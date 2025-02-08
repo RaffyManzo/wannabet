@@ -1,5 +1,6 @@
 package is.project.wannabet.service;
 
+import is.project.wannabet.model.StatoQuota;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import is.project.wannabet.model.Quota;
@@ -33,5 +34,22 @@ public class QuotaService {
     public void deleteQuota(Long id) {
         quotaRepository.deleteById(id);
 
+    }
+
+    public void refertaQuota(Long idQuota, String referto) {
+        Optional<Quota> quotaOpt = quotaRepository.findById(idQuota);
+        if (quotaOpt.isPresent()) {
+            Quota quota = quotaOpt.get();
+
+            if(referto.equals(quota.getDescrizione()))
+                quota.setStato(StatoQuota.VINCENTE);
+            else
+                    quota.setStato(StatoQuota.PERDENTE);
+            quotaRepository.save(quota);
+        }
+    }
+
+    public void chiudiQuota(Long idQuota) {
+        quotaRepository.deleteById(idQuota); // Rimuove la quota chiusa dal DB
     }
 }
