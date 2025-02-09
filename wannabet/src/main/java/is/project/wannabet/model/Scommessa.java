@@ -1,6 +1,10 @@
 package is.project.wannabet.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import is.project.wannabet.util.StatoScommessaConverter;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -10,11 +14,11 @@ public class Scommessa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idScommessa")
+    @Column(name = "id_scommessa")
     private Long idScommessa;
 
     @ManyToOne
-    @JoinColumn(name = "idAccount", nullable = false)
+    @JoinColumn(name = "id_account", nullable = false)
     private AccountRegistrato account;
 
     @Column(name = "importo", nullable = false)
@@ -27,12 +31,13 @@ public class Scommessa {
     @Temporal(TemporalType.TIMESTAMP)
     private Date data;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = StatoScommessaConverter.class)
     @Column(name = "stato", nullable = false)
     private StatoScommessa stato;
 
-    @OneToMany(mappedBy = "scommessa", cascade = CascadeType.ALL)
-    private List<QuotaGiocata> quoteGiocate;
+    @OneToMany(mappedBy = "scommessa", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<QuotaGiocata> quoteGiocate = new ArrayList<>();
 
     public List<QuotaGiocata> getQuoteGiocate() { return quoteGiocate; }
     public void setQuoteGiocate(List<QuotaGiocata> quoteGiocate) { this.quoteGiocate = quoteGiocate; }

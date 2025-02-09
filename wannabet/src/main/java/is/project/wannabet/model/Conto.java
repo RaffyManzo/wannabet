@@ -10,20 +10,23 @@ public class Conto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idconto")
+    @Column(name = "id_conto")
     private Long idConto;
 
     @Column(name = "saldo", nullable = false)
     private Double saldo;
 
-    @Column(name = "data_crazione", nullable = false)
+    @Column(name = "data_creazione", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataCreazione;
 
     @Column(name = "indirizzo_fatturazione", length = 100)
     private String indirizzoFatturazione;
 
+
+
     // Getters e Setters
+
 
     public Long getIdConto() {
         return idConto;

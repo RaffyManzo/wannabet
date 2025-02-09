@@ -10,7 +10,7 @@ public class Evento {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idEvento")
+    @Column(name = "id_evento")
     private Long idEvento;
 
     @Column(name = "nome", nullable = false, length = 100)

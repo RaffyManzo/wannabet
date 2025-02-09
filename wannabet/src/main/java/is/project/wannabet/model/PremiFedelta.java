@@ -10,7 +10,7 @@ public class PremiFedelta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idPremio")
+    @Column(name = "id_premio")
     private Long idPremio;
 
     @Column(name = "nome", nullable = false, length = 100)

@@ -10,8 +10,8 @@ public class EventoFactory {
         if (nome == null || nome.isEmpty()) {
             throw new IllegalArgumentException("Il nome dell'evento non può essere vuoto");
         }
-        if (data == null || data.before(new Date())) {
-            throw new IllegalArgumentException("La data dell'evento deve essere nel futuro");
+        if (data == null) {
+            throw new IllegalArgumentException("Data necessaria");
         }
         if (descrizione == null || descrizione.isEmpty()) {
             throw new IllegalArgumentException("La descrizione dell'evento non può essere vuota");

@@ -23,7 +23,7 @@ public class StoricoRiscossioniService {
     }
 
     public List<StoricoRiscossioni> getRiscossioniBySaldoFedelta(Long saldoFedeltaId) {
-        return storicoRiscossioniRepository.findBySaldoFedeltaId(saldoFedeltaId);
+        return storicoRiscossioniRepository.findBySaldoFedelta_IdSaldoFedelta(saldoFedeltaId);
     }
 
     public StoricoRiscossioni saveRiscossione(StoricoRiscossioni riscossione) {

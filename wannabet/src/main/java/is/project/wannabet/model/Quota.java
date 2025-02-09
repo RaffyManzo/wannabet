@@ -1,7 +1,7 @@
 package is.project.wannabet.model;
 
+import is.project.wannabet.util.StatoQuotaConverter;
 import jakarta.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "quota")
@@ -9,23 +9,23 @@ public class Quota {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_Quota")
+    @Column(name = "id_quota")
     private Long idQuota;
 
     @Column(name = "moltiplicatore", nullable = false)
     private double moltipicatore;
 
-    @Column(name = "descrizione", nullable = false, length = 100)
-    private String descrizione;
+    @Column(name = "esito", nullable = false, length = 100)
+    private String esito;
 
     @Column(name = "categoria", nullable = false, length = 100)
     private String categoria;
 
     @ManyToOne
-    @JoinColumn(name = "idEvento", nullable = false)
+    @JoinColumn(name = "id_evento", nullable = false)
     private Evento evento;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = StatoQuotaConverter.class)
     @Column(name = "stato", nullable = false)
     private StatoQuota stato;
 
@@ -48,12 +48,12 @@ public class Quota {
         this.moltipicatore = moltipicatore;
     }
 
-    public String getDescrizione() {
-        return descrizione;
+    public String getEsito() {
+        return esito;
     }
 
-    public void setDescrizione(String descrizione) {
-        this.descrizione = descrizione;
+    public void setEsito(String esito) {
+        this.esito = esito;
     }
 
     public Evento getEvento() {

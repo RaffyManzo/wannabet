@@ -27,10 +27,11 @@ dependencies {
 	implementation 'junit:junit:4.13.1'
 	implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 
+	testImplementation 'com.h2database:h2'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.testcontainers:junit-jupiter'
-	testImplementation 'org.testcontainers:mysql'  // Se usi MySQL
-	testImplementation 'com.h2database:h2'  // Database in-memory per test
+	testImplementation 'org.mockito:mockito-core'
+	testImplementation 'org.mockito:mockito-junit-jupiter'
+	testImplementation 'org.springframework.security:spring-security-test'
 }
 
 

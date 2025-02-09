@@ -1,5 +1,6 @@
 package is.project.wannabet.model;
 
+import is.project.wannabet.util.TipoAccountConverter;
 import jakarta.persistence.*;
 import java.util.Date;
 
@@ -9,22 +10,22 @@ public class AccountRegistrato {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idAccount")
+    @Column(name = "id_account")
     private Long idAccount;
 
-    @Column(name = "Codice_Fiscale", nullable = false, length = 45, unique = true)
+    @Column(name = "codice_fiscale", nullable = false, length = 45, unique = true)
     private String codiceFiscale;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "tipo", nullable = false)
+    @Convert(converter = TipoAccountConverter.class)
     private TipoAccount tipo;
 
     @ManyToOne
-    @JoinColumn(name = "idConto", nullable = false)
+    @JoinColumn(name = "id_conto", nullable = false)
     private Conto conto;
 
     @ManyToOne
-    @JoinColumn(name = "idFedelta", nullable = false)
+    @JoinColumn(name = "id_fedelta", nullable = false)
     private SaldoFedelta saldoFedelta;
 
     @Column(name = "nome", length = 45)

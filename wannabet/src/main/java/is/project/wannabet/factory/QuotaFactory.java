@@ -10,7 +10,7 @@ public class QuotaFactory {
         Quota quota = new Quota();
         quota.setEvento(evento);
         quota.setMoltipicatore(moltiplicatore);
-        quota.setDescrizione(descrizione);
+        quota.setEsito(descrizione);
         quota.setCategoria(categoria);
         quota.setStato(StatoQuota.DA_REFERTARE);
         quota.setChiusa(false);

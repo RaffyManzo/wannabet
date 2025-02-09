@@ -13,11 +13,11 @@ public class StoricoRiscossioni {
     private Long idRiscossione;
 
     @ManyToOne
-    @JoinColumn(name = "idSaldoFedelta", nullable = false)
+    @JoinColumn(name = "id_saldo_fedelta", nullable = false)
     private SaldoFedelta saldoFedelta;
 
     @ManyToOne
-    @JoinColumn(name = "idPremio", nullable = false)
+    @JoinColumn(name = "id_premio", nullable = false)
     private PremiFedelta premio;
 
     @Column(name = "data_riscossione", nullable = false)

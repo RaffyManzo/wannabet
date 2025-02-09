@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface QuotaGiocataRepository extends JpaRepository<QuotaGiocata, Long> {
-    List<QuotaGiocata> findByScommessaId(Long idScommessa);
+    List<QuotaGiocata> findByScommessa_IdScommessa(Long idScommessa);
 }

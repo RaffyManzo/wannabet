@@ -3,6 +3,7 @@ package is.project.wannabet.service;
 import is.project.wannabet.factory.ScommessaFactory;
 import is.project.wannabet.model.AccountRegistrato;
 import is.project.wannabet.model.Quota;
+import is.project.wannabet.model.QuotaGiocata;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import is.project.wannabet.model.Scommessa;
@@ -31,12 +32,19 @@ public class ScommessaService {
     }
 
     public Scommessa saveScommessa(Scommessa scommessa) {
-        // Assicuriamoci che tutte le quote esistano prima di salvare
-        scommessa.setQuote(quotaRepository.findAllById(
-                scommessa.getQuote().stream().map(Quota::getIdQuota).toList()
-        ));
+        // Verifichiamo che tutte le quote esistano
+        List<QuotaGiocata> quoteGiocate = scommessa.getQuoteGiocate().stream()
+                .map(qg -> new QuotaGiocata(scommessa, quotaRepository.findById(qg.getQuota().getIdQuota())
+                        .orElseThrow(() -> new IllegalArgumentException("Quota non trovata con ID: " + qg.getQuota().getIdQuota()))))
+                .toList();
+
+        // Assegniamo le quote giocate alla scommessa
+        scommessa.setQuoteGiocate(quoteGiocate);
+
+        // Salviamo la scommessa con le quote giocate
         return scommessaRepository.save(scommessa);
     }
+
 
     public void deleteScommessa(Long id) {
         scommessaRepository.deleteById(id);

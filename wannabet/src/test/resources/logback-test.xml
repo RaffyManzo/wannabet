@@ -1,0 +1,5 @@
+<configuration>
+    <logger name="org.springframework.test.context" level="DEBUG"/>
+    <logger name="org.springframework.test" level="DEBUG"/>
+    <logger name="org.springframework" level="INFO"/>
+</configuration>
