@@ -1,11 +1,11 @@
 package is.project.wannabet.observer;
 
+import is.project.wannabet.controller.QuotaManager;
 import is.project.wannabet.model.*;
 import is.project.wannabet.repository.ScommessaRepository;
 import is.project.wannabet.service.ContoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 @Service
@@ -17,6 +17,10 @@ public class ScommessaObserverManager implements QuotaObserver {
     @Autowired
     private ContoService contoService;
 
+    public ScommessaObserverManager() {
+        QuotaManager.getInstance().addObserver(this);
+    }
+
     @Override
     public void update(Long idQuota) {
         List<Scommessa> scommesse = scommessaRepository.findScommesseByQuotaId(idQuota);
@@ -24,11 +28,11 @@ public class ScommessaObserverManager implements QuotaObserver {
     }
 
     private void aggiornaStatoScommessa(Scommessa scommessa) {
-        boolean almenoUnaPerdente = scommessa.getQuote().stream()
-                .anyMatch(quota -> quota.getStato() == StatoQuota.PERDENTE);
+        boolean almenoUnaPerdente = scommessa.getQuoteGiocate().stream()
+                .anyMatch(q -> q.getQuota().getStato() == StatoQuota.PERDENTE);
 
-        boolean tutteVincenti = scommessa.getQuote().stream()
-                .allMatch(quota -> quota.getStato() == StatoQuota.VINCENTE);
+        boolean tutteVincenti = scommessa.getQuoteGiocate().stream()
+                .allMatch(q -> q.getQuota().getStato() == StatoQuota.VINCENTE);
 
         if (almenoUnaPerdente) {
             scommessa.setStato(StatoScommessa.PERSA);
@@ -39,6 +43,4 @@ public class ScommessaObserverManager implements QuotaObserver {
 
         scommessaRepository.save(scommessa);
     }
-
-
 }

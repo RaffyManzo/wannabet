@@ -60,4 +60,16 @@ public class Conto {
     public void aggiungiSaldo(double importo) {
         this.saldo += importo;
     }
+
+    public boolean preleva(double importo) {
+        if (saldo >= importo) {
+            saldo -= importo;
+            return true;
+        }
+        return false;
+    }
+
+    public void deposita(double importo) {
+        saldo += importo;
+    }
 }

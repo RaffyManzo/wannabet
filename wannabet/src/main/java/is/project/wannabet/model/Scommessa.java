@@ -31,24 +31,35 @@ public class Scommessa {
     @Column(name = "stato", nullable = false)
     private StatoScommessa stato;
 
-    // Relazione ManyToMany con Quota tramite una tabella intermedia
-    @ManyToMany
-    @JoinTable(
-            name = "lista_quote",  // Nome della tabella intermedia
-            joinColumns = @JoinColumn(name = "idScommessa"),
-            inverseJoinColumns = @JoinColumn(name = "idQuota")
-    )
-    private List<Quota> quote;
+    @OneToMany(mappedBy = "scommessa", cascade = CascadeType.ALL)
+    private List<QuotaGiocata> quoteGiocate;
 
-    // Getters e Setters
-    public Long getIdScommessa() { return idScommessa; }
-    public void setIdScommessa(Long idScommessa) { this.idScommessa = idScommessa; }
+    public List<QuotaGiocata> getQuoteGiocate() { return quoteGiocate; }
+    public void setQuoteGiocate(List<QuotaGiocata> quoteGiocate) { this.quoteGiocate = quoteGiocate; }
 
-    public AccountRegistrato getAccount() { return account; }
-    public void setAccount(AccountRegistrato account) { this.account = account; }
+    public Long getIdScommessa() {
+        return idScommessa;
+    }
 
-    public double getImporto() { return importo; }
-    public void setImporto(double importo) { this.importo = importo; }
+    public void setIdScommessa(Long idScommessa) {
+        this.idScommessa = idScommessa;
+    }
+
+    public AccountRegistrato getAccount() {
+        return account;
+    }
+
+    public void setAccount(AccountRegistrato account) {
+        this.account = account;
+    }
+
+    public double getImporto() {
+        return importo;
+    }
+
+    public void setImporto(double importo) {
+        this.importo = importo;
+    }
 
     public double getVincita() {
         return vincita;
@@ -58,12 +69,19 @@ public class Scommessa {
         this.vincita = vincita;
     }
 
-    public Date getData() { return data; }
-    public void setData(Date data) { this.data = data; }
+    public Date getData() {
+        return data;
+    }
 
-    public StatoScommessa getStato() { return stato; }
-    public void setStato(StatoScommessa stato) { this.stato = stato; }
+    public void setData(Date data) {
+        this.data = data;
+    }
 
-    public List<Quota> getQuote() { return quote; }
-    public void setQuote(List<Quota> quote) { this.quote = quote; }
+    public StatoScommessa getStato() {
+        return stato;
+    }
+
+    public void setStato(StatoScommessa stato) {
+        this.stato = stato;
+    }
 }
