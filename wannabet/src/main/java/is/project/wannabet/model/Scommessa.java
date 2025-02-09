@@ -1,7 +1,6 @@
 package is.project.wannabet.model;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -19,9 +18,12 @@ public class Scommessa {
     private AccountRegistrato account;
 
     @Column(name = "importo", nullable = false)
-    private BigDecimal importo;
+    private double importo;
 
-    @Column(name = "data", nullable = false)
+    @Column(name = "vincita", nullable = false)
+    private double vincita;
+
+    @Column(name = "data_scommessa", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date data;
 
@@ -45,8 +47,16 @@ public class Scommessa {
     public AccountRegistrato getAccount() { return account; }
     public void setAccount(AccountRegistrato account) { this.account = account; }
 
-    public BigDecimal getImporto() { return importo; }
-    public void setImporto(BigDecimal importo) { this.importo = importo; }
+    public double getImporto() { return importo; }
+    public void setImporto(double importo) { this.importo = importo; }
+
+    public double getVincita() {
+        return vincita;
+    }
+
+    public void setVincita(double vincita) {
+        this.vincita = vincita;
+    }
 
     public Date getData() { return data; }
     public void setData(Date data) { this.data = data; }

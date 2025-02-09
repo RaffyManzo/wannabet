@@ -2,6 +2,8 @@ package is.project.wannabet.model;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "premi_fedelta")
 public class PremiFedelta {
@@ -17,6 +19,14 @@ public class PremiFedelta {
     @Column(name = "descrizione", length = 255)
     private String descrizione;
 
+    @Column(name = "data_creazione", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataCreazione;
+
+    @Column(name = "data_scadenza", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataScadenza;
+
     @Column(name = "punti_richiesti", nullable = false)
     private Integer puntiRichiesti;
 
@@ -29,6 +39,22 @@ public class PremiFedelta {
 
     public String getDescrizione() { return descrizione; }
     public void setDescrizione(String descrizione) { this.descrizione = descrizione; }
+
+    public Date getDataCreazione() {
+        return dataCreazione;
+    }
+
+    public void setDataCreazione(Date dataCreazione) {
+        this.dataCreazione = dataCreazione;
+    }
+
+    public Date getDataScadenza() {
+        return dataScadenza;
+    }
+
+    public void setDataScadenza(Date dataScadenza) {
+        this.dataScadenza = dataScadenza;
+    }
 
     public Integer getPuntiRichiesti() { return puntiRichiesti; }
     public void setPuntiRichiesti(Integer puntiRichiesti) { this.puntiRichiesti = puntiRichiesti; }

@@ -1,5 +1,7 @@
 package is.project.wannabet.service;
 
+import is.project.wannabet.factory.ScommessaFactory;
+import is.project.wannabet.model.AccountRegistrato;
 import is.project.wannabet.model.Quota;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,5 +39,13 @@ public class ScommessaService {
 
     public void deleteScommessa(Long id) {
         scommessaRepository.deleteById(id);
+    }
+
+    public Scommessa createScommessa(AccountRegistrato account, List<Quota> quote, double importo) {
+        // Usa la Factory per creare una Scommessa
+        Scommessa scommessa = ScommessaFactory.createScommessa(account, quote, importo);
+
+        // Salva la scommessa nel database
+        return scommessaRepository.save(scommessa);
     }
 }

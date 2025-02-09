@@ -2,6 +2,7 @@ package is.project.wannabet.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -19,6 +20,9 @@ public class Quota {
     @Column(name = "categoria", nullable = false, length = 45)
     private String categoria;
 
+    @Column(name = "referto", nullable = false, length = 45)
+    private String referto;
+
     @Column(name = "moltipicatore", nullable = false)
     private double moltipicatore;
 
@@ -33,12 +37,24 @@ public class Quota {
     @Column(name = "stato", nullable = false)
     private StatoQuota stato;
 
+    @Column(name = "chiusa", nullable = false)
+    private boolean chiusa = false;
+
+    public boolean isChiusa() { return chiusa; }
+    public void setChiusa(boolean chiusa) { this.chiusa = chiusa; }
+
     // Getters e Setters
     public Long getIdQuota() {
         return idQuota;
     }
 
+    public String getReferto() {
+        return referto;
+    }
 
+    public void setReferto(String referto) {
+        this.referto = referto;
+    }
 
     public void setIdQuota(Long idQuota) {
         this.idQuota = idQuota;
@@ -93,4 +109,5 @@ public class Quota {
     public void setStato(StatoQuota stato) {
         this.stato = stato;
     }
+
 }
