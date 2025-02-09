@@ -25,8 +25,8 @@ DROP TABLE IF EXISTS `account_registrato`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `account_registrato` (
-  `idAccount` int NOT NULL AUTO_INCREMENT,
-  `Codice_Fiscale` varchar(45) NOT NULL,
+  `idaccount` int NOT NULL AUTO_INCREMENT,
+  `codice_fiscale` varchar(45) NOT NULL,
   `tipo` enum('Utente','Admin','Gestore_fedeltá','Gestore_referti','Gestore_evento') NOT NULL,
   `idConto` int NOT NULL,
   `idFedelta` int NOT NULL,
@@ -34,7 +34,8 @@ CREATE TABLE `account_registrato` (
   `cognome` varchar(45) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `data_nascita` date DEFAULT NULL,
-  PRIMARY KEY (`idAccount`,`Codice_Fiscale`),
+  PRIMARY KEY (`idaccount`,`codice_fiscale`),
+  UNIQUE KEY `unq_account_registrato_idaccount` (`idaccount`),
   KEY `idConto` (`idConto`),
   KEY `idFedelta` (`idFedelta`),
   CONSTRAINT `account_registrato_ibfk_1` FOREIGN KEY (`idConto`) REFERENCES `conto` (`idconto`),
@@ -61,7 +62,7 @@ DROP TABLE IF EXISTS `conto`;
 CREATE TABLE `conto` (
   `idconto` int NOT NULL,
   `data_creazione` date NOT NULL,
-  `bilancio` int DEFAULT '0',
+  `saldo` double DEFAULT (_utf8mb4'0'),
   `indirizzo_fatturazione` varchar(45) NOT NULL,
   PRIMARY KEY (`idconto`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -88,6 +89,7 @@ CREATE TABLE `evento` (
   `data_evento` datetime NOT NULL,
   `descrizione` varchar(200) DEFAULT NULL COMMENT 'Si intende il titolo dell''evento, come i giocatori coinvolti',
   `categoria` tinytext,
+  `chiuso` tinyint(1) NOT NULL DEFAULT (false),
   PRIMARY KEY (`idEvento`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -110,7 +112,6 @@ DROP TABLE IF EXISTS `lista_quote`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `lista_quote` (
   `idLink` int NOT NULL AUTO_INCREMENT,
-  `dataGiocata` date NOT NULL,
   `idScommessa` int NOT NULL,
   `idQuota` int NOT NULL,
   PRIMARY KEY (`idLink`),
@@ -141,8 +142,8 @@ CREATE TABLE `premi_fedeltà` (
   `idpremio` int NOT NULL,
   `costo` int NOT NULL,
   `descrizione` varchar(100) DEFAULT NULL,
-  `data_aggiunta` date DEFAULT NULL,
-  `scadenza` date DEFAULT NULL,
+  `data_creazione` date DEFAULT NULL,
+  `data_scadenza` date DEFAULT NULL,
   `nome` varchar(45) NOT NULL,
   PRIMARY KEY (`idpremio`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -172,6 +173,7 @@ CREATE TABLE `quota` (
   `stato` enum('Da Refertare','Vincente','Perdente') NOT NULL DEFAULT (_utf8mb4'Da Refertare'),
   `categoria` tinytext,
   `referto` varchar(45) DEFAULT NULL,
+  `chiusa` tinyint(1) DEFAULT (false),
   PRIMARY KEY (`id_Quota`),
   KEY `fk_quota_evento1_idx` (`idEvento`),
   CONSTRAINT `fk_quota_evento1` FOREIGN KEY (`idEvento`) REFERENCES `evento` (`idEvento`)
@@ -222,10 +224,11 @@ CREATE TABLE `scommessa` (
   `vincita` int DEFAULT '0',
   `data_scommessa` date NOT NULL,
   `idAccount` int NOT NULL,
-  `Codice_Fiscale` varchar(45) NOT NULL,
+  `importo` double NOT NULL,
+  `stato` enum('Da refertare','Vinta','Persa') DEFAULT NULL,
   PRIMARY KEY (`idScommessa`),
-  KEY `fk_scommessa_account_registrato1_idx` (`idAccount`,`Codice_Fiscale`),
-  CONSTRAINT `fk_scommessa_account_registrato1` FOREIGN KEY (`idAccount`, `Codice_Fiscale`) REFERENCES `account_registrato` (`idAccount`, `Codice_Fiscale`)
+  KEY `fk_scommessa_account_registrato1_idx` (`idAccount`),
+  CONSTRAINT `fk_scommessa_account_registrato1` FOREIGN KEY (`idAccount`) REFERENCES `account_registrato` (`idaccount`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -248,13 +251,12 @@ DROP TABLE IF EXISTS `storico_riscossioni`;
 CREATE TABLE `storico_riscossioni` (
   `idstorico_riscossioni` int NOT NULL,
   `data_riscossione` date NOT NULL,
-  `idAccount` int NOT NULL,
-  `CodiceFiscale` varchar(45) NOT NULL,
   `idPremio` int NOT NULL,
+  `id_saldo_fedelta` int NOT NULL,
   PRIMARY KEY (`idstorico_riscossioni`),
-  KEY `fk_storico_riscossioni_account_registrato1_idx` (`idAccount`,`CodiceFiscale`),
   KEY `fk_storico_riscossioni_premi_fedeltà1_idx` (`idPremio`),
-  CONSTRAINT `fk_storico_riscossioni_account_registrato1` FOREIGN KEY (`idAccount`, `CodiceFiscale`) REFERENCES `account_registrato` (`idAccount`, `Codice_Fiscale`),
+  KEY `fk_storico_riscossioni_account_registrato1` (`id_saldo_fedelta`),
+  CONSTRAINT `fk_storico_riscossioni_account_registrato1` FOREIGN KEY (`id_saldo_fedelta`) REFERENCES `saldo_fedelta` (`idsaldo_fedelta`),
   CONSTRAINT `fk_storico_riscossioni_premi_fedeltà1` FOREIGN KEY (`idPremio`) REFERENCES `premi_fedeltà` (`idpremio`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -267,6 +269,33 @@ LOCK TABLES `storico_riscossioni` WRITE;
 /*!40000 ALTER TABLE `storico_riscossioni` DISABLE KEYS */;
 /*!40000 ALTER TABLE `storico_riscossioni` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `storico_transazioni`
+--
+
+DROP TABLE IF EXISTS `storico_transazioni`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `storico_transazioni` (
+  `idtransazione` int NOT NULL,
+  `importo` double DEFAULT NULL,
+  `data_transazione` datetime DEFAULT NULL,
+  `idconto` int DEFAULT NULL,
+  PRIMARY KEY (`idtransazione`),
+  KEY `fk_storico_transazioni_conto` (`idconto`),
+  CONSTRAINT `fk_storico_transazioni_conto` FOREIGN KEY (`idconto`) REFERENCES `conto` (`idconto`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `storico_transazioni`
+--
+
+LOCK TABLES `storico_transazioni` WRITE;
+/*!40000 ALTER TABLE `storico_transazioni` DISABLE KEYS */;
+/*!40000 ALTER TABLE `storico_transazioni` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -277,4 +306,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-02-08 13:17:05
+-- Dump completed on 2025-02-09 13:47:55
