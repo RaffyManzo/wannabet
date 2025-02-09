@@ -1,8 +1,6 @@
 package is.project.wannabet.model;
 
 import jakarta.persistence.*;
-
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -11,27 +9,21 @@ public class Quota {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idquota")
+    @Column(name = "id_Quota")
     private Long idQuota;
+
+    @Column(name = "moltiplicatore", nullable = false)
+    private double moltipicatore;
 
     @Column(name = "descrizione", nullable = false, length = 100)
     private String descrizione;
 
-    @Column(name = "categoria", nullable = false, length = 45)
+    @Column(name = "categoria", nullable = false, length = 100)
     private String categoria;
-
-    @Column(name = "referto", nullable = false, length = 45)
-    private String referto;
-
-    @Column(name = "moltipicatore", nullable = false)
-    private double moltipicatore;
 
     @ManyToOne
     @JoinColumn(name = "idEvento", nullable = false)
     private Evento evento;
-
-    @ManyToMany(mappedBy = "quote") // Relazione bidirezionale con Scommessa
-    private List<Scommessa> scommesse;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "stato", nullable = false)
@@ -40,24 +32,20 @@ public class Quota {
     @Column(name = "chiusa", nullable = false)
     private boolean chiusa = false;
 
-    public boolean isChiusa() { return chiusa; }
-    public void setChiusa(boolean chiusa) { this.chiusa = chiusa; }
-
-    // Getters e Setters
     public Long getIdQuota() {
         return idQuota;
     }
 
-    public String getReferto() {
-        return referto;
-    }
-
-    public void setReferto(String referto) {
-        this.referto = referto;
-    }
-
     public void setIdQuota(Long idQuota) {
         this.idQuota = idQuota;
+    }
+
+    public double getMoltipicatore() {
+        return moltipicatore;
+    }
+
+    public void setMoltipicatore(double moltipicatore) {
+        this.moltipicatore = moltipicatore;
     }
 
     public String getDescrizione() {
@@ -68,38 +56,12 @@ public class Quota {
         this.descrizione = descrizione;
     }
 
-
-    public String getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
-    }
-
-
-    public double getMoltipicatore() {
-        return moltipicatore;
-    }
-
-    public void setMoltipicatore(double moltipicatore) {
-        this.moltipicatore = moltipicatore;
-    }
-
     public Evento getEvento() {
         return evento;
     }
 
     public void setEvento(Evento evento) {
         this.evento = evento;
-    }
-
-    public List<Scommessa> getScommesse() {
-        return scommesse;
-    }
-
-    public void setScommesse(List<Scommessa> scommesse) {
-        this.scommesse = scommesse;
     }
 
     public StatoQuota getStato() {
@@ -110,4 +72,19 @@ public class Quota {
         this.stato = stato;
     }
 
+    public boolean isChiusa() {
+        return chiusa;
+    }
+
+    public void setChiusa(boolean chiusa) {
+        this.chiusa = chiusa;
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
 }

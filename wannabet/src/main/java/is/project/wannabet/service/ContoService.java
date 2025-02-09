@@ -1,5 +1,6 @@
 package is.project.wannabet.service;
 
+import is.project.wannabet.exception.SaldoInsufficienteException;
 import is.project.wannabet.model.Conto;
 import is.project.wannabet.model.Scommessa;
 import is.project.wannabet.repository.ContoRepository;
@@ -32,6 +33,32 @@ public class ContoService {
         contoRepository.deleteById(id);
     }
 
+
+    public Optional<Conto> getContoByAccountId(Long accountId) {
+        return contoRepository.findByAccount_IdAccount(accountId);
+    }
+
+    @Transactional
+    public void preleva(Long accountId, double importo) {
+        Conto conto = getContoByAccountId(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("Conto non trovato"));
+
+        if (conto.getSaldo() < importo) {
+            throw new SaldoInsufficienteException("Saldo insufficiente per prelevare " + importo);
+        }
+
+        conto.preleva(importo);
+        contoRepository.save(conto);
+    }
+
+    @Transactional
+    public void deposita(Long accountId, double importo) {
+        Conto conto = getContoByAccountId(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("Conto non trovato"));
+
+        conto.deposita(importo);
+        contoRepository.save(conto);
+    }
 
     @Transactional
     public void aggiornaSaldoDopoVincita(Scommessa scommessa) {

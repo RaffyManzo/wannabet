@@ -13,5 +13,5 @@ public interface QuotaRepository extends JpaRepository<Quota, Long> {
      * Trova tutte le quote associate a un determinato evento.
      */
     @Query("SELECT q FROM Quota q WHERE q.evento.idEvento = :eventoId")
-    List<Quota> findByEvento_IdEvento(@Param("eventoId") Long eventoId);
+    List<Quota> findByEventoId(@Param("eventoId") Long eventoId);
 }

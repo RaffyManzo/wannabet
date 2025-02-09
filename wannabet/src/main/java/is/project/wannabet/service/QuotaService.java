@@ -1,12 +1,11 @@
 package is.project.wannabet.service;
 
 import is.project.wannabet.factory.QuotaFactory;
+import is.project.wannabet.controller.QuotaManager;
 import is.project.wannabet.model.Evento;
 import is.project.wannabet.model.Quota;
 import is.project.wannabet.model.StatoQuota;
-import is.project.wannabet.observer.QuotaNotifier;
 import is.project.wannabet.observer.QuotaObserver;
-import is.project.wannabet.observer.ScommessaObserverManager;
 import is.project.wannabet.repository.QuotaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +19,7 @@ public class QuotaService {
     @Autowired
     private QuotaRepository quotaRepository;
 
-    @Autowired
-    private ScommessaObserverManager scommessaObserverManager;
-
-    private final QuotaNotifier quotaNotifier = new QuotaNotifier();
+    private final QuotaManager quotaManager = QuotaManager.getInstance();
 
     /**
      * Restituisce tutte le quote presenti nel database.
@@ -43,14 +39,16 @@ public class QuotaService {
      * Restituisce tutte le quote associate a un determinato evento.
      */
     public List<Quota> getQuoteByEvento(Long eventoId) {
-        return quotaRepository.findByEvento_IdEvento(eventoId);
+        return quotaRepository.findByEventoId(eventoId);
     }
 
     /**
-     * Salva una nuova quota nel database.
+     * Salva una nuova quota nel database e la registra nel `QuotaManager`.
      */
     public Quota saveQuota(Quota quota) {
-        return quotaRepository.save(quota);
+        Quota savedQuota = quotaRepository.save(quota);
+        quotaManager.aggiornaQuota(savedQuota); // Registra la quota nel sistema globale
+        return savedQuota;
     }
 
     /**
@@ -58,12 +56,19 @@ public class QuotaService {
      */
     public void deleteQuota(Long id) {
         quotaRepository.deleteById(id);
+        quotaManager.rimuoviQuota(id); // Rimuove la quota dal sistema globale
     }
 
+    /**
+     * Registra un Observer per il monitoraggio delle quote.
+     */
     public void registerObserver(QuotaObserver observer) {
-        quotaNotifier.addObserver(observer);
+        quotaManager.addObserver(observer);
     }
 
+    /**
+     * Referta una quota aggiornandone lo stato e notificando gli osservatori.
+     */
     public void refertaQuota(Long idQuota, String referto) {
         Optional<Quota> quotaOpt = quotaRepository.findById(idQuota);
         if (quotaOpt.isPresent()) {
@@ -73,19 +78,20 @@ public class QuotaService {
             } else {
                 quota.setStato(StatoQuota.PERDENTE);
             }
-            quota.setReferto(referto);
             quotaRepository.save(quota);
 
-            // Notifica gli osservatori (ScommessaObserverManager)
-            quotaNotifier.notifyObservers(idQuota);
+            // Notifica gli observer della modifica dello stato
+            quotaManager.aggiornaQuota(quota);
         }
     }
 
+    /**
+     * Crea una nuova quota tramite la Factory e la registra nel sistema.
+     */
     public Quota createQuota(String descrizione, String categoria, double moltiplicatore, Evento evento) {
-        // Usa la Factory per creare l'oggetto Quota
-        Quota quota = QuotaFactory.createQuota(descrizione, categoria, moltiplicatore, evento);
-
-        // Salva la quota nel database
-        return quotaRepository.save(quota);
+        Quota quota = QuotaFactory.createQuota(evento, moltiplicatore, descrizione, categoria);
+        Quota savedQuota = quotaRepository.save(quota);
+        quotaManager.aggiornaQuota(savedQuota); // Registra la quota nel `QuotaManager`
+        return savedQuota;
     }
 }

@@ -1,7 +1,9 @@
 package is.project.wannabet.controller;
 
 
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import is.project.wannabet.model.Conto;
 import is.project.wannabet.service.ContoService;
@@ -34,6 +36,20 @@ public class ContoController {
     @DeleteMapping("/{id}")
     public void deleteConto(@PathVariable Long id) {
         contoService.deleteConto(id);
+    }
+
+    @PostMapping("/{accountId}/deposita")
+    public ResponseEntity<String> deposita(@PathVariable Long accountId,
+                                           @RequestParam @Min(value = 1, message = "L'importo deve essere maggiore di zero") double importo) {
+        contoService.deposita(accountId, importo);
+        return ResponseEntity.ok("Deposito di " + importo + " effettuato con successo.");
+    }
+
+    @PostMapping("/{accountId}/preleva")
+    public ResponseEntity<String> preleva(@PathVariable Long accountId,
+                                          @RequestParam @Min(value = 1, message = "L'importo deve essere maggiore di zero") double importo) {
+        contoService.preleva(accountId, importo);
+        return ResponseEntity.ok("Prelievo di " + importo + " effettuato con successo.");
     }
 }
 
