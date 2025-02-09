@@ -2,6 +2,7 @@ package is.project.wannabet.controller;
 
 import is.project.wannabet.model.Scommessa;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import is.project.wannabet.model.Quota;
@@ -19,21 +20,22 @@ public class QuotaController {
 
     /**
      * Endpoint per refertare una quota dato il suo ID.
-     * @param idQuota ID della quota da refertare.
+     * @param id ID della quota da refertare.
      * @param referto Referto assegnato alla quota.
      * @return ResponseEntity con stato HTTP appropriato.
      */
-    @PostMapping("/quota/referta/{id}")
-    public ResponseEntity<Void> refertaQuota(@PathVariable Long idQuota, @RequestParam String referto) {
-        Optional<Quota> quotaOpt = quotaService.getQuotaById(idQuota);
+    @PostMapping("/referta/{id}")
+    public ResponseEntity<Void> refertaQuota(@PathVariable Long id, @RequestParam String referto) {
+        Optional<Quota> quotaOpt = quotaService.getQuotaById(id);
 
         if (quotaOpt.isEmpty()) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Restituisce 404 se la quota non esiste
         }
 
-        quotaService.refertaQuota(idQuota, referto);
+        quotaService.refertaQuota(id, referto);
         return ResponseEntity.ok().build();
     }
+
 
 
     @GetMapping

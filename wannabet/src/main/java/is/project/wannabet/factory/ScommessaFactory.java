@@ -29,7 +29,7 @@ public class ScommessaFactory {
 
         scommessa.setVincita(importo * quoteGiocate.stream()
                 .map(QuotaGiocata::getQuota)
-                .mapToDouble(Quota::getMoltipicatore)
+                .mapToDouble(Quota::getMoltiplicatore)
                 .reduce(1.0, (a, b) -> a * b)
         );
 

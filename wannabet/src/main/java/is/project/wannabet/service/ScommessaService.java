@@ -46,18 +46,6 @@ public class ScommessaService {
     }
 
 
-    public void deleteScommessa(Long id) {
-        scommessaRepository.deleteById(id);
-    }
-
-    public Scommessa createScommessa(AccountRegistrato account, List<Quota> quote, double importo) {
-        // Usa la Factory per creare una Scommessa
-        Scommessa scommessa = ScommessaFactory.createScommessa(account, quote, importo);
-
-        // Salva la scommessa nel database
-        return scommessaRepository.save(scommessa);
-    }
-
     @Transactional
     public void creaScommessaDaScontrino(List<Quota> quote, double importo) {
         if (quote == null || quote.isEmpty()) {

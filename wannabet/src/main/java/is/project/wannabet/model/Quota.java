@@ -1,35 +1,46 @@
 package is.project.wannabet.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import is.project.wannabet.util.StatoQuotaConverter;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "quota")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Quota {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_quota")
+    @JsonProperty("id_quota")
     private Long idQuota;
 
     @Column(name = "moltiplicatore", nullable = false)
-    private double moltipicatore;
+    @JsonProperty("moltiplicatore")
+    private double moltiplicatore;
 
     @Column(name = "esito", nullable = false, length = 100)
+    @JsonProperty("esito")
     private String esito;
 
     @Column(name = "categoria", nullable = false, length = 100)
+    @JsonProperty("categoria")
     private String categoria;
 
     @ManyToOne
     @JoinColumn(name = "id_evento", nullable = false)
+    @JsonIgnore
     private Evento evento;
 
     @Convert(converter = StatoQuotaConverter.class)
     @Column(name = "stato", nullable = false)
+    @JsonProperty("stato")
     private StatoQuota stato;
 
     @Column(name = "chiusa", nullable = false)
+    @JsonProperty("chiusa")
     private boolean chiusa = false;
 
     public Long getIdQuota() {
@@ -40,12 +51,12 @@ public class Quota {
         this.idQuota = idQuota;
     }
 
-    public double getMoltipicatore() {
-        return moltipicatore;
+    public double getMoltiplicatore() {
+        return moltiplicatore;
     }
 
-    public void setMoltipicatore(double moltipicatore) {
-        this.moltipicatore = moltipicatore;
+    public void setMoltiplicatore(double moltiplicatore) {
+        this.moltiplicatore = moltiplicatore;
     }
 
     public String getEsito() {

@@ -1,43 +1,60 @@
 package is.project.wannabet.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import is.project.wannabet.util.TipoAccountConverter;
 import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "account_registrato")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class AccountRegistrato {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_account")
+    @JsonProperty("id_account")
     private Long idAccount;
 
     @Column(name = "codice_fiscale", nullable = false, length = 45, unique = true)
+    @JsonProperty("codice_fiscale")
     private String codiceFiscale;
 
     @Column(name = "tipo", nullable = false)
     @Convert(converter = TipoAccountConverter.class)
+    @JsonProperty("tipo")
     private TipoAccount tipo;
 
     @ManyToOne
     @JoinColumn(name = "id_conto", nullable = false)
+    @JsonBackReference
+    @JsonProperty("conto")
     private Conto conto;
 
     @ManyToOne
     @JoinColumn(name = "id_fedelta", nullable = false)
+    @JsonBackReference
+    @JsonProperty("saldo_fedelta")
     private SaldoFedelta saldoFedelta;
 
     @Column(name = "nome", length = 45)
+    @JsonProperty("nome")
     private String nome;
 
     @Column(name = "cognome", length = 45)
+    @JsonProperty("cognome")
     private String cognome;
 
     @Column(name = "email", length = 100)
+    @JsonProperty("email")
     private String email;
 
     @Column(name = "data_nascita")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "UTC")
+    @JsonProperty("data_nascita")
     private Date dataNascita;
 
     // Getters e Setters

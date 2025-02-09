@@ -30,7 +30,7 @@ public class QuotaGiocata {
     public QuotaGiocata(Scommessa scommessa, Quota quota) {
         this.scommessa = scommessa;
         this.quota = quota;
-        this.moltiplicatore = quota.getMoltipicatore();
+        this.moltiplicatore = quota.getMoltiplicatore();
     }
 
     public Long getIdLink() { return idLink; }

@@ -30,8 +30,4 @@ public class ScommessaController {
         return scommessaService.saveScommessa(scommessa);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteScommessa(@PathVariable Long id) {
-        scommessaService.deleteScommessa(id);
-    }
 }
