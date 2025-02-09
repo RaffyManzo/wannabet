@@ -11,6 +11,7 @@ import is.project.wannabet.repository.QuotaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,6 +24,41 @@ public class QuotaService {
     private ScommessaObserverManager scommessaObserverManager;
 
     private final QuotaNotifier quotaNotifier = new QuotaNotifier();
+
+    /**
+     * Restituisce tutte le quote presenti nel database.
+     */
+    public List<Quota> getAllQuote() {
+        return quotaRepository.findAll();
+    }
+
+    /**
+     * Recupera una quota tramite il suo ID.
+     */
+    public Optional<Quota> getQuotaById(Long id) {
+        return quotaRepository.findById(id);
+    }
+
+    /**
+     * Restituisce tutte le quote associate a un determinato evento.
+     */
+    public List<Quota> getQuoteByEvento(Long eventoId) {
+        return quotaRepository.findByEvento_IdEvento(eventoId);
+    }
+
+    /**
+     * Salva una nuova quota nel database.
+     */
+    public Quota saveQuota(Quota quota) {
+        return quotaRepository.save(quota);
+    }
+
+    /**
+     * Elimina una quota in base al suo ID.
+     */
+    public void deleteQuota(Long id) {
+        quotaRepository.deleteById(id);
+    }
 
     public void registerObserver(QuotaObserver observer) {
         quotaNotifier.addObserver(observer);

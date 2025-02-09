@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import is.project.wannabet.model.Scommessa;
 import is.project.wannabet.repository.ScommessaRepository;
 import is.project.wannabet.repository.QuotaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -47,5 +48,26 @@ public class ScommessaService {
 
         // Salva la scommessa nel database
         return scommessaRepository.save(scommessa);
+    }
+
+    @Transactional
+    public void creaScommessaDaScontrino(List<Quota> quote, double importo) {
+        if (quote == null || quote.isEmpty()) {
+            throw new IllegalArgumentException("Una scommessa deve contenere almeno una quota.");
+        }
+        if (importo <= 0) {
+            throw new IllegalArgumentException("L'importo della scommessa deve essere positivo.");
+        }
+
+        // Supponiamo che l'account venga identificato in sessione (da implementare con Spring Security)
+        AccountRegistrato account = getAccountCorrente(); // TODO: Recuperare l'account dell'utente loggato
+
+        Scommessa scommessa = ScommessaFactory.createScommessa(account, quote, importo);
+        scommessaRepository.save(scommessa);
+    }
+
+    private AccountRegistrato getAccountCorrente() {
+        // TODO: Recuperare l'account dalla sessione o dal contesto di Spring Security
+        return new AccountRegistrato(); // Placeholder temporaneo
     }
 }
