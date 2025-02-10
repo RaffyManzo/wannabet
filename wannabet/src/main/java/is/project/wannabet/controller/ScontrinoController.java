@@ -148,7 +148,7 @@ public class ScontrinoController {
         }
 
         // Creazione della scommessa
-        scommessaService.creaScommessaDaScontrino(scontrino.getQuote(), importo);
+        scommessaService.creaScommessaDaScontrino(scontrino.getQuote(), importo, idAccount);
 
         // **Svuota lo scontrino dopo la conferma e aggiorna la sessione**
         scontrino.svuotaScontrino();

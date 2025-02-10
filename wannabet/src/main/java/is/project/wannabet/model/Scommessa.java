@@ -1,10 +1,6 @@
 package is.project.wannabet.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.*;
 import is.project.wannabet.util.StatoScommessaConverter;
 import jakarta.persistence.*;
 
@@ -14,8 +10,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "scommessa")
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id_scommessa")
 public class Scommessa {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,10 +20,11 @@ public class Scommessa {
     @JsonProperty("id_scommessa")
     private Long idScommessa;
 
+    @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id_account")
     @ManyToOne
     @JoinColumn(name = "id_account", nullable = false)
-    @JsonBackReference
     private AccountRegistrato account;
+
 
     @Column(name = "importo", nullable = false)
     @JsonProperty("importo")
@@ -51,6 +49,7 @@ public class Scommessa {
     @JsonManagedReference
     @JsonProperty("quote_giocate")
     private List<QuotaGiocata> quoteGiocate = new ArrayList<>();
+
 
     public List<QuotaGiocata> getQuoteGiocate() {
         return quoteGiocate;

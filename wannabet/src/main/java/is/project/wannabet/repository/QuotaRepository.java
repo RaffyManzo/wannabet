@@ -1,21 +1,23 @@
 package is.project.wannabet.repository;
 
-import is.project.wannabet.model.StatoQuota;
-import org.springframework.data.jpa.repository.JpaRepository;
 import is.project.wannabet.model.Quota;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
+
+/**
+ * Repository per l'entità Quota.
+ * Gestisce l'accesso ai dati delle quote nel database.
+ */
 @Repository
 public interface QuotaRepository extends JpaRepository<Quota, Long> {
+
     /**
      * Trova tutte le quote associate a un determinato evento.
+     *
+     * @param eventoId ID dell'evento.
+     * @return Lista di quote associate all'evento specificato.
      */
-    @Query("SELECT q FROM Quota q WHERE q.evento.idEvento = :eventoId")
-    List<Quota> findByEventoId(@Param("eventoId") Long eventoId);
+    List<Quota> findByEvento_IdEvento(Long eventoId);
 }

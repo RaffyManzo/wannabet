@@ -2,11 +2,14 @@ package is.project.wannabet.controller;
 
 import is.project.wannabet.model.Quota;
 import is.project.wannabet.observer.QuotaObserver;
+import org.springframework.stereotype.Component;
+
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Component
 public class QuotaManager {
 
     private static QuotaManager instance;
