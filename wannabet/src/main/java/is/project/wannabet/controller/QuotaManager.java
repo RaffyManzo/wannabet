@@ -47,6 +47,11 @@ public class QuotaManager {
         }
     }
 
+    public void reset() {
+        quoteDisponibili.clear();
+        observers.clear();
+    }
+
     // Observer Methods
     public void addObserver(QuotaObserver observer) {
         observers.add(observer);

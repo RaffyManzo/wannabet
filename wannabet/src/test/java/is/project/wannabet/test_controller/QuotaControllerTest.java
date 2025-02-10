@@ -41,12 +41,6 @@ public class QuotaControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private QuotaService quotaService;
-
-    @Autowired
     private EventoRepository eventoRepository;
 
     @Autowired
