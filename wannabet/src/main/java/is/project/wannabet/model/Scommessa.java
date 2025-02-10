@@ -1,41 +1,64 @@
 package is.project.wannabet.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import is.project.wannabet.util.StatoScommessaConverter;
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "scommessa")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Scommessa {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idScommessa")
+    @Column(name = "id_scommessa")
+    @JsonProperty("id_scommessa")
     private Long idScommessa;
 
     @ManyToOne
-    @JoinColumn(name = "idAccount", nullable = false)
+    @JoinColumn(name = "id_account", nullable = false)
+    @JsonBackReference
     private AccountRegistrato account;
 
     @Column(name = "importo", nullable = false)
+    @JsonProperty("importo")
     private double importo;
 
     @Column(name = "vincita", nullable = false)
+    @JsonProperty("vincita")
     private double vincita;
 
     @Column(name = "data_scommessa", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonProperty("data_scommessa")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     private Date data;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = StatoScommessaConverter.class)
     @Column(name = "stato", nullable = false)
+    @JsonProperty("stato")
     private StatoScommessa stato;
 
-    @OneToMany(mappedBy = "scommessa", cascade = CascadeType.ALL)
-    private List<QuotaGiocata> quoteGiocate;
+    @OneToMany(mappedBy = "scommessa", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    @JsonProperty("quote_giocate")
+    private List<QuotaGiocata> quoteGiocate = new ArrayList<>();
 
-    public List<QuotaGiocata> getQuoteGiocate() { return quoteGiocate; }
-    public void setQuoteGiocate(List<QuotaGiocata> quoteGiocate) { this.quoteGiocate = quoteGiocate; }
+    public List<QuotaGiocata> getQuoteGiocate() {
+        return quoteGiocate;
+    }
+
+    public void setQuoteGiocate(List<QuotaGiocata> quoteGiocate) {
+        this.quoteGiocate = quoteGiocate;
+    }
 
     public Long getIdScommessa() {
         return idScommessa;

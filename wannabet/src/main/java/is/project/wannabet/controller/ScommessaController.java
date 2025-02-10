@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/scommessa")
+@RequestMapping("/api/scommesse")
 public class ScommessaController {
 
     @Autowired
@@ -30,8 +30,4 @@ public class ScommessaController {
         return scommessaService.saveScommessa(scommessa);
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteScommessa(@PathVariable Long id) {
-        scommessaService.deleteScommessa(id);
-    }
 }

@@ -8,7 +8,7 @@ public class SaldoFedelta {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idsaldo_fedelta")
+    @Column(name = "id_saldo_fedelta")
     private Long idSaldoFedelta;
 
     @Column(name = "punti", nullable = false)

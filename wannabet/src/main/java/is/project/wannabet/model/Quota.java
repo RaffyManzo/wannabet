@@ -1,35 +1,46 @@
 package is.project.wannabet.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import is.project.wannabet.util.StatoQuotaConverter;
 import jakarta.persistence.*;
-import java.util.List;
 
 @Entity
 @Table(name = "quota")
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Quota {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_Quota")
+    @Column(name = "id_quota")
+    @JsonProperty("id_quota")
     private Long idQuota;
 
     @Column(name = "moltiplicatore", nullable = false)
-    private double moltipicatore;
+    @JsonProperty("moltiplicatore")
+    private double moltiplicatore;
 
-    @Column(name = "descrizione", nullable = false, length = 100)
-    private String descrizione;
+    @Column(name = "esito", nullable = false, length = 100)
+    @JsonProperty("esito")
+    private String esito;
 
     @Column(name = "categoria", nullable = false, length = 100)
+    @JsonProperty("categoria")
     private String categoria;
 
     @ManyToOne
-    @JoinColumn(name = "idEvento", nullable = false)
+    @JoinColumn(name = "id_evento", nullable = false)
+    @JsonIgnore
     private Evento evento;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = StatoQuotaConverter.class)
     @Column(name = "stato", nullable = false)
+    @JsonProperty("stato")
     private StatoQuota stato;
 
     @Column(name = "chiusa", nullable = false)
+    @JsonProperty("chiusa")
     private boolean chiusa = false;
 
     public Long getIdQuota() {
@@ -40,20 +51,20 @@ public class Quota {
         this.idQuota = idQuota;
     }
 
-    public double getMoltipicatore() {
-        return moltipicatore;
+    public double getMoltiplicatore() {
+        return moltiplicatore;
     }
 
-    public void setMoltipicatore(double moltipicatore) {
-        this.moltipicatore = moltipicatore;
+    public void setMoltiplicatore(double moltiplicatore) {
+        this.moltiplicatore = moltiplicatore;
     }
 
-    public String getDescrizione() {
-        return descrizione;
+    public String getEsito() {
+        return esito;
     }
 
-    public void setDescrizione(String descrizione) {
-        this.descrizione = descrizione;
+    public void setEsito(String esito) {
+        this.esito = esito;
     }
 
     public Evento getEvento() {
@@ -87,4 +98,18 @@ public class Quota {
     public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Quota quota = (Quota) obj;
+        return idQuota != null && idQuota.equals(quota.idQuota);
+    }
+
+    @Override
+    public int hashCode() {
+        return idQuota != null ? idQuota.hashCode() : 0;
+    }
+
 }

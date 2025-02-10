@@ -13,7 +13,7 @@ public class QuotaGiocataService {
     private QuotaGiocataRepository quotaGiocataRepository;
 
     public List<QuotaGiocata> getQuoteGiocateByScommessa(Long idScommessa) {
-        return quotaGiocataRepository.findByScommessaId(idScommessa);
+        return quotaGiocataRepository.findByScommessa_IdScommessa(idScommessa);
     }
 
     public void salvaQuotaGiocata(QuotaGiocata quotaGiocata) {

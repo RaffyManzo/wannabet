@@ -9,11 +9,23 @@ public class QuotaFactory {
     public static Quota createQuota(Evento evento, double moltiplicatore, String descrizione, String categoria) {
         Quota quota = new Quota();
         quota.setEvento(evento);
-        quota.setMoltipicatore(moltiplicatore);
-        quota.setDescrizione(descrizione);
+        quota.setMoltiplicatore(moltiplicatore);
+        quota.setEsito(descrizione);
         quota.setCategoria(categoria);
         quota.setStato(StatoQuota.DA_REFERTARE);
         quota.setChiusa(false);
+
+        return quota;
+    }
+
+    public static Quota createQuota(Evento evento, double moltiplicatore, String descrizione, String categoria, boolean chiusa) {
+        Quota quota = new Quota();
+        quota.setEvento(evento);
+        quota.setMoltiplicatore(moltiplicatore);
+        quota.setEsito(descrizione);
+        quota.setCategoria(categoria);
+        quota.setStato(StatoQuota.DA_REFERTARE);
+        quota.setChiusa(chiusa);
 
         return quota;
     }

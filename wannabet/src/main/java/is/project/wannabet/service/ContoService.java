@@ -34,13 +34,18 @@ public class ContoService {
     }
 
 
-    public Optional<Conto> getContoByAccountId(Long accountId) {
-        return contoRepository.findByAccount_IdAccount(accountId);
+    public boolean verificaSaldo(Long accountId, double importo) {
+
+        Conto conto = getContoById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("Conto non trovato"));
+
+        return conto.verificaSaldo(importo);
     }
+
 
     @Transactional
     public void preleva(Long accountId, double importo) {
-        Conto conto = getContoByAccountId(accountId)
+        Conto conto = getContoById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("Conto non trovato"));
 
         if (conto.getSaldo() < importo) {
@@ -53,7 +58,7 @@ public class ContoService {
 
     @Transactional
     public void deposita(Long accountId, double importo) {
-        Conto conto = getContoByAccountId(accountId)
+        Conto conto = getContoById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("Conto non trovato"));
 
         conto.deposita(importo);
@@ -63,7 +68,7 @@ public class ContoService {
     @Transactional
     public void aggiornaSaldoDopoVincita(Scommessa scommessa) {
         if (scommessa.getStato() == is.project.wannabet.model.StatoScommessa.VINTA) {
-            Optional<Conto> contoOpt = contoRepository.findByAccount_IdAccount(scommessa.getAccount().getIdAccount());
+            Optional<Conto> contoOpt = contoRepository.findById(scommessa.getAccount().getIdAccount());
 
             if (contoOpt.isPresent()) {
                 Conto conto = contoOpt.get();

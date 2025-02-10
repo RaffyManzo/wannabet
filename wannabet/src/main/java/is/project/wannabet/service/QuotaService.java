@@ -73,7 +73,7 @@ public class QuotaService {
         Optional<Quota> quotaOpt = quotaRepository.findById(idQuota);
         if (quotaOpt.isPresent()) {
             Quota quota = quotaOpt.get();
-            if (referto.equals(quota.getDescrizione())) {
+            if (referto.equals(quota.getEsito())) {
                 quota.setStato(StatoQuota.VINCENTE);
             } else {
                 quota.setStato(StatoQuota.PERDENTE);
@@ -88,8 +88,15 @@ public class QuotaService {
     /**
      * Crea una nuova quota tramite la Factory e la registra nel sistema.
      */
-    public Quota createQuota(String descrizione, String categoria, double moltiplicatore, Evento evento) {
-        Quota quota = QuotaFactory.createQuota(evento, moltiplicatore, descrizione, categoria);
+    public Quota createQuota(String esito, String categoria, double moltiplicatore, Evento evento) {
+        Quota quota = QuotaFactory.createQuota(evento, moltiplicatore, esito, categoria);
+        Quota savedQuota = quotaRepository.save(quota);
+        quotaManager.aggiornaQuota(savedQuota); // Registra la quota nel `QuotaManager`
+        return savedQuota;
+    }
+
+    public Quota createQuota(String esito, String categoria, double moltiplicatore, Evento evento, boolean chiusa) {
+        Quota quota = QuotaFactory.createQuota(evento, moltiplicatore, esito, categoria, chiusa);
         Quota savedQuota = quotaRepository.save(quota);
         quotaManager.aggiornaQuota(savedQuota); // Registra la quota nel `QuotaManager`
         return savedQuota;

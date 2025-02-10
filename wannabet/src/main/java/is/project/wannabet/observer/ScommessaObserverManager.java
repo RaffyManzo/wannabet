@@ -38,7 +38,7 @@ public class ScommessaObserverManager implements QuotaObserver {
             scommessa.setStato(StatoScommessa.PERSA);
         } else if (tutteVincenti) {
             scommessa.setStato(StatoScommessa.VINTA);
-            contoService.aggiornaSaldoDopoVincita(scommessa);
+            // contoService.aggiornaSaldoDopoVincita(scommessa); DISABLED FOR TESTING
         }
 
         scommessaRepository.save(scommessa);
