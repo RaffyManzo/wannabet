@@ -7,10 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Servizio per la gestione delle scommesse.
+ * Le scommesse sono sempre associate a un account e includono una o più quote giocate.
+ */
 @Service
 public class ScommessaService {
 
@@ -18,33 +21,75 @@ public class ScommessaService {
     private ScommessaRepository scommessaRepository;
 
     @Autowired
-    private QuotaRepository quotaRepository;
+    private QuotaService quotaService;
 
-    public List<Scommessa> getAllScommesse() {
-        return scommessaRepository.findAll();
+    @Autowired
+    private AccountRegistratoRepository accountRegistratoRepository;
+
+    /**
+     * Recupera tutte le scommesse associate a un determinato account.
+     *
+     * @param idAccount ID dell'account dell'utente.
+     * @return Lista delle scommesse dell'account specificato.
+     */
+    public List<Scommessa> getScommesseByAccount(Long idAccount) {
+        return scommessaRepository.findByAccount_IdAccount(idAccount);
     }
 
-    public Optional<Scommessa> getScommessaById(Long id) {
-        return scommessaRepository.findById(id);
+    /**
+     * Recupera una scommessa per ID solo se appartiene all'account specificato.
+     *
+     * @param idScommessa ID della scommessa.
+     * @return Optional contenente la scommessa se trovata, altrimenti vuoto.
+     */
+    public Optional<Scommessa> getScommessaById(Long idScommessa) {
+        return scommessaRepository.findByIdScommessa(idScommessa);
     }
 
+    /**
+     * Crea una nuova scommessa per un determinato account.
+     *
+     * @param scommessa Oggetto Scommessa da salvare.
+     * @return La scommessa salvata.
+     */
     public Scommessa saveScommessa(Scommessa scommessa) {
-        // Verifichiamo che tutte le quote esistano
+        Optional<AccountRegistrato> accountOpt = accountRegistratoRepository.findById(scommessa.getAccount().getIdAccount());
+
+        if (accountOpt.isEmpty()) {
+            throw new IllegalArgumentException("Account non trovato per ID: " + scommessa.getAccount().getIdAccount());
+        }
+
+        // Verifica che tutte le quote esistano prima di salvare la scommessa
         List<QuotaGiocata> quoteGiocate = scommessa.getQuoteGiocate().stream()
-                .map(qg -> new QuotaGiocata(scommessa, quotaRepository.findById(qg.getQuota().getIdQuota())
+                .map(qg -> new QuotaGiocata(scommessa, quotaService.getQuotaById(qg.getQuota().getIdQuota())
                         .orElseThrow(() -> new IllegalArgumentException("Quota non trovata con ID: " + qg.getQuota().getIdQuota()))))
                 .toList();
 
-        // Assegniamo le quote giocate alla scommessa
         scommessa.setQuoteGiocate(quoteGiocate);
 
-        // Salviamo la scommessa con le quote giocate
         return scommessaRepository.save(scommessa);
     }
 
+    /**
+     * Recupera tutte le scommesse che contengono una determinata quota.
+     *
+     * @param idQuota ID della quota.
+     * @return Lista di scommesse contenenti la quota specificata.
+     */
+    public List<Scommessa> getScommesseByQuota(Long idQuota) {
+        return scommessaRepository.findScommesseByQuotaId(idQuota);
+    }
 
+
+    /**
+     * Crea una scommessa a partire da un elenco di quote e un importo.
+     *
+     * @param quote    Lista delle quote giocate nella scommessa.
+     * @param importo  Importo della scommessa.
+     * @param idAccount ID dell'account che sta effettuando la scommessa.
+     */
     @Transactional
-    public void creaScommessaDaScontrino(List<Quota> quote, double importo) {
+    public void creaScommessaDaScontrino(List<Quota> quote, double importo, Long idAccount) {
         if (quote == null || quote.isEmpty()) {
             throw new IllegalArgumentException("Una scommessa deve contenere almeno una quota.");
         }
@@ -52,51 +97,14 @@ public class ScommessaService {
             throw new IllegalArgumentException("L'importo della scommessa deve essere positivo.");
         }
 
-        // Supponiamo che l'account venga identificato in sessione (da implementare con Spring Security)
-        AccountRegistrato account = getAccountCorrente(); // TODO: Recuperare l'account dell'utente loggato
+        Optional<AccountRegistrato> accountOpt = accountRegistratoRepository.findById(idAccount);
+        if (accountOpt.isEmpty()) {
+            throw new IllegalArgumentException("Account non trovato per ID: " + idAccount);
+        }
 
-        Scommessa scommessa = ScommessaFactory.createScommessa(account, quote, importo);
+        Scommessa scommessa = ScommessaFactory.createScommessa(accountOpt.get(), quote, importo);
         scommessaRepository.save(scommessa);
     }
 
-    // Da rimuovre qui solo per testing
 
-    @Autowired
-    private ContoRepository contoRepository;
-
-    @Autowired
-    private AccountRegistratoRepository accountRegistratoRepository;
-
-    @Autowired
-    private SaldoFedeltaRepository saldoFedeltaRepository;
-
-
-    private AccountRegistrato getAccountCorrente() {
-
-        // Creazione del conto e salvataggio nel database
-        Conto conto = new Conto();
-        conto.setSaldo(500.00);
-        conto.setDataCreazione(new Date());
-        conto.setIndirizzoFatturazione("Via Roma, 10");
-        conto = contoRepository.save(conto);
-
-        SaldoFedelta saldoFedelta = new SaldoFedelta();
-        saldoFedelta.setPunti(10);
-        saldoFedelta = saldoFedeltaRepository.save(saldoFedelta);
-
-        // Creazione di un account senza impostare manualmente l'ID
-        AccountRegistrato ac = new AccountRegistrato();
-        ac.setCodiceFiscale("XYZ12345");  // Devi settare campi validi
-        ac.setNome("Mario");
-        ac.setCognome("Rossi");
-        ac.setSaldoFedelta(saldoFedelta);
-        ac.setConto(conto);
-        ac.setTipo(TipoAccount.UTENTE);
-        ac.setEmail("mario.rossi@example.com");
-        ac = accountRegistratoRepository.save(ac);
-
-
-        // TODO: Recuperare l'account dalla sessione o dal contesto di Spring Security
-        return ac; // Placeholder temporaneo
-    }
 }

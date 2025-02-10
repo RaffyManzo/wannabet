@@ -2,131 +2,99 @@ package is.project.wannabet.test_controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import is.project.wannabet.WannabetApplication;
-import is.project.wannabet.controller.QuotaManager;
-import is.project.wannabet.controller.ScommessaController;
-import is.project.wannabet.factory.EventoFactory;
-import is.project.wannabet.factory.QuotaFactory;
 import is.project.wannabet.factory.ScommessaFactory;
 import is.project.wannabet.model.*;
-import is.project.wannabet.repository.*;
-import is.project.wannabet.service.ScommessaService;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import is.project.wannabet.service.*;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Classe di test per `ScommessaController`.
- * Verifica che la creazione e l'aggiornamento delle scommesse funzioni correttamente.
+ * Test per ScommessaController.
  */
-@SpringBootTest(classes = WannabetApplication.class) // Indica la classe principale
+@SpringBootTest(classes = WannabetApplication.class)
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@WithMockUser(username = "testuser", roles = {"USER"})
 public class ScommessaControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @Mock
-    private ScommessaService scommessaService;
-
-    @Mock
-    private ScommessaRepository scommessaRepository;
-
-    @Test
-    public void testGetScommessaById() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/scommesse/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-
-
-
-    /**
-     * Test per verificare la creazione di una nuova scommessa.
-     */
-
     @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
-    private EventoRepository eventoRepository;
+    private EventoService eventoService;
 
     @Autowired
-    private QuotaRepository quotaRepository;
+    private QuotaService quotaService;
 
     @Autowired
-    private ContoRepository contoRepository;
+    private ContoService contoService;
 
     @Autowired
-    private AccountRegistratoRepository accountRegistratoRepository;
+    private AccountRegistratoService accountService;
 
     @Autowired
-    private SaldoFedeltaRepository saldoFedeltaRepository;
+    private ScommessaService scommessaService;
 
-    @Test
-    @WithMockUser(username = "testuser", roles = "USER")
-    public void testCreateScommessa() throws Exception {
-        // Creazione dell'evento
-        Evento evento = eventoRepository.save(EventoFactory.createEvento("evento1", new Date(), "des", "Calcio"));
+    private AccountRegistrato account;
+    private Quota quota;
 
-        // Creazione della quota legata all'evento
-        Quota q = QuotaFactory.createQuota(evento, 1.70, "1", "Risultato finale");
-        q = quotaRepository.save(q);  // Salvataggio per generare l'ID
+    @BeforeEach
+    public void setup() {
+        Evento evento = eventoService.createEvento("evento1", new Date(), "descrizione", "Calcio");
+        quota = quotaService.createQuota("1", "Risultato finale", 1.70, evento);
 
-        // Creazione del conto e salvataggio nel database
         Conto conto = new Conto();
-        conto.setSaldo(1000.00);
+        conto.setSaldo(500.00);
         conto.setDataCreazione(new Date());
         conto.setIndirizzoFatturazione("Via Roma, 10");
-        conto = contoRepository.save(conto);
+        conto = contoService.saveConto(conto);
 
-        SaldoFedelta saldoFedelta = new SaldoFedelta();
-        saldoFedelta.setPunti(10);
-        saldoFedelta = saldoFedeltaRepository.save(saldoFedelta);
-
-        // Creazione di un account senza impostare manualmente l'ID
-        AccountRegistrato ac = new AccountRegistrato();
-        ac.setCodiceFiscale("XYZ12345");  // Devi settare campi validi
-        ac.setNome("Mario");
-        ac.setCognome("Rossi");
-        ac.setSaldoFedelta(saldoFedelta);
-        ac.setConto(conto);
-        ac.setTipo(TipoAccount.UTENTE);
-        ac.setEmail("mario.rossi@example.com");
-        ac = accountRegistratoRepository.save(ac);  // Hibernate assegnerà l'ID
-
-        // Creazione della scommessa
-        Scommessa nuovaScommessa = ScommessaFactory.createScommessa(
-                ac, List.of(q), 100
-        );
-
-        mockMvc.perform(post("/api/scommesse")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(nuovaScommessa)))
-                .andExpect(status().isOk());
+        account = new AccountRegistrato();
+        account.setCodiceFiscale("XYZ12345");
+        account.setNome("Mario");
+        account.setCognome("Rossi");
+        account.setConto(conto);
+        account.setTipo(TipoAccount.UTENTE);
+        account.setEmail("mario.rossi@example.com");
+        account = accountService.saveAccount(account);
     }
 
+    @AfterEach
+    public void cleanup() {
+        quotaService.deleteQuota(quota.getIdQuota());
+        eventoService.deleteEvento(quota.getEvento().getIdEvento());
+        accountService.deleteAccount(account.getIdAccount());
+        contoService.deleteConto(account.getConto().getIdConto());
+    }
 
+    @Test
+    public void testCreateScommessa() throws Exception {
+        Scommessa nuovaScommessa = ScommessaFactory.createScommessa(account, List.of(quota), 100);
 
+        mockMvc.perform(post("/api/scommesse/" + account.getIdAccount() + "/crea")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(nuovaScommessa)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    public void testGetScommessaById() throws Exception {
+        Scommessa scommessa = scommessaService.saveScommessa(ScommessaFactory.createScommessa(account, List.of(quota), 100));
+
+        mockMvc.perform(get("/api/scommesse/account/" + account.getIdAccount() + "/get/" + scommessa.getIdScommessa())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 }
