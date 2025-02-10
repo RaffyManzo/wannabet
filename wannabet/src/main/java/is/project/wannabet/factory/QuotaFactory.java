@@ -17,4 +17,16 @@ public class QuotaFactory {
 
         return quota;
     }
+
+    public static Quota createQuota(Evento evento, double moltiplicatore, String descrizione, String categoria, boolean chiusa) {
+        Quota quota = new Quota();
+        quota.setEvento(evento);
+        quota.setMoltiplicatore(moltiplicatore);
+        quota.setEsito(descrizione);
+        quota.setCategoria(categoria);
+        quota.setStato(StatoQuota.DA_REFERTARE);
+        quota.setChiusa(chiusa);
+
+        return quota;
+    }
 }

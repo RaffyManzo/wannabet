@@ -1,10 +1,15 @@
 package is.project.wannabet.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Scontrino {
 
+    @JsonProperty("quote")
     private List<Quota> quote;
 
     public Scontrino() {
@@ -20,14 +25,24 @@ public class Scontrino {
     }
 
     public void aggiungiQuota(Quota quota) {
-        this.quote.add(quota);
+        if (!quote.contains(quota)) { // Evita duplicati
+            quote.add(quota);
+        }
     }
 
-    public void rimuoviQuota(Quota quota) {
-        this.quote.remove(quota);
+    public boolean rimuoviQuota(Quota quota) {
+        Iterator<Quota> iterator = quote.iterator();
+        while (iterator.hasNext()) {
+            Quota q = iterator.next();
+            if (q.getIdQuota().equals(quota.getIdQuota())) {
+                iterator.remove();
+                return true; // Conferma la rimozione
+            }
+        }
+        return false; // Quota non trovata
     }
 
     public void svuotaScontrino() {
-        this.quote.clear();
+        quote.clear();
     }
 }

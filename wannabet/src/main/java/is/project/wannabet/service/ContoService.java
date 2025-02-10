@@ -34,6 +34,14 @@ public class ContoService {
     }
 
 
+    public boolean verificaSaldo(Long accountId, double importo) {
+
+        Conto conto = getContoById(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("Conto non trovato"));
+
+        return conto.verificaSaldo(importo);
+    }
+
 
     @Transactional
     public void preleva(Long accountId, double importo) {

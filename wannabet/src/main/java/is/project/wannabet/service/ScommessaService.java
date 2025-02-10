@@ -1,16 +1,13 @@
 package is.project.wannabet.service;
 
 import is.project.wannabet.factory.ScommessaFactory;
-import is.project.wannabet.model.AccountRegistrato;
-import is.project.wannabet.model.Quota;
-import is.project.wannabet.model.QuotaGiocata;
+import is.project.wannabet.model.*;
+import is.project.wannabet.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import is.project.wannabet.model.Scommessa;
-import is.project.wannabet.repository.ScommessaRepository;
-import is.project.wannabet.repository.QuotaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,8 +59,44 @@ public class ScommessaService {
         scommessaRepository.save(scommessa);
     }
 
+    // Da rimuovre qui solo per testing
+
+    @Autowired
+    private ContoRepository contoRepository;
+
+    @Autowired
+    private AccountRegistratoRepository accountRegistratoRepository;
+
+    @Autowired
+    private SaldoFedeltaRepository saldoFedeltaRepository;
+
+
     private AccountRegistrato getAccountCorrente() {
+
+        // Creazione del conto e salvataggio nel database
+        Conto conto = new Conto();
+        conto.setSaldo(500.00);
+        conto.setDataCreazione(new Date());
+        conto.setIndirizzoFatturazione("Via Roma, 10");
+        conto = contoRepository.save(conto);
+
+        SaldoFedelta saldoFedelta = new SaldoFedelta();
+        saldoFedelta.setPunti(10);
+        saldoFedelta = saldoFedeltaRepository.save(saldoFedelta);
+
+        // Creazione di un account senza impostare manualmente l'ID
+        AccountRegistrato ac = new AccountRegistrato();
+        ac.setCodiceFiscale("XYZ12345");  // Devi settare campi validi
+        ac.setNome("Mario");
+        ac.setCognome("Rossi");
+        ac.setSaldoFedelta(saldoFedelta);
+        ac.setConto(conto);
+        ac.setTipo(TipoAccount.UTENTE);
+        ac.setEmail("mario.rossi@example.com");
+        ac = accountRegistratoRepository.save(ac);
+
+
         // TODO: Recuperare l'account dalla sessione o dal contesto di Spring Security
-        return new AccountRegistrato(); // Placeholder temporaneo
+        return ac; // Placeholder temporaneo
     }
 }

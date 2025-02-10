@@ -98,4 +98,18 @@ public class Quota {
     public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Quota quota = (Quota) obj;
+        return idQuota != null && idQuota.equals(quota.idQuota);
+    }
+
+    @Override
+    public int hashCode() {
+        return idQuota != null ? idQuota.hashCode() : 0;
+    }
+
 }

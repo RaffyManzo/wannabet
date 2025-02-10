@@ -94,4 +94,8 @@ public class Conto {
     public void deposita(double importo) {
         saldo += importo;
     }
+
+    public boolean verificaSaldo(double importo) {
+        return saldo >= importo;
+    }
 }

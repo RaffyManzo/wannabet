@@ -94,4 +94,11 @@ public class QuotaService {
         quotaManager.aggiornaQuota(savedQuota); // Registra la quota nel `QuotaManager`
         return savedQuota;
     }
+
+    public Quota createQuota(String esito, String categoria, double moltiplicatore, Evento evento, boolean chiusa) {
+        Quota quota = QuotaFactory.createQuota(evento, moltiplicatore, esito, categoria, chiusa);
+        Quota savedQuota = quotaRepository.save(quota);
+        quotaManager.aggiornaQuota(savedQuota); // Registra la quota nel `QuotaManager`
+        return savedQuota;
+    }
 }
