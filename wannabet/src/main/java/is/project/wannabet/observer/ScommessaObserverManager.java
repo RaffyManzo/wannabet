@@ -1,6 +1,6 @@
 package is.project.wannabet.observer;
 
-import is.project.wannabet.cache.QuotaCache;
+import is.project.wannabet.observer.QuotaCache;
 import is.project.wannabet.model.*;
 import is.project.wannabet.service.ContoService;
 import is.project.wannabet.service.ScommessaService;

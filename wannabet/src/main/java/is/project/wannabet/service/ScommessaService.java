@@ -108,5 +108,27 @@ public class ScommessaService {
         return  scommessa;
     }
 
+    /**
+     * Crea una scommessa a partire da un elenco di quote e un importo.
+     *
+     * @param quote    Lista delle quote giocate nella scommessa.
+     * @param importo  Importo della scommessa.
+     * @param account Istanza di account che sta effettuando la scommessa.
+     */
+    @Transactional
+    public Scommessa creaScommessa(List<Quota> quote, double importo, AccountRegistrato account) {
+        if (quote == null || quote.isEmpty()) {
+            throw new IllegalArgumentException("Una scommessa deve contenere almeno una quota.");
+        }
+        if (importo <= 0) {
+            throw new IllegalArgumentException("L'importo della scommessa deve essere positivo.");
+        }
+
+        Scommessa scommessa = ScommessaFactory.createScommessa(account, quote, importo);
+        scommessaRepository.save(scommessa);
+
+        return  scommessa;
+    }
+
 
 }

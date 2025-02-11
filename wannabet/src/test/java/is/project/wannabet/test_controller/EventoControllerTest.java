@@ -90,7 +90,7 @@ public class EventoControllerTest {
         nuovoEvento.setDescrizione("Descrizione evento");
         nuovoEvento.setCategoria("Basket");
 
-        mockMvc.perform(post("/api/evento")
+        mockMvc.perform(post("/api/evento/create")
                         .contentType(MediaType.APPLICATION_JSON)
 
                         .content(objectMapper.writeValueAsString(nuovoEvento)))

@@ -1,11 +1,15 @@
 package is.project.wannabet.controller;
 
+import is.project.wannabet.model.AccountRegistrato;
 import is.project.wannabet.model.Quota;
 import is.project.wannabet.model.Scontrino;
 import is.project.wannabet.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.ui.Model;
@@ -44,6 +48,7 @@ public class ScontrinoController {
      * Recupera lo stato attuale dello scontrino.
      */
     @GetMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Scontrino> getScontrino(@ModelAttribute("scontrino") Scontrino scontrino) {
         return ResponseEntity.ok(scontrino);
     }
@@ -52,10 +57,10 @@ public class ScontrinoController {
      * Aggiunge una quota allo scontrino e aggiorna la sessione.
      */
     @PostMapping("/aggiungi/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Scontrino> aggiungiQuota(@ModelAttribute("scontrino") Scontrino scontrino,
                                                    @PathVariable Long id,
                                                    Model model) {
-        // TODO: da verificare se bisogna usare QuotaManager
         Optional<Quota> quotaOptional = quotaService.getQuotaById(id);
 
         if (quotaOptional.isEmpty()) {
@@ -63,27 +68,27 @@ public class ScontrinoController {
         }
 
         Quota quota = quotaOptional.get();
-        if (quota.isChiusa()) {
+
+        if (scontrino.getQuote().contains(quota)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(scontrino);
         }
 
         scontrino.aggiungiQuota(quota);
-
-        // **Aggiorniamo la sessione con il nuovo scontrino**
         model.addAttribute("scontrino", scontrino);
 
         return ResponseEntity.ok(scontrino);
     }
 
+
     /**
      * Rimuove una quota dallo scontrino e aggiorna la sessione.
      */
     @DeleteMapping("/rimuovi/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Scontrino> rimuoviQuota(@ModelAttribute("scontrino") Scontrino scontrino,
                                                   @PathVariable Long id,
                                                   Model model) {
 
-        // TODO: da verificare se bisogna usare QuotaManager
 
         Optional<Quota> quotaOptional = quotaService.getQuotaById(id);
 
@@ -105,6 +110,7 @@ public class ScontrinoController {
      * Svuota completamente lo scontrino e aggiorna la sessione.
      */
     @DeleteMapping("/svuota")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<String> svuotaScontrino(Model model) {
         model.addAttribute("scontrino", new Scontrino());
         return ResponseEntity.ok("Scontrino svuotato.");
@@ -114,6 +120,7 @@ public class ScontrinoController {
      * Conferma la scommessa e la registra nel sistema.
      */
     @PostMapping("/conferma")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<String> confermaScommessa(@ModelAttribute("scontrino") Scontrino scontrino,
                                                     @RequestParam double importo,
                                                     @RequestParam Long idAccount,
@@ -132,18 +139,19 @@ public class ScontrinoController {
                     .body("Lo scontrino contiene quote chiuse.");
         }
 
-        // Recupero conto associato all'utente
-
-        // TODO: il conto deve essre rcuperato dalla sessione
-        Optional<Long> idContoOpt = accountRegistratoService.getAccountById(idAccount)
-                .map(account -> account.getConto().getIdConto());
-
-        if (idContoOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account non trovato.");
+        /// 🔹 Recupera l'account dalla sessione di Spring Security
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Errore: Utente non autenticato!");
         }
 
-        Long idConto = idContoOpt.get();
-        if (!contoService.verificaSaldo(idConto, importo)) {
+        // 🔹 Converti l'oggetto autenticato nel tuo `AccountRegistrato`
+        AccountRegistrato account = (AccountRegistrato) authentication.getPrincipal();
+        if (account.getConto() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Errore: L'account non ha un conto associato.");
+        }
+
+        if (!contoService.verificaSaldo(account.getConto().getIdConto(), importo)) {
             return ResponseEntity.badRequest().body("Saldo insufficiente per piazzare la scommessa.");
         }
 
