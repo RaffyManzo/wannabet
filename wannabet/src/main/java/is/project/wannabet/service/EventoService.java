@@ -3,10 +3,12 @@ package is.project.wannabet.service;
 import is.project.wannabet.factory.EventoFactory;
 import is.project.wannabet.model.Quota;
 import is.project.wannabet.repository.QuotaRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import is.project.wannabet.model.Evento;
 import is.project.wannabet.repository.EventoRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -44,6 +46,26 @@ public class EventoService {
     public Optional<Evento> getEventoById(Long id) {
         return eventoRepository.findById(id);
     }
+
+    @Transactional
+    public Evento updateEvento(Long idEvento, Evento eventoDetails) {
+        Optional<Evento> eventoOpt = eventoRepository.findById(idEvento);
+        if (eventoOpt.isPresent()) {
+            Evento evento = eventoOpt.get();
+            evento.setNome(eventoDetails.getNome());
+            evento.setDescrizione(eventoDetails.getDescrizione());
+            evento.setCategoria(eventoDetails.getCategoria());
+            evento.setChiuso(eventoDetails.isChiuso());
+            return eventoRepository.save(evento);
+        }
+        throw new EntityNotFoundException("Evento non trovato");
+    }
+
+    @Transactional
+    public void flush() {
+        eventoRepository.flush(); // Forza Hibernate a salvare subito
+    }
+
 
     /**
      * Cerca eventi basandosi sul nome, ignorando le maiuscole/minuscole.

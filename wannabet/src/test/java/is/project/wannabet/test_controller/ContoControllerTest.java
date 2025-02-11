@@ -87,16 +87,14 @@ public class ContoControllerTest {
 
     @Test
     public void testCRUDConto() throws Exception {
-        Conto nuovoConto = new Conto();
-        nuovoConto.setSaldo(500.0);
 
-        String json = objectMapper.writeValueAsString(nuovoConto);
+        String json = objectMapper.writeValueAsString(contoDiTest);
 
         // Creazione
         mockMvc.perform(post("/api/conto")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.saldo").value(500.0));
+                .andExpect(jsonPath("$.saldo").value(100.0));
     }
 }

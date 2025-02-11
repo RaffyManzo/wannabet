@@ -89,7 +89,7 @@ public class ScommessaService {
      * @param idAccount ID dell'account che sta effettuando la scommessa.
      */
     @Transactional
-    public void creaScommessaDaScontrino(List<Quota> quote, double importo, Long idAccount) {
+    public Scommessa creaScommessa(List<Quota> quote, double importo, Long idAccount) {
         if (quote == null || quote.isEmpty()) {
             throw new IllegalArgumentException("Una scommessa deve contenere almeno una quota.");
         }
@@ -104,6 +104,8 @@ public class ScommessaService {
 
         Scommessa scommessa = ScommessaFactory.createScommessa(accountOpt.get(), quote, importo);
         scommessaRepository.save(scommessa);
+
+        return  scommessa;
     }
 
 

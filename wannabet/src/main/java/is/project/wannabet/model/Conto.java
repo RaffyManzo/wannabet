@@ -30,10 +30,6 @@ public class Conto {
     @JsonProperty("indirizzo_fatturazione")
     private String indirizzoFatturazione;
 
-    @OneToMany(mappedBy = "conto", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("conto") // 🔴 Sostituisce @JsonManagedReference per evitare problemi ciclici
-    @JsonProperty("account_registrati")
-    private List<AccountRegistrato> accountRegistrati;
 
     // Getters e Setters
     public Long getIdConto() {
@@ -66,14 +62,6 @@ public class Conto {
 
     public void setIndirizzoFatturazione(String indirizzoFatturazione) {
         this.indirizzoFatturazione = indirizzoFatturazione;
-    }
-
-    public List<AccountRegistrato> getAccountRegistrati() {
-        return accountRegistrati;
-    }
-
-    public void setAccountRegistrati(List<AccountRegistrato> accountRegistrati) {
-        this.accountRegistrati = accountRegistrati;
     }
 
     public void aggiungiSaldo(double importo) {

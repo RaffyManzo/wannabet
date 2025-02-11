@@ -1,14 +1,16 @@
 package is.project.wannabet.service;
 
 import is.project.wannabet.factory.QuotaFactory;
-import is.project.wannabet.controller.QuotaManager;
+import is.project.wannabet.observer.QuotaManager;
 import is.project.wannabet.model.Evento;
 import is.project.wannabet.model.Quota;
 import is.project.wannabet.model.StatoQuota;
 import is.project.wannabet.observer.QuotaObserver;
 import is.project.wannabet.repository.QuotaRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +20,9 @@ import java.util.Optional;
  */
 @Service
 public class QuotaService {
+
+    @Autowired
+    private is.project.wannabet.cache.QuotaCache quotaCache;
 
     @Autowired
     private QuotaRepository quotaRepository;
@@ -68,13 +73,36 @@ public class QuotaService {
     }
 
     /**
+     * Salva la mopdifica della quota nel database e la registra nel `QuotaManager`.
+     *
+     * @param quotaDetails Oggetto quota da aggiornare nel db.
+     */
+    @Transactional
+    public Quota updateQuota(Long idQuota, Quota quotaDetails) {
+        Optional<Quota> quotaOpt = quotaRepository.findById(idQuota);
+        if (quotaOpt.isPresent()) {
+            Quota quota = quotaOpt.get();
+            quota.setMoltiplicatore(quotaDetails.getMoltiplicatore());
+            quota.setEsito(quotaDetails.getEsito());
+            quota.setCategoria(quotaDetails.getCategoria());
+            quota.setChiusa(quotaDetails.isChiusa());
+            quota.setStato(quotaDetails.getStato());
+            quota = quotaRepository.save(quota);
+            quotaManager.aggiornaQuota(quota); // Aggiorna cache e notifica observer
+            return quota;
+        }
+        throw new EntityNotFoundException("Quota non trovata");
+    }
+
+
+    /**
      * Elimina una quota in base al suo ID.
      *
      * @param id ID della quota da eliminare.
      */
     public void deleteQuota(Long id) {
         quotaRepository.deleteById(id);
-        quotaManager.rimuoviQuota(id); // Rimuove la quota dal sistema globale
+        quotaCache.rimuoviQuota(id); // Rimuove la quota dal sistema globale
     }
 
     /**
@@ -106,6 +134,11 @@ public class QuotaService {
             // Notifica gli observer della modifica dello stato
             quotaManager.aggiornaQuota(quota);
         }
+    }
+
+    @Transactional
+    public void flush() {
+        quotaRepository.flush();
     }
 
     /**

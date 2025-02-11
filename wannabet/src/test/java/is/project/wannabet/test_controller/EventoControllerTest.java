@@ -159,4 +159,18 @@ public class EventoControllerTest {
         Optional<Evento> eventoEliminato = eventoService.getEventoById(eventoDiTest.getIdEvento());
         assertFalse(eventoEliminato.isPresent());
     }
+
+    /**
+     * Testa la modifica di un evento.
+     */
+    @Test
+    public void testUpdateEvento() throws Exception {
+        eventoDiTest.setNome("Partita Modificata");
+
+        mockMvc.perform(put("/api/evento/" + eventoDiTest.getIdEvento())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(eventoDiTest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.nome").value("Partita Modificata"));
+    }
 }

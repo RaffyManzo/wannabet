@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import is.project.wannabet.model.PremiFedelta;
 import is.project.wannabet.repository.PremiFedeltaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,10 @@ public class PremiFedeltaService {
         return premiFedeltaRepository.save(premio);
     }
 
+    @Transactional
+    public void flush() {
+        premiFedeltaRepository.flush();
+    }
     public void deletePremio(Long id) {
         premiFedeltaRepository.deleteById(id);
     }

@@ -113,6 +113,11 @@ public class ContoService {
         contoRepository.save(conto);
     }
 
+    @Transactional
+    public void flush() {
+        contoRepository.flush();
+    }
+
     /**
      * Aggiorna il saldo di un conto dopo la vincita di una scommessa.
      * Se la scommessa è stata vinta, il saldo del conto viene incrementato dell'importo vinto.

@@ -5,6 +5,7 @@ import is.project.wannabet.repository.AccountRegistratoRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,11 @@ public class AccountRegistratoService {
 
     public AccountRegistrato saveAccount(AccountRegistrato account) {
         return repository.save(account);
+    }
+
+    @Transactional
+    public void flush() {
+        repository.flush();
     }
 
     public void deleteAccount(Long id) {

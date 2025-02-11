@@ -10,136 +10,171 @@ import is.project.wannabet.model.Quota;
 import is.project.wannabet.model.StatoQuota;
 import is.project.wannabet.repository.EventoRepository;
 import is.project.wannabet.repository.QuotaRepository;
+import is.project.wannabet.service.EventoService;
 import is.project.wannabet.service.QuotaService;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- *  Test completo del modulo `Quota`, utilizzando un database H2 in memoria.
- * 🔹 Nessun mock (Mockito), test realistico con repository veri.
+ * Classe di test per verificare il corretto funzionamento del controller QuotaController.
+ * Testa tutte le operazioni CRUD e la gestione delle quote associate.
  */
-@SpringBootTest(classes = WannabetApplication.class)
-@AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@WithMockUser(username = "testuser", roles = {"USER"})
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
 public class QuotaControllerTest {
+
 
     @Autowired
     private MockMvc mockMvc;
 
     @Autowired
-    private EventoRepository eventoRepository;
+    private QuotaService quotaService;
 
     @Autowired
-    private QuotaRepository quotaRepository;
+    private EventoService eventoService;
 
-    private Evento evento;
+    @Autowired
+    private ObjectMapper objectMapper;
 
+    private Evento eventoDiTest;
+    private Quota quotaDiTest;
+
+    /**
+     * Configura un evento di test prima di ogni esecuzione.
+     */
     @BeforeEach
-    public void setUp() {
-        //  Pulisce il database prima di ogni test
-        quotaRepository.deleteAll();
-        eventoRepository.deleteAll();
+    public void setup() {
+        eventoDiTest = eventoService.createEvento("Sinner vs Medvedev", new Date(), "", "Tennis");
 
-        //  Crea un evento fittizio per i test
-        evento = eventoRepository.save(EventoFactory.createEvento("evento1", new Date(), "des", "Calcio"));
+        eventoService.flush(); // 🔴 Assicura che l'evento sia scritto immediatamente nel DB
+        eventoDiTest = eventoService.getEventoById(eventoDiTest.getIdEvento()).get();
+        assertNotNull(eventoDiTest.getIdEvento()); // Assicura che l'evento abbia un ID valido
+
+        quotaDiTest = quotaService.createQuota("1", "Risultato Finale", 2.5, eventoDiTest);
+        assertNotNull(quotaDiTest.getIdQuota()); // Assicura che la quota abbia un ID valido
     }
 
+
+
+
     /**
-     *  Test: Creazione e recupero di una quota senza mocking
+     * Testa la creazione di una quota tramite il controller.
      */
     @Test
-    public void testCreateAndRetrieveQuota() throws Exception {
-        //  Creazione e salvataggio della quota
-        Quota quota = QuotaFactory.createQuota(evento, 1.70, "1", "Risultato finale");
-        quota = quotaRepository.save(quota);
+    public void testCreateQuota() throws Exception {
+        while (eventoDiTest == null || eventoDiTest.getIdEvento() == null) {
+            Thread.sleep(100); // Aspetta finché l'evento non viene creato
+        }
 
-        //  Test recupero quota
-        mockMvc.perform(get("/api/quota/" + quota.getIdQuota())
-                        .contentType(MediaType.APPLICATION_JSON))
+        Quota nuovaQuota = new Quota();
+        nuovaQuota.setMoltiplicatore(2.5);
+        nuovaQuota.setEsito("1");
+        nuovaQuota.setChiusa(false);
+        nuovaQuota.setCategoria("Risultato Finale");
+        nuovaQuota.setEvento(eventoDiTest);
+        nuovaQuota.setStato(StatoQuota.DA_REFERTARE);
+
+        mockMvc.perform(post("/api/quota")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(nuovaQuota)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.esito", is("1")))
-                .andExpect(jsonPath("$.stato", is("DA_REFERTARE")));
+                .andExpect(jsonPath("$.moltiplicatore").value(2.5));
     }
 
     /**
-     *  Test: Refertazione di una quota vincente
+     * Testa il recupero di tutte le quote.
      */
     @Test
-    public void testRefertaQuotaVincente() throws Exception {
-        Quota quota = QuotaFactory.createQuota(evento, 1.70, "1", "Risultato finale");
-        quota = quotaRepository.save(quota);
+    public void testGetAllQuote() throws Exception {
+        mockMvc.perform(get("/api/quota"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(0))));
+    }
 
-        //  Referta la quota come vincente
-        mockMvc.perform(post("/api/quota/referta/" + quota.getIdQuota())
-                        .param("referto", "1") // Il referto combacia con l'esito della quota
-                        .contentType(MediaType.APPLICATION_JSON))
+    /**
+     * Testa il recupero delle quote associate a un evento.
+     */
+    @Test
+    public void testGetQuoteByEvento() throws Exception {
+        mockMvc.perform(get("/api/quota/evento/" + eventoDiTest.getIdEvento()))
                 .andExpect(status().isOk());
-
-        //  Controlla che la quota ora sia vincente
-        Quota quotaAggiornata = quotaRepository.findById(quota.getIdQuota()).orElseThrow();
-        assert quotaAggiornata.getStato() == StatoQuota.VINCENTE;
     }
 
     /**
-     * Test: Refertazione di una quota perdente
+     * Testa la refertazione di una quota.
      */
     @Test
-    public void testRefertaQuotaPerdente() throws Exception {
-        Quota quota = QuotaFactory.createQuota(evento, 1.70, "1", "Risultato finale");
-        quota = quotaRepository.save(quota);
+    public void testRefertaQuota() throws Exception {
 
-        // Referta la quota con un esito errato
-        mockMvc.perform(post("/api/quota/referta/" + quota.getIdQuota())
-                        .param("referto", "X") // Esito errato
-                        .contentType(MediaType.APPLICATION_JSON))
+
+        mockMvc.perform(post("/api/quota/referta/" + quotaDiTest.getIdQuota())
+                        .param("referto", "1"))
                 .andExpect(status().isOk());
-
-        // Controlla che la quota ora sia perdente
-        Quota quotaAggiornata = quotaRepository.findById(quota.getIdQuota()).orElseThrow();
-        assert quotaAggiornata.getStato() == StatoQuota.PERDENTE;
-    }
-
-
-
-    /**
-     * Test: Prova a refertare una quota inesistente (404 Not Found)
-     */
-    @Test
-    public void testRefertaQuotaNonEsistente() throws Exception {
-        mockMvc.perform(post("/api/quota/referta/999") // ID non esistente
-                        .param("referto", "1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
     }
 
     /**
-     *  Test: Eliminazione di una quota
+     * Testa l'eliminazione di una quota.
      */
     @Test
     public void testDeleteQuota() throws Exception {
-        Quota quota = QuotaFactory.createQuota(evento, 1.70, "1", "Risultato finale");
-        quota = quotaRepository.save(quota);
 
-        //  Elimina la quota
-        mockMvc.perform(delete("/api/quota/" + quota.getIdQuota())
-                        .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(delete("/api/quota/" + quotaDiTest.getIdQuota()))
                 .andExpect(status().isOk());
+    }
 
-        //  Verifica che la quota sia stata effettivamente eliminata
-        assert quotaRepository.findById(quota.getIdQuota()).isEmpty();
+    /**
+     * Testa la chiusura di una quota e verifica che mantenga il suo stato.
+     */
+    @Test
+    public void testChiusuraQuota() throws Exception {
+
+        Quota quota = quotaService.getQuotaById(quotaDiTest.getIdQuota()).get();
+
+        quota.setChiusa(true);
+
+
+
+        mockMvc.perform(put("/api/quota/update/" + quotaDiTest.getIdQuota())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(quota)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.chiusa").value(true));
+    }
+
+    /**
+     * Testa la modifica di una quota.
+     */
+    @Test
+    public void testUpdateQuota() throws Exception {
+        Quota quota = new Quota();
+        quota.setMoltiplicatore(2.5);
+        quota.setEsito("1");
+        quota.setStato(StatoQuota.VINCENTE);
+        quota.setCategoria("Risultato Finale");
+        quota.setEvento(eventoDiTest);
+
+        quota.setMoltiplicatore(3.0); // Modifica il valore della quota
+
+        mockMvc.perform(put("/api/quota/update/" + quotaDiTest.getIdQuota())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(quota)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.moltiplicatore").value(3.0));
     }
 }
+

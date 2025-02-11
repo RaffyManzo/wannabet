@@ -46,4 +46,11 @@ public class EventoController {
         eventoService.chiudiEvento(id);
         return ResponseEntity.ok("Evento chiuso, quote non giocabili.");
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Evento> updateEvento(@PathVariable Long id, @RequestBody Evento eventoDetails) {
+        Evento updatedEvento = eventoService.updateEvento(id, eventoDetails);
+        return ResponseEntity.ok(updatedEvento);
+    }
+
 }
