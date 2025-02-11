@@ -1,12 +1,11 @@
 package is.project.wannabet.config;
 
-import is.project.wannabet.security.CustomAccessDeniedHandler;
+import is.project.wannabet.service.AccountRegistratoService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -17,18 +16,25 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomAccessDeniedHandler accessDeniedHandler) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable) // 🔹 Disabilita CSRF per le API REST
+                .csrf(csrf -> csrf.disable()) // 🔹 Disabilita CSRF per le API REST
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**").permitAll() // 🔹 Permette l'accesso libero a register e login
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/gestore-eventi/**").hasRole("GESTORE_EVENTO")
-                        .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN", "GESTORE_EVENTO", "GESTORE_FEDELTA")
+                        .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated()
                 )
-                .exceptionHandling(ex -> ex.accessDeniedHandler(accessDeniedHandler)) // 🔹 Nuovo modo per gestire gli errori 403
-                .formLogin(withDefaults()) // 🔹 Usa la configurazione predefinita per il login
-                .logout(withDefaults()); // 🔹 Usa la configurazione predefinita per il logout
+                .sessionManagement(session -> session
+                        .maximumSessions(1) // 🔹 Ogni utente può avere solo 1 sessione attiva
+                        .maxSessionsPreventsLogin(true) // 🔹 Se si logga da un altro dispositivo, blocca il login
+                )
+                .formLogin(withDefaults()) // 🔹 Gestisce il login automaticamente
+                .logout(logout -> logout
+                        .logoutUrl("/api/auth/logout") // 🔹 Endpoint per il logout
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                );
 
         return http.build();
     }

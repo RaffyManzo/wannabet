@@ -82,15 +82,6 @@ public class ScommessaController {
     public ResponseEntity<?> createScommessa(@PathVariable Long idAccount,
                                                      @RequestBody Scommessa scommessa) {
 
-
-        // 1️⃣ Recupera l'account dal database
-        Optional<AccountRegistrato> optionalAccount = accountRegistratoService.getAccountById(idAccount);
-
-        if (optionalAccount.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Errore: Account non trovato!"));
-        }
-
-        AccountRegistrato account = optionalAccount.get();
         if(!contoService.verificaSaldo(idAccount, scommessa.getImporto())) {
             return ResponseEntity.status(HttpStatus.resolve(400)).body(Map.of("error", "Saldo insufficiente"));
         }

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.ui.Model;
@@ -87,7 +89,6 @@ public class ScontrinoController {
                                                   @PathVariable Long id,
                                                   Model model) {
 
-        // TODO: da verificare se bisogna usare QuotaManager
 
         Optional<Quota> quotaOptional = quotaService.getQuotaById(id);
 
@@ -138,15 +139,14 @@ public class ScontrinoController {
                     .body("Lo scontrino contiene quote chiuse.");
         }
 
-        // Recupero conto associato all'utente
-
-        // TODO: il conto deve essre rcuperato dalla sessione
-        Optional<AccountRegistrato> optionalAccount = accountRegistratoService.getAccountById(idAccount);
-        if (optionalAccount.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Errore: Account non trovato!");
+        /// 🔹 Recupera l'account dalla sessione di Spring Security
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Errore: Utente non autenticato!");
         }
 
-        AccountRegistrato account = optionalAccount.get();
+        // 🔹 Converti l'oggetto autenticato nel tuo `AccountRegistrato`
+        AccountRegistrato account = (AccountRegistrato) authentication.getPrincipal();
         if (account.getConto() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Errore: L'account non ha un conto associato.");
         }
