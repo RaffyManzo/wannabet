@@ -2,6 +2,7 @@ package is.project.wannabet.factory;
 
 import is.project.wannabet.model.Evento;
 import is.project.wannabet.model.Quota;
+import is.project.wannabet.model.StatoQuota;
 
 /**
  * Factory per la creazione di oggetti {@link Quota}.
@@ -45,7 +46,7 @@ public class QuotaFactory {
         quota.setMoltiplicatore(moltiplicatore);
         quota.setEsito(esito);
         quota.setCategoria(categoria);
-        quota.setStato(is.project.wannabet.model.StatoQuota.DA_REFERTARE);
+        quota.setStato(StatoQuota.DA_REFERTARE);
         quota.setChiusa(chiusa);
         return quota;
     }

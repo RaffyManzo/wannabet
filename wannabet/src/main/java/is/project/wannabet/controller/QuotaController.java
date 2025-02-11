@@ -2,7 +2,7 @@ package is.project.wannabet.controller;
 
 import is.project.wannabet.model.Quota;
 import is.project.wannabet.service.QuotaService;
-import is.project.wannabet.controller.QuotaManager;
+import is.project.wannabet.observer.QuotaManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,11 @@ public class QuotaController {
     @Autowired
     private QuotaService quotaService;
 
-    private QuotaManager quotaManager = QuotaManager.getInstance();
+    @Autowired
+    private is.project.wannabet.cache.QuotaCache quotaCache;
+
+    @Autowired
+    private QuotaManager quotaManager;
 
     /**
      * Endpoint per refertare una quota dato il suo ID.
@@ -57,6 +61,13 @@ public class QuotaController {
         return quotaService.getQuotaById(id);
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Quota> updateQuota(@PathVariable Long id, @RequestBody Quota quotaDetails) {
+        Quota updatedQuota = quotaService.updateQuota(id, quotaDetails);
+        return ResponseEntity.ok(updatedQuota);
+    }
+
+
     /**
      * Recupera tutte le quote associate a un evento.
      */
@@ -87,7 +98,7 @@ public class QuotaController {
         }
 
         quotaService.deleteQuota(id); // Elimina la quota dal database
-        quotaManager.rimuoviQuota(id); // Rimuove la quota dal sistema di monitoraggio
+        quotaCache.rimuoviQuota(id); // Rimuove la quota dal sistema di monitoraggio
 
         return ResponseEntity.ok("Quota eliminata con successo.");
     }

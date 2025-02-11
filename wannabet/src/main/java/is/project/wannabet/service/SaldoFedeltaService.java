@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import is.project.wannabet.model.SaldoFedelta;
 import is.project.wannabet.repository.SaldoFedeltaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,8 +23,18 @@ public class SaldoFedeltaService {
         return saldoFedeltaRepository.findById(id);
     }
 
-    public SaldoFedelta saveSaldoFedelta(SaldoFedelta saldoFedelta) {
-        return saldoFedeltaRepository.save(saldoFedelta);
+        @Transactional
+        public SaldoFedelta saveSaldoFedelta(SaldoFedelta saldoFedelta) {
+            saldoFedelta = saldoFedeltaRepository.save(saldoFedelta);
+            saldoFedeltaRepository.flush();
+            return saldoFedelta;
+        }
+
+
+
+    @Transactional
+    public void flush() {
+        saldoFedeltaRepository.flush();
     }
 
     public void deleteSaldoFedelta(Long id) {

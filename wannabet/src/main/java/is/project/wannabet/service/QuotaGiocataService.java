@@ -4,6 +4,8 @@ import is.project.wannabet.model.QuotaGiocata;
 import is.project.wannabet.repository.QuotaGiocataRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 /**
@@ -24,6 +26,11 @@ public class QuotaGiocataService {
      */
     public List<QuotaGiocata> getQuoteGiocateByScommessa(Long idScommessa) {
         return quotaGiocataRepository.findByScommessa_IdScommessa(idScommessa);
+    }
+
+    @Transactional
+    public void flush() {
+        quotaGiocataRepository.flush();
     }
 
     /**

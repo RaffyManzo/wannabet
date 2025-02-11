@@ -67,11 +67,13 @@ public class ContoService {
      * @return true se il saldo è sufficiente, false altrimenti.
      */
     public boolean verificaSaldo(Long accountId, double importo) {
-        Conto conto = getContoById(accountId)
-                .orElseThrow(() -> new IllegalArgumentException("Conto non trovato"));
-
-        return conto.verificaSaldo(importo);
+        Double saldo = contoRepository.findById(accountId).get().getSaldo();
+        if (saldo == null) {
+            throw new IllegalArgumentException("Conto non trovato");
+        }
+        return saldo >= importo;
     }
+
 
     /**
      * Effettua un prelievo dal conto di un utente, aggiornando il saldo.
@@ -82,16 +84,17 @@ public class ContoService {
      * @throws SaldoInsufficienteException se il saldo è insufficiente.
      */
     @Transactional
-    public void preleva(Long accountId, double importo) {
+    public boolean preleva(Long accountId, double importo) {
         Conto conto = getContoById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("Conto non trovato"));
 
         if (conto.getSaldo() < importo) {
-            throw new SaldoInsufficienteException("Saldo insufficiente per prelevare " + importo);
+            return false;
         }
 
         conto.preleva(importo);
         contoRepository.save(conto);
+        return true;
     }
 
     /**
@@ -108,6 +111,11 @@ public class ContoService {
 
         conto.deposita(importo);
         contoRepository.save(conto);
+    }
+
+    @Transactional
+    public void flush() {
+        contoRepository.flush();
     }
 
     /**

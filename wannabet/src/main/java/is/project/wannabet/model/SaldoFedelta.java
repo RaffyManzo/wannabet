@@ -11,6 +11,7 @@ public class SaldoFedelta {
     @Column(name = "id_saldo_fedelta")
     private Long idSaldoFedelta;
 
+
     @Column(name = "punti", nullable = false)
     private Integer punti;
 

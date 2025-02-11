@@ -30,13 +30,11 @@ public class AccountRegistrato {
 
     @ManyToOne
     @JoinColumn(name = "id_conto", nullable = false)
-    @JsonBackReference
     @JsonProperty("conto")
     private Conto conto;
 
     @ManyToOne
     @JoinColumn(name = "id_fedelta", nullable = false)
-    @JsonBackReference
     @JsonProperty("saldo_fedelta")
     private SaldoFedelta saldoFedelta;
 

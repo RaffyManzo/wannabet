@@ -31,8 +31,8 @@ public class Quota {
 
     @ManyToOne
     @JoinColumn(name = "id_evento", nullable = false)
-    @JsonIgnore
     private Evento evento;
+
 
     @Convert(converter = StatoQuotaConverter.class)
     @Column(name = "stato", nullable = false)
