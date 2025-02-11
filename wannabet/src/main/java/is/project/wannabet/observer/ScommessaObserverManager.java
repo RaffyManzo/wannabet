@@ -27,7 +27,7 @@ public class ScommessaObserverManager implements QuotaObserver {
         this.scommessaService = scommessaService;
         this.contoService = contoService;
         this.quotaManager = quotaManager;
-        // this.quotaManager.addObserver(this); // Registriamo subito l'observer
+        this.quotaManager.addObserver(this); // Registriamo subito l'observer
     }
 
 

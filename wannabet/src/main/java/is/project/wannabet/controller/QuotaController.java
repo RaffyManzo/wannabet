@@ -18,7 +18,8 @@ public class QuotaController {
     @Autowired
     private QuotaService quotaService;
 
-    private QuotaManager quotaManager = QuotaManager.getInstance();
+    @Autowired
+    private QuotaManager quotaManager;
 
     /**
      * Endpoint per refertare una quota dato il suo ID.

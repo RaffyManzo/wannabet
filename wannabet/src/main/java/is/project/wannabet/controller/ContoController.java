@@ -48,8 +48,17 @@ public class ContoController {
     @PostMapping("/{accountId}/preleva")
     public ResponseEntity<String> preleva(@PathVariable Long accountId,
                                           @RequestParam @Min(value = 1, message = "L'importo deve essere maggiore di zero") double importo) {
-        contoService.preleva(accountId, importo);
-        return ResponseEntity.ok("Prelievo di " + importo + " effettuato con successo.");
+        if(contoService.preleva(accountId, importo))
+            return ResponseEntity.ok("Prelievo di " + importo + " effettuato con successo.");
+        else
+            return ResponseEntity.badRequest().body("Saldo insufficinte");
     }
+
+    @GetMapping("/{accountId}/verifica-saldo")
+    public ResponseEntity<Boolean> verificaSaldo(@PathVariable Long accountId, @RequestParam double importo) {
+        boolean saldoSufficiente = contoService.verificaSaldo(accountId, importo);
+        return ResponseEntity.ok(saldoSufficiente);
+    }
+
 }
 

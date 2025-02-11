@@ -2,19 +2,31 @@ package is.project.wannabet.controller;
 
 import is.project.wannabet.model.Quota;
 import is.project.wannabet.observer.QuotaObserver;
+import is.project.wannabet.service.QuotaService;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Gestisce le quote disponibili, mantendole aggiornate in memoria e nel database.
+ * Notifica gli observer ogni volta che una quota viene aggiornata.
+ */
 @Component
 public class QuotaManager {
 
     private static QuotaManager instance;
+
     private final Map<Long, Quota> quoteDisponibili;
     private final List<QuotaObserver> observers;
+
+    @Autowired
+    @Lazy  // 🔴 Risolve la dipendenza circolare
+    private QuotaService quotaService;
 
     private QuotaManager() {
         this.quoteDisponibili = new ConcurrentHashMap<>();
@@ -55,7 +67,6 @@ public class QuotaManager {
         observers.clear();
     }
 
-    // Observer Methods
     public void addObserver(QuotaObserver observer) {
         observers.add(observer);
     }

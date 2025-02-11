@@ -1,16 +1,13 @@
 package is.project.wannabet.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "evento")
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL) // Esclude i campi nulli dalla serializzazione
 public class Evento {
 
     @Id
@@ -42,7 +39,7 @@ public class Evento {
     private String categoria;
 
     @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonIgnoreProperties("evento") // 🔴 Sostituisce @JsonManagedReference per evitare problemi ciclici
     @JsonProperty("quote")
     private List<Quota> quote;
 

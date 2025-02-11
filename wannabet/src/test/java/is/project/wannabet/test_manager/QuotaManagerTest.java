@@ -29,7 +29,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @WithMockUser(username = "testuser", roles = {"USER"})
 class QuotaManagerTest {
 
-    private QuotaManager quotaManager;
     private Quota quota;
     private Evento evento;
 
@@ -39,9 +38,11 @@ class QuotaManagerTest {
     @Autowired
     private EventoService eventoService;
 
+    @Autowired
+    private QuotaManager quotaManager;
+
     @BeforeEach
     void setUp() {
-        quotaManager = QuotaManager.getInstance(); // Otteniamo il Singleton
         quotaManager.reset(); // Pulisce le quote registrate prima di ogni test
 
         evento = eventoService.createEvento("Test Evento", new Date(), "Test Descrizione", "Calcio");

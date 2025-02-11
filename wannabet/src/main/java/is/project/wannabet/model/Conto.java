@@ -1,17 +1,13 @@
 package is.project.wannabet.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import jakarta.persistence.*;
-
 import java.util.Date;
 import java.util.List;
 
 @Entity
 @Table(name = "conto")
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL) // Esclude i campi nulli dalla serializzazione
 public class Conto {
 
     @Id
@@ -26,8 +22,8 @@ public class Conto {
 
     @Column(name = "data_creazione", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     @JsonProperty("data_creazione")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "UTC")
     private Date dataCreazione;
 
     @Column(name = "indirizzo_fatturazione", length = 100)
@@ -35,7 +31,8 @@ public class Conto {
     private String indirizzoFatturazione;
 
     @OneToMany(mappedBy = "conto", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonIgnoreProperties("conto") // 🔴 Sostituisce @JsonManagedReference per evitare problemi ciclici
+    @JsonProperty("account_registrati")
     private List<AccountRegistrato> accountRegistrati;
 
     // Getters e Setters
