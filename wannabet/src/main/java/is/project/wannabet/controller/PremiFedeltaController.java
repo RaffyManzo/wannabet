@@ -1,6 +1,7 @@
 package is.project.wannabet.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import is.project.wannabet.model.PremiFedelta;
 import is.project.wannabet.service.PremiFedeltaService;
@@ -21,16 +22,19 @@ public class PremiFedeltaController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public Optional<PremiFedelta> getPremioById(@PathVariable Long id) {
         return premiFedeltaService.getPremioById(id);
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('GESTORE_FEDELTA', 'ADMIN')")
     public PremiFedelta createPremio(@RequestBody PremiFedelta premio) {
         return premiFedeltaService.savePremio(premio);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('GESTORE_FEDELTA', 'ADMIN')")
     public void deletePremio(@PathVariable Long id) {
         premiFedeltaService.deletePremio(id);
     }

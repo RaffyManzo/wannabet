@@ -7,6 +7,7 @@ import is.project.wannabet.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.ui.Model;
@@ -45,6 +46,7 @@ public class ScontrinoController {
      * Recupera lo stato attuale dello scontrino.
      */
     @GetMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Scontrino> getScontrino(@ModelAttribute("scontrino") Scontrino scontrino) {
         return ResponseEntity.ok(scontrino);
     }
@@ -53,6 +55,7 @@ public class ScontrinoController {
      * Aggiunge una quota allo scontrino e aggiorna la sessione.
      */
     @PostMapping("/aggiungi/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Scontrino> aggiungiQuota(@ModelAttribute("scontrino") Scontrino scontrino,
                                                    @PathVariable Long id,
                                                    Model model) {
@@ -79,6 +82,7 @@ public class ScontrinoController {
      * Rimuove una quota dallo scontrino e aggiorna la sessione.
      */
     @DeleteMapping("/rimuovi/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Scontrino> rimuoviQuota(@ModelAttribute("scontrino") Scontrino scontrino,
                                                   @PathVariable Long id,
                                                   Model model) {
@@ -105,6 +109,7 @@ public class ScontrinoController {
      * Svuota completamente lo scontrino e aggiorna la sessione.
      */
     @DeleteMapping("/svuota")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<String> svuotaScontrino(Model model) {
         model.addAttribute("scontrino", new Scontrino());
         return ResponseEntity.ok("Scontrino svuotato.");
@@ -114,6 +119,7 @@ public class ScontrinoController {
      * Conferma la scommessa e la registra nel sistema.
      */
     @PostMapping("/conferma")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<String> confermaScommessa(@ModelAttribute("scontrino") Scontrino scontrino,
                                                     @RequestParam double importo,
                                                     @RequestParam Long idAccount,

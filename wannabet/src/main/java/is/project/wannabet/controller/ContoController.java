@@ -4,6 +4,7 @@ package is.project.wannabet.controller;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import is.project.wannabet.model.Conto;
 import is.project.wannabet.service.ContoService;
@@ -18,27 +19,26 @@ public class ContoController {
     @Autowired
     private ContoService contoService;
 
-    @GetMapping
-    public List<Conto> getAllConti() {
-        return contoService.getAllConti();
-    }
-
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public Optional<Conto> getContoById(@PathVariable Long id) {
         return contoService.getContoById(id);
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public Conto createConto(@RequestBody Conto conto) {
         return contoService.saveConto(conto);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public void deleteConto(@PathVariable Long id) {
         contoService.deleteConto(id);
     }
 
     @PostMapping("/{accountId}/deposita")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<String> deposita(@PathVariable Long accountId,
                                            @RequestParam @Min(value = 1, message = "L'importo deve essere maggiore di zero") double importo) {
         contoService.deposita(accountId, importo);
@@ -46,6 +46,7 @@ public class ContoController {
     }
 
     @PostMapping("/{accountId}/preleva")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<String> preleva(@PathVariable Long accountId,
                                           @RequestParam @Min(value = 1, message = "L'importo deve essere maggiore di zero") double importo) {
         if(contoService.preleva(accountId, importo))
@@ -55,6 +56,7 @@ public class ContoController {
     }
 
     @GetMapping("/{accountId}/verifica-saldo")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Boolean> verificaSaldo(@PathVariable Long accountId, @RequestParam double importo) {
         boolean saldoSufficiente = contoService.verificaSaldo(accountId, importo);
         return ResponseEntity.ok(saldoSufficiente);
