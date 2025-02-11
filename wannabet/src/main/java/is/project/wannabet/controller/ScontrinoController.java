@@ -1,5 +1,6 @@
 package is.project.wannabet.controller;
 
+import is.project.wannabet.model.AccountRegistrato;
 import is.project.wannabet.model.Quota;
 import is.project.wannabet.model.Scontrino;
 import is.project.wannabet.service.*;
@@ -55,7 +56,6 @@ public class ScontrinoController {
     public ResponseEntity<Scontrino> aggiungiQuota(@ModelAttribute("scontrino") Scontrino scontrino,
                                                    @PathVariable Long id,
                                                    Model model) {
-        // TODO: da verificare se bisogna usare QuotaManager
         Optional<Quota> quotaOptional = quotaService.getQuotaById(id);
 
         if (quotaOptional.isEmpty()) {
@@ -63,17 +63,17 @@ public class ScontrinoController {
         }
 
         Quota quota = quotaOptional.get();
-        if (quota.isChiusa()) {
+
+        if (scontrino.getQuote().contains(quota)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(scontrino);
         }
 
         scontrino.aggiungiQuota(quota);
-
-        // **Aggiorniamo la sessione con il nuovo scontrino**
         model.addAttribute("scontrino", scontrino);
 
         return ResponseEntity.ok(scontrino);
     }
+
 
     /**
      * Rimuove una quota dallo scontrino e aggiorna la sessione.
@@ -135,15 +135,17 @@ public class ScontrinoController {
         // Recupero conto associato all'utente
 
         // TODO: il conto deve essre rcuperato dalla sessione
-        Optional<Long> idContoOpt = accountRegistratoService.getAccountById(idAccount)
-                .map(account -> account.getConto().getIdConto());
-
-        if (idContoOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Account non trovato.");
+        Optional<AccountRegistrato> optionalAccount = accountRegistratoService.getAccountById(idAccount);
+        if (optionalAccount.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Errore: Account non trovato!");
         }
 
-        Long idConto = idContoOpt.get();
-        if (!contoService.verificaSaldo(idConto, importo)) {
+        AccountRegistrato account = optionalAccount.get();
+        if (account.getConto() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Errore: L'account non ha un conto associato.");
+        }
+
+        if (!contoService.verificaSaldo(account.getConto().getIdConto(), importo)) {
             return ResponseEntity.badRequest().body("Saldo insufficiente per piazzare la scommessa.");
         }
 

@@ -19,7 +19,7 @@ public class QuotaController {
     private QuotaService quotaService;
 
     @Autowired
-    private is.project.wannabet.cache.QuotaCache quotaCache;
+    private is.project.wannabet.observer.QuotaCache quotaCache;
 
     @Autowired
     private QuotaManager quotaManager;

@@ -1,4 +1,4 @@
-package is.project.wannabet.cache;
+package is.project.wannabet.observer;
 
 import is.project.wannabet.model.Quota;
 import org.springframework.stereotype.Component;

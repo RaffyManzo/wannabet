@@ -2,7 +2,11 @@ package is.project.wannabet.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import is.project.wannabet.model.AccountRegistrato;
+import is.project.wannabet.model.Conto;
 import is.project.wannabet.model.Scommessa;
+import is.project.wannabet.service.AccountRegistratoService;
+import is.project.wannabet.service.ContoService;
 import is.project.wannabet.service.ScommessaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -22,6 +27,12 @@ public class ScommessaController {
 
     @Autowired
     private ScommessaService scommessaService;
+
+    @Autowired
+    private AccountRegistratoService accountRegistratoService;
+
+    @Autowired
+    private ContoService contoService;
 
     /**
      * Recupera tutte le scommesse associate a un determinato account.
@@ -61,8 +72,25 @@ public class ScommessaController {
      * @return La scommessa creata con stato HTTP 201 Created.
      */
     @PostMapping("/{idAccount}/crea")
-    public ResponseEntity<Scommessa> createScommessa(@PathVariable Long idAccount,
+    public ResponseEntity<?> createScommessa(@PathVariable Long idAccount,
                                                      @RequestBody Scommessa scommessa) {
+
+
+        // 1️⃣ Recupera l'account dal database
+        Optional<AccountRegistrato> optionalAccount = accountRegistratoService.getAccountById(idAccount);
+
+        if (optionalAccount.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Errore: Account non trovato!"));
+        }
+
+        AccountRegistrato account = optionalAccount.get();
+        if(!contoService.verificaSaldo(idAccount, scommessa.getImporto())) {
+            return ResponseEntity.status(HttpStatus.resolve(400)).body(Map.of("error", "Saldo insufficiente"));
+        }
+
+        // 3️⃣ Scala l'importo dal saldo
+        contoService.preleva(idAccount, scommessa.getImporto());
+
         Scommessa nuovaScommessa = scommessaService.saveScommessa(scommessa);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuovaScommessa);
     }

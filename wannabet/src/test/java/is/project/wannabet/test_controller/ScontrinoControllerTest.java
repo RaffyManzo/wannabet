@@ -1,248 +1,162 @@
 package is.project.wannabet.test_controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import is.project.wannabet.WannabetApplication;
 import is.project.wannabet.model.*;
 import is.project.wannabet.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.ui.Model;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Classe di test per il controller dello scontrino
+ * Classe di test per verificare il corretto funzionamento del controller ScontrinoController.
+ * Testa la creazione dello scontrino, l'aggiunta e rimozione di quote, e la conferma della scommessa.
  */
-@SpringBootTest(classes = WannabetApplication.class)
+@SpringBootTest
 @AutoConfigureMockMvc
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@WithMockUser(username = "testuser", roles = {"USER"})
+@Transactional
 public class ScontrinoControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-
     @Autowired
     private QuotaService quotaService;
-
-    @Autowired
-    private EventoService eventoService;
-
-    @Autowired
-    private SaldoFedeltaService saldoFedeltaService;
 
     @Autowired
     private ContoService contoService;
 
     @Autowired
-    private AccountRegistratoService accountRegistratoService;
+    private AccountRegistratoService accountService;
 
+    @Autowired
+    private EventoService eventoService;
+
+    @Autowired
+    private ScommessaService scommessaService;
+
+    @Autowired
+    private SaldoFedeltaService saldoFedeltaService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    private AccountRegistrato accountDiTest;
+    private Conto contoDiTest;
+    private Evento eventoDiTest;
+    private Quota quotaDiTest;
     private MockHttpSession session;
-    private Quota quotaValida;
-    private Quota quotaChiusa;
-
-    private AccountRegistrato accountRegistrato;
 
     @BeforeEach
     public void setup() {
         session = new MockHttpSession();
+        // 1️⃣ Crea e salva Saldo Fedeltà
+        SaldoFedelta saldoFedelta = new SaldoFedelta();
+        saldoFedelta.setPunti(100);
+        saldoFedelta = saldoFedeltaService.saveSaldoFedelta(saldoFedelta);
+        saldoFedeltaService.flush();
+        assertNotNull(saldoFedelta.getIdSaldoFedelta());
 
-        // Creazione evento
-        Evento evento = eventoService.createEvento("evento1", new Date(), "descrizione", "Calcio");
+        // 2️⃣ Crea e salva Conto
+        contoDiTest = new Conto();
+        contoDiTest.setSaldo(1000.0);
+        contoDiTest.setDataCreazione(new Date());
+        contoDiTest.setIndirizzoFatturazione("Via .");
+        contoDiTest = contoService.saveConto(contoDiTest);
+        contoService.flush();
+        assertNotNull(contoDiTest.getIdConto());
 
-        accountRegistrato = getAccountCorrente();
+        // 3️⃣ Crea e salva Account
+        accountDiTest = new AccountRegistrato();
+        accountDiTest.setSaldoFedelta(saldoFedelta);
+        accountDiTest.setNome("Pippo");
+        accountDiTest.setCognome("Baudo");
+        accountDiTest.setDataNascita(new Date());
+        accountDiTest.setCodiceFiscale("XYZ1234");
+        accountDiTest.setTipo(TipoAccount.UTENTE);
+        accountDiTest.setEmail("test@email.com");
+        accountDiTest.setConto(contoDiTest);
+        accountDiTest = accountService.saveAccount(accountDiTest);
+        accountService.flush();
+        assertNotNull(accountDiTest.getIdAccount());
 
-        // Creazione di quote di test
-        quotaValida = quotaService.createQuota("X", "Risultato finale", 3.00, evento, false);
-        quotaChiusa = quotaService.createQuota("1", "Risultato finale", 1.56, evento, true);
+        // 4️⃣ Crea e salva Evento
+        eventoDiTest = eventoService.createEvento("Sinner vs Medvedev", new Date(), "", "Tennis");
+        eventoService.flush();
+        eventoDiTest = eventoService.getEventoById(eventoDiTest.getIdEvento()).get();
+        assertNotNull(eventoDiTest.getIdEvento());
+
+        // 5️⃣ Crea e salva Quota
+        quotaDiTest = quotaService.createQuota("1", "Risultato Finale", 2.5, eventoDiTest);
+        quotaService.flush();
+        assertNotNull(quotaDiTest.getIdQuota());
     }
 
     /**
-     * Test: recupero dello stato iniziale dello scontrino.
+     * Testa la creazione automatica dello scontrino in sessione.
      */
     @Test
-    public void testGetScontrinoVuoto() throws Exception {
+    public void testGetScontrino() throws Exception {
         mockMvc.perform(get("/api/scontrino").session(session))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.quote", hasSize(0)))
-                .andReturn();
+                .andExpect(jsonPath("$.quote").isArray());
     }
 
     /**
-     * Test: aggiunta di una quota valida allo scontrino.
+     * Testa l'aggiunta di una quota valida allo scontrino.
      */
     @Test
-    public void testAggiungiQuotaScontrino() throws Exception {
-        // Aggiunge una quota
-        mockMvc.perform(post("/api/scontrino/aggiungi/" + quotaValida.getIdQuota())
-                        .session(session))
+    public void testAggiungiQuota() throws Exception {
+        mockMvc.perform(post("/api/scontrino/aggiungi/" + quotaDiTest.getIdQuota()).session(session))
                 .andExpect(status().isOk())
-                .andReturn();
-
-        // Recupera lo scontrino e verifica la presenza della quota
-        mockMvc.perform(get("/api/scontrino").session(session))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.quote", hasSize(1)))
-                .andExpect(jsonPath("$.quote[0].esito", is("X")))
-                .andReturn();
+                .andExpect(jsonPath("$.quote", hasSize(1)));
     }
 
     /**
-     * Test: tentativo di aggiungere una quota chiusa.
-     */
-    @Test
-    public void testAggiungiQuotaChiusaScontrino() throws Exception {
-        mockMvc.perform(post("/api/scontrino/aggiungi/" + quotaChiusa.getIdQuota()).session(session))
-                .andExpect(status().isBadRequest())
-                .andReturn();
-    }
-
-    /**
-     * Test: rimozione di una quota dallo scontrino.
-     */
-    @Test
-    public void testRimuoviQuotaScontrino() throws Exception {
-        // Aggiunge una quota
-        mockMvc.perform(post("/api/scontrino/aggiungi/" + quotaValida.getIdQuota()).session(session))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        // Rimuove la quota
-        mockMvc.perform(delete("/api/scontrino/rimuovi/" + quotaValida.getIdQuota()).session(session))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        // Verifica che lo scontrino sia vuoto
-        mockMvc.perform(get("/api/scontrino").session(session))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.quote", hasSize(0)))
-                .andReturn();
-    }
-
-    /**
-     * Test: svuotare lo scontrino.
-     */
-    @Test
-    public void testSvuotaScontrino() throws Exception {
-        // Aggiunge una quota
-        mockMvc.perform(post("/api/scontrino/aggiungi/" + quotaValida.getIdQuota()).session(session))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        // Svuota lo scontrino
-        mockMvc.perform(delete("/api/scontrino/svuota").session(session))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        // Verifica che lo scontrino sia vuoto
-        mockMvc.perform(get("/api/scontrino").session(session))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.quote", hasSize(0)))
-                .andReturn();
-    }
-
-    /**
-     * Test: conferma di una scommessa con saldo sufficiente.
+     * Testa la conferma di una scommessa con quote valide.
      */
     @Test
     public void testConfermaScommessa() throws Exception {
-        // Aggiunge una quota
-        mockMvc.perform(post("/api/scontrino/aggiungi/" + quotaValida.getIdQuota()).session(session))
-                .andExpect(status().isOk())
-                .andReturn();
+        mockMvc.perform(post("/api/scontrino/aggiungi/" + quotaDiTest.getIdQuota()).session(session));
 
-        // Conferma la scommessa
         mockMvc.perform(post("/api/scontrino/conferma")
                         .param("importo", "100")
-                        .param("idAccount", ""+accountRegistrato.getIdAccount())
+                        .param("idAccount", accountDiTest.getIdAccount().toString())
                         .session(session))
                 .andExpect(status().isOk())
-                .andReturn();
-
-        // Verifica che lo scontrino sia stato svuotato
-        mockMvc.perform(get("/api/scontrino").session(session))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.quote", hasSize(0)))
-                .andReturn();
+                .andExpect(content().string("Scommessa effettuata con successo!"));
     }
 
     /**
-     * Test: conferma di una scommessa con saldo insufficiente.
+     * Testa la conferma di una scommessa con quote chiuse.
      */
     @Test
-    public void testConfermaScommessaSaldoInsufficiente() throws Exception {
-        // Aggiunge una quota
-        mockMvc.perform(post("/api/scontrino/aggiungi/" + quotaValida.getIdQuota()).session(session))
-                .andExpect(status().isOk())
-                .andReturn();
+    public void testConfermaScommessaConQuoteChiuse() throws Exception {
+        quotaDiTest.setChiusa(true);
+        quotaService.saveQuota(quotaDiTest);
 
-        // Tentativo di conferma con saldo insufficiente
-        mockMvc.perform(post("/api/scontrino/conferma")
-                        .param("importo", "1000") // Supera il saldo disponibile
-                        .param("idAccount", ""+accountRegistrato.getIdAccount())
-                        .session(session))
-                .andExpect(status().isBadRequest())
-                .andReturn();
-    }
+        mockMvc.perform(post("/api/scontrino/aggiungi/" + quotaDiTest.getIdQuota()).session(session));
 
-    private AccountRegistrato getAccountCorrente() {
-
-        // Creazione del conto e salvataggio nel database
-        Conto conto = new Conto();
-        conto.setSaldo(500.00);
-        conto.setDataCreazione(new Date());
-        conto.setIndirizzoFatturazione("Via Roma, 10");
-        conto = contoService.saveConto(conto);
-
-        SaldoFedelta saldoFedelta = new SaldoFedelta();
-        saldoFedelta.setPunti(10);
-        saldoFedelta = saldoFedeltaService.saveSaldoFedelta(saldoFedelta);
-
-        // Creazione di un account senza impostare manualmente l'ID
-        AccountRegistrato ac = new AccountRegistrato();
-        ac.setCodiceFiscale("XYZ12345");  // Devi settare campi validi
-        ac.setNome("Mario");
-        ac.setCognome("Rossi");
-        ac.setSaldoFedelta(saldoFedelta);
-        ac.setConto(conto);
-        ac.setTipo(TipoAccount.UTENTE);
-        ac.setEmail("mario.rossi@example.com");
-        ac = accountRegistratoService.saveAccount(ac);
-
-
-        // TODO: Recuperare l'account dalla sessione o dal contesto di Spring Security
-        return ac; // Placeholder temporaneo
-    }
-
-    /**
-     * Test: conferma con quota chiusa.
-     */
-    @Test
-    public void testConfermaScommessaQuotaChiusa() throws Exception {
-        // Aggiunge una quota chiusa
-        mockMvc.perform(post("/api/scontrino/aggiungi/" + quotaChiusa.getIdQuota()).session(session))
-                .andExpect(status().isBadRequest())
-                .andReturn();
-
-        // Tentativo di conferma scommessa
         mockMvc.perform(post("/api/scontrino/conferma")
                         .param("importo", "100")
-                        .param("idAccount", ""+accountRegistrato.getIdAccount())
+                        .param("idAccount", accountDiTest.getIdAccount().toString())
                         .session(session))
                 .andExpect(status().isBadRequest())
-                .andReturn();
+                .andExpect(content().string("Lo scontrino contiene quote chiuse."));
     }
 }

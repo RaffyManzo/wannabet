@@ -3,15 +3,18 @@ package is.project.wannabet.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import is.project.wannabet.util.TipoAccountConverter;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "account_registrato")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AccountRegistrato {
+public class AccountRegistrato implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +27,7 @@ public class AccountRegistrato {
     private String codiceFiscale;
 
     @Column(name = "tipo", nullable = false)
-    @Convert(converter = TipoAccountConverter.class)
+    @Enumerated(EnumType.STRING)
     @JsonProperty("tipo")
     private TipoAccount tipo;
 
@@ -46,16 +49,46 @@ public class AccountRegistrato {
     @JsonProperty("cognome")
     private String cognome;
 
-    @Column(name = "email", length = 100)
+    @Column(name = "email", length = 100, unique = true, nullable = false)
     @JsonProperty("email")
     private String email;
+
+    @Column(name = "password", nullable = false)
+    @JsonProperty("password")
+    private String password;
 
     @Column(name = "data_nascita")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "UTC")
     @JsonProperty("data_nascita")
     private Date dataNascita;
 
+    // 🔹 Implementazione di `UserDetails`
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(() -> "ROLE_" + tipo.name()); // 🔹 Converte `TipoAccount` in Spring Roles (es. ROLE_ADMIN)
+    }
+
+    @Override
+    public String getUsername() { return email; } // 🔹 L'email è il campo per il login
+
+    @Override
+    public String getPassword() { return password; } // 🔹 Necessario per Spring Security
+
+    @Override
+    public boolean isAccountNonExpired() { return true; } // 🔹 L'account non scade mai
+
+    @Override
+    public boolean isAccountNonLocked() { return true; } // 🔹 L'account non viene bloccato
+
+    @Override
+    public boolean isCredentialsNonExpired() { return true; } // 🔹 Le credenziali non scadono
+
+    @Override
+    public boolean isEnabled() { return true; } // 🔹 L'account è attivo
+
     // Getters e Setters
+
     public Long getIdAccount() { return idAccount; }
     public void setIdAccount(Long idAccount) { this.idAccount = idAccount; }
 
@@ -79,6 +112,8 @@ public class AccountRegistrato {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    public void setPassword(String password) { this.password = password; }
 
     public Date getDataNascita() { return dataNascita; }
     public void setDataNascita(Date dataNascita) { this.dataNascita = dataNascita; }
