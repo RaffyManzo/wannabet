@@ -22,7 +22,7 @@ import java.util.Optional;
 public class QuotaService {
 
     @Autowired
-    private is.project.wannabet.cache.QuotaCache quotaCache;
+    private is.project.wannabet.observer.QuotaCache quotaCache;
 
     @Autowired
     private QuotaRepository quotaRepository;

@@ -20,4 +20,6 @@ public interface AccountRegistratoRepository extends JpaRepository<AccountRegist
      * @return Optional contenente l'account registrato, se presente.
      */
     Optional<AccountRegistrato> findByCodiceFiscale(String codiceFiscale);
+
+    Optional<AccountRegistrato> findByEmail(String emil);
 }

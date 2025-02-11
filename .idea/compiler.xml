@@ -2,8 +2,8 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
-      <module name="wannabet.wannabet.main~1" target="17" />
-      <module name="wannabet.wannabet.test~1" target="17" />
+      <module name="wannabet.wannabet.main" target="17" />
+      <module name="wannabet.wannabet.test" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

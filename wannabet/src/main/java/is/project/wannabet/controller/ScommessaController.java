@@ -2,14 +2,20 @@ package is.project.wannabet.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import is.project.wannabet.model.AccountRegistrato;
+import is.project.wannabet.model.Conto;
 import is.project.wannabet.model.Scommessa;
+import is.project.wannabet.service.AccountRegistratoService;
+import is.project.wannabet.service.ContoService;
 import is.project.wannabet.service.ScommessaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -23,6 +29,12 @@ public class ScommessaController {
     @Autowired
     private ScommessaService scommessaService;
 
+    @Autowired
+    private AccountRegistratoService accountRegistratoService;
+
+    @Autowired
+    private ContoService contoService;
+
     /**
      * Recupera tutte le scommesse associate a un determinato account.
      *
@@ -30,6 +42,8 @@ public class ScommessaController {
      * @return Lista di scommesse dell'account specificato.
      */
     @GetMapping("/account/{idAccount}")
+
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<Scommessa>> getScommesseByAccount(@PathVariable Long idAccount) {
         List<Scommessa> scommesse = scommessaService.getScommesseByAccount(idAccount);
         return ResponseEntity.ok(scommesse);
@@ -43,6 +57,8 @@ public class ScommessaController {
      * @return La scommessa se trovata e appartiene all'account, altrimenti 404.
      */
     @GetMapping("/account/{idAccount}/get/{idScommessa}")
+
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Scommessa> getScommessaById(@PathVariable Long idAccount, @PathVariable Long idScommessa) {
         Optional<Scommessa> scommessaOpt = scommessaService.getScommessaById(idScommessa);
 
@@ -61,8 +77,18 @@ public class ScommessaController {
      * @return La scommessa creata con stato HTTP 201 Created.
      */
     @PostMapping("/{idAccount}/crea")
-    public ResponseEntity<Scommessa> createScommessa(@PathVariable Long idAccount,
+
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> createScommessa(@PathVariable Long idAccount,
                                                      @RequestBody Scommessa scommessa) {
+
+        if(!contoService.verificaSaldo(idAccount, scommessa.getImporto())) {
+            return ResponseEntity.status(HttpStatus.resolve(400)).body(Map.of("error", "Saldo insufficiente"));
+        }
+
+        // 3️⃣ Scala l'importo dal saldo
+        contoService.preleva(idAccount, scommessa.getImporto());
+
         Scommessa nuovaScommessa = scommessaService.saveScommessa(scommessa);
         return ResponseEntity.status(HttpStatus.CREATED).body(nuovaScommessa);
     }

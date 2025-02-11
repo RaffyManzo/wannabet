@@ -89,7 +89,7 @@ public class QuotaControllerTest {
         nuovaQuota.setEvento(eventoDiTest);
         nuovaQuota.setStato(StatoQuota.DA_REFERTARE);
 
-        mockMvc.perform(post("/api/quota")
+        mockMvc.perform(post("/api/quota/create")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(nuovaQuota)))
                 .andExpect(status().isOk())
@@ -101,7 +101,7 @@ public class QuotaControllerTest {
      */
     @Test
     public void testGetAllQuote() throws Exception {
-        mockMvc.perform(get("/api/quota"))
+        mockMvc.perform(get("/api/quota/list"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(0))));
     }
@@ -133,7 +133,7 @@ public class QuotaControllerTest {
     @Test
     public void testDeleteQuota() throws Exception {
 
-        mockMvc.perform(delete("/api/quota/" + quotaDiTest.getIdQuota()))
+        mockMvc.perform(delete("/api/quota/delete/" + quotaDiTest.getIdQuota()))
                 .andExpect(status().isOk());
     }
 
