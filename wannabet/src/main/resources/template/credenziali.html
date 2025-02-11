@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inserimento Credenziali</title>
+    <link rel="stylesheet" href="../static/css/style.css">
+    <script src="../static/script/signup-login.js" defer></script>
+</head>
+<body>
+    <section class="credentials">
+        <form action="validateCredentials">
+            <div class="inputbox">
+                <input type="text" name="codiceFiscale" placeholder="Codice Fiscale" pattern="^[a-zA-Z]{6}[0-9]{2}[a-zA-Z][0-9]{2}[a-zA-Z][0-9]{3}[a-zA-Z]" required>
+            </div>
+            <div class="inputbox">
+                <input type="text" name="nome" placeholder="Nome" required>
+            </div>
+            <div class="inputbox">
+                <input type="text" name="cognome" placeholder="Cognome" required>
+            </div>
+            <div class="inputbox">
+                <input type="date" id="dataDiNascita" required>
+            </div>
+            <button>Conferma Credenziali</button>
+        </form>
+    </section>
+</body>
+</html>
