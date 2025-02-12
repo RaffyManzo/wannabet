@@ -7,23 +7,70 @@
     <script src="../static/script/signup-login.js" defer></script>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar_container">
-            <img src = "--/static/backgroud.jpg">
-            <div class = "nav-bar-toggle">
-                <span class="bar"></span>
-                <span class = "bar"></span>
-                <span class = "bar"></span>
-            </div>
-            <ul class="nav_menu">
-                <li class="nav_item"><a href = "/" class="nav_links">Home</a></li>
-                <li class="nav_item"><a href = "/" class="nav_links">Feature</a></li>
-                <li class="nav_item"><a href = "/" class="nav_links">Feature</a></li>
-                <li class="nav_btn"><a href = "singup.html" class="buttonR">Registrati</a></li>
-                <li class="nav_btn"><a href = "login.html" class="buttonL">Login</a></li>
-            </ul>
-        </div>
 
-    </nav>
+<header>
+<nav>
+    <ul class="sidebar">
+        <li onclick=hideSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 96 960 960" width="26"><path d="m249 849-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z"/></svg></a></li>
+        <li><a href="#">Sports</a></li>
+        <li><a href="#">Esports</a></li>
+        <li><a href="#">Login</a></li>
+        <li><a href="#">Register</a></li>
+    </ul>
+    <ul>
+        <li><a href="#">Logo</a></li>
+        <li><a href="#">Sports</a></li>
+        <li><a href="#">Esports</a></li>
+        <li><a href="login.html">Login</a></li>
+        <li><a href="singup.html" class="nav__register">Register</a></li>
+        <li class="menu-button" onclick=showSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 96 960 960" width="26"><path d="M120 816v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z"/></svg></a></li>
+    </ul>
+</nav>
+
+<script>
+    function showSidebar(){
+        const sidebar = document.querySelector('.sidebar')
+        sidebar.style.display = 'flex'
+    }
+    function hideSidebar(){
+        const sidebar = document.querySelector('.sidebar')
+        sidebar.style.display = 'none'
+    }
+</script>
+</header>
+
+<footer class = "footer">
+    <div class = "footer__container">
+        <div class="footer__row">
+            <div class="footer--col">
+                <h4>DataFooter1</h4>
+                <ul>
+                    <li><a href="#">dati</a></li>
+                    <li><a href="#">dati</a></li>
+                    <li><a href="#">dati</a></li>
+                    <li><a href="#">dati</a></li>
+                </ul>
+            </div>
+            <div class="footer--col">
+                <h4>DataFooter2</h4>
+                <ul>
+                    <li><a href="#">dati</a></li>
+                    <li><a href="#">dati</a></li>
+                    <li><a href="#">dati</a></li>
+                    <li><a href="#">dati</a></li>
+                </ul>
+            </div>
+            <div class="footer--col">
+                <h4>Contatti</h4>
+                <ul>
+                    <li><a href="#">dati</a></li>
+                    <li><a href="#">dati</a></li>
+                    <li><a href="#">dati</a></li>
+                    <li><a href="#">dati</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

@@ -9,5 +9,4 @@ public class WannabetApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(WannabetApplication.class, args);
 	}
-
 }
