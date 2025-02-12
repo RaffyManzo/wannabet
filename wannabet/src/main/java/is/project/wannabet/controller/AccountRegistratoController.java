@@ -23,19 +23,19 @@ public class AccountRegistratoController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('UTENTE', 'ADMIN')")
     public Optional<AccountRegistrato> getAccountById(@PathVariable Long id) {
         return service.getAccountById(id);
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('UTENTE')")
     public AccountRegistrato createAccount(@RequestBody AccountRegistrato account) {
         return service.saveAccount(account);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("#id == authentication.principal.idAccount and hasRole('UTENTE')")
     public void deleteAccount(@PathVariable Long id) {
         service.deleteAccount(id);
     }

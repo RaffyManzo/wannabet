@@ -22,7 +22,7 @@ public class PremiFedeltaController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('UTENTE')")
     public Optional<PremiFedelta> getPremioById(@PathVariable Long id) {
         return premiFedeltaService.getPremioById(id);
     }

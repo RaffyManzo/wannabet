@@ -23,19 +23,19 @@ public class SaldoFedeltaController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('UTENTE', 'ADMIN')")
     public Optional<SaldoFedelta> getSaldoFedeltaById(@PathVariable Long id) {
         return saldoFedeltaService.getSaldoFedeltaById(id);
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('UTENTE')")
     public SaldoFedelta createSaldoFedelta(@RequestBody SaldoFedelta saldoFedelta) {
         return saldoFedeltaService.saveSaldoFedelta(saldoFedelta);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('UTENTE')")
     public void deleteSaldoFedelta(@PathVariable Long id) {
         saldoFedeltaService.deleteSaldoFedelta(id);
     }

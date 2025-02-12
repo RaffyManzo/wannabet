@@ -43,7 +43,7 @@ public class ScommessaController {
      */
     @GetMapping("/account/{idAccount}")
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('UTENTE')")
     public ResponseEntity<List<Scommessa>> getScommesseByAccount(@PathVariable Long idAccount) {
         List<Scommessa> scommesse = scommessaService.getScommesseByAccount(idAccount);
         return ResponseEntity.ok(scommesse);
@@ -58,7 +58,7 @@ public class ScommessaController {
      */
     @GetMapping("/account/{idAccount}/get/{idScommessa}")
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('UTENTE')")
     public ResponseEntity<Scommessa> getScommessaById(@PathVariable Long idAccount, @PathVariable Long idScommessa) {
         Optional<Scommessa> scommessaOpt = scommessaService.getScommessaById(idScommessa);
 
@@ -78,7 +78,7 @@ public class ScommessaController {
      */
     @PostMapping("/{idAccount}/crea")
 
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('UTENTE')")
     public ResponseEntity<?> createScommessa(@PathVariable Long idAccount,
                                                      @RequestBody Scommessa scommessa) {
 

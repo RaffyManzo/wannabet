@@ -22,7 +22,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // 🔹 Permette l'accesso libero a register e login
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/utente/**").hasAnyRole("UTENTE", "ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

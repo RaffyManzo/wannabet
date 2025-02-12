@@ -17,7 +17,7 @@ public class QuotaGiocataController {
     private QuotaGiocataService quotaGiocataService;
 
     @GetMapping("/scommessa/{idScommessa}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("#scommessaService.getScommessaById(idScommessa).get().account.idAccount == authentication.principal.idAccount and hasRole('UTENTE')")
     public ResponseEntity<List<QuotaGiocata>> getQuoteGiocateByScommessa(@PathVariable Long idScommessa) {
         return ResponseEntity.ok(quotaGiocataService.getQuoteGiocateByScommessa(idScommessa));
     }
