@@ -97,7 +97,7 @@ public class ScontrinoControllerTest {
         accountDiTest.setCodiceFiscale("XYZ1234");
         accountDiTest.setPassword(sha256("acrfgt"));
         accountDiTest.setTipo(TipoAccount.UTENTE);
-        accountDiTest.setEmail("test@email.com");
+        accountDiTest.setEmail("abcde@email.com");
         accountDiTest.setConto(contoDiTest);
         accountDiTest = accountService.saveAccount(accountDiTest);
         accountService.flush();
@@ -156,7 +156,7 @@ public class ScontrinoControllerTest {
     /**
      * Testa la conferma di una scommessa con quote valide.
      */
-    @WithUserDetails(value = "test@email.com", userDetailsServiceBeanName = "accountDetailsService")
+    @WithUserDetails(value = "abcde@email.com", userDetailsServiceBeanName = "accountDetailsService")
     @Test
     public void testConfermaScommessa() throws Exception {
         mockMvc.perform(post("/api/scontrino/aggiungi/" + quotaDiTest.getIdQuota()).session(session));

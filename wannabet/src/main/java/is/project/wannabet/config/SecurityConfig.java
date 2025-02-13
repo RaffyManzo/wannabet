@@ -2,10 +2,12 @@ package is.project.wannabet.config;
 
 import is.project.wannabet.service.AccountDetailsService;
 import is.project.wannabet.service.AccountRegistratoService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,25 +17,29 @@ import org.springframework.security.web.SecurityFilterChain;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // 🔹 Disabilita CSRF per le API REST
+                .csrf(csrf -> csrf.disable()) // ❌ Disabilita CSRF per le API REST
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // 🔹 Permette l'accesso libero a register e login
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/utente/**").hasAnyRole("UTENTE", "ADMIN")
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/auth/**").permitAll() // 🔓 Permette login e registrazione
+                        .anyRequest().authenticated() // 🔒 Tutto il resto richiede autenticazione
                 )
                 .sessionManagement(session -> session
-                        .maximumSessions(1) // 🔹 Ogni utente può avere solo 1 sessione attiva
-                        .maxSessionsPreventsLogin(true) // 🔹 Se si logga da un altro dispositivo, blocca il login
+                        .maximumSessions(1) // 🔒 Solo 1 sessione attiva per utente
+                        .maxSessionsPreventsLogin(true)
                 )
-                .formLogin(withDefaults()) // 🔹 Gestisce il login automaticamente
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                        })
+                )
+                //.formLogin(withDefaults()) // 🔑 Gestisce il login automatico
                 .logout(logout -> logout
-                        .logoutUrl("/api/auth/logout") // 🔹 Endpoint per il logout
+                        .logoutUrl("/api/auth/logout") // 🔑 Logout via API
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                 );
