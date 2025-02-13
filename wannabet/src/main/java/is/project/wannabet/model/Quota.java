@@ -1,14 +1,12 @@
 package is.project.wannabet.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.*;
 import is.project.wannabet.util.StatoQuotaConverter;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "quota")
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Quota {
 
     @Id
@@ -29,9 +27,12 @@ public class Quota {
     @JsonProperty("categoria")
     private String categoria;
 
+
     @ManyToOne
+    @JsonIdentityReference(alwaysAsId = true)
     @JoinColumn(name = "id_evento", nullable = false)
     private Evento evento;
+
 
 
     @Convert(converter = StatoQuotaConverter.class)

@@ -1,5 +1,6 @@
 package is.project.wannabet.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -9,6 +10,7 @@ import java.util.List;
 
 public class Scontrino {
 
+    @JsonIgnoreProperties("evento")
     @JsonProperty("quote")
     private List<Quota> quote;
 

@@ -20,25 +20,25 @@ public class ContoController {
     private ContoService contoService;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('UTENTE')")
     public Optional<Conto> getContoById(@PathVariable Long id) {
         return contoService.getContoById(id);
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('UTENTE')")
     public Conto createConto(@RequestBody Conto conto) {
         return contoService.saveConto(conto);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('UTENTE')")
     public void deleteConto(@PathVariable Long id) {
         contoService.deleteConto(id);
     }
 
     @PostMapping("/{accountId}/deposita")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("#accountId == authentication.principal.idAccount and hasRole('UTENTE')")
     public ResponseEntity<String> deposita(@PathVariable Long accountId,
                                            @RequestParam @Min(value = 1, message = "L'importo deve essere maggiore di zero") double importo) {
         contoService.deposita(accountId, importo);
@@ -46,7 +46,7 @@ public class ContoController {
     }
 
     @PostMapping("/{accountId}/preleva")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("#accountId == authentication.principal.idAccount and hasRole('UTENTE')")
     public ResponseEntity<String> preleva(@PathVariable Long accountId,
                                           @RequestParam @Min(value = 1, message = "L'importo deve essere maggiore di zero") double importo) {
         if(contoService.preleva(accountId, importo))
@@ -56,7 +56,7 @@ public class ContoController {
     }
 
     @GetMapping("/{accountId}/verifica-saldo")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('UTENTE')")
     public ResponseEntity<Boolean> verificaSaldo(@PathVariable Long accountId, @RequestParam double importo) {
         boolean saldoSufficiente = contoService.verificaSaldo(accountId, importo);
         return ResponseEntity.ok(saldoSufficiente);

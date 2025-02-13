@@ -23,4 +23,10 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
                       @Param("descrizione") String descrizione, @Param("categoria") String categoria,
                       @Param("chiuso") boolean chiuso);
 
+    List<Evento> findEventoByCategoria(String categoria);
+
+    List<Evento> findEventoByCategoriaOrderByDataAsc(String categoria);
+
+    List<Evento> findEventoByCategoriaAndDescrizione(String categoria, String descrizione);
+
 }

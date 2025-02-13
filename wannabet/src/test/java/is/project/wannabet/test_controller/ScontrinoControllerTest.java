@@ -2,13 +2,16 @@ package is.project.wannabet.test_controller;
 
 import is.project.wannabet.model.*;
 import is.project.wannabet.service.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.ui.Model;
@@ -18,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static is.project.wannabet.security.PasswordEncoding.sha256;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -30,6 +34,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@WithMockUser(username = "test@email.com", roles = {"UTENTE"})
 public class ScontrinoControllerTest {
 
     @Autowired
@@ -62,7 +68,8 @@ public class ScontrinoControllerTest {
     private Quota quotaDiTest;
     private MockHttpSession session;
 
-    @BeforeEach
+
+    @BeforeAll
     public void setup() {
         session = new MockHttpSession();
         // 1️⃣ Crea e salva Saldo Fedeltà
@@ -88,12 +95,17 @@ public class ScontrinoControllerTest {
         accountDiTest.setCognome("Baudo");
         accountDiTest.setDataNascita(new Date());
         accountDiTest.setCodiceFiscale("XYZ1234");
+        accountDiTest.setPassword(sha256("acrfgt"));
         accountDiTest.setTipo(TipoAccount.UTENTE);
         accountDiTest.setEmail("test@email.com");
         accountDiTest.setConto(contoDiTest);
         accountDiTest = accountService.saveAccount(accountDiTest);
         accountService.flush();
         assertNotNull(accountDiTest.getIdAccount());
+
+        // **Verifica che l'account sia effettivamente presente**
+        AccountRegistrato dbAccount = accountService.getAccountByEmail("test@email.com");
+        assertNotNull(dbAccount);
 
         // 4️⃣ Crea e salva Evento
         eventoDiTest = eventoService.createEvento("Sinner vs Medvedev", new Date(), "", "Tennis");
@@ -106,6 +118,20 @@ public class ScontrinoControllerTest {
         quotaService.flush();
         assertNotNull(quotaDiTest.getIdQuota());
     }
+
+    @BeforeEach
+    public void setupSession() {
+        session = new MockHttpSession();  // 🔹 Ricrea la sessione ad ogni test
+    }
+
+    @AfterEach
+    public void cleanup() {
+        session.clearAttributes();  // 🔹 Rimuove tutti gli attributi dalla sessione
+    }
+
+
+
+
 
     /**
      * Testa la creazione automatica dello scontrino in sessione.
@@ -130,6 +156,7 @@ public class ScontrinoControllerTest {
     /**
      * Testa la conferma di una scommessa con quote valide.
      */
+    @WithUserDetails(value = "test@email.com", userDetailsServiceBeanName = "accountDetailsService")
     @Test
     public void testConfermaScommessa() throws Exception {
         mockMvc.perform(post("/api/scontrino/aggiungi/" + quotaDiTest.getIdQuota()).session(session));

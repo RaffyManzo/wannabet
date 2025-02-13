@@ -3,12 +3,17 @@ package is.project.wannabet.test_controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import is.project.wannabet.model.Evento;
 import is.project.wannabet.service.EventoService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +34,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
+@WithMockUser(username = "admin", roles = {"ADMIN"})
 public class EventoControllerTest {
 
     @Autowired
@@ -41,6 +49,8 @@ public class EventoControllerTest {
     private ObjectMapper objectMapper;
 
     private Evento eventoDiTest;
+
+
 
     /**
      * Configura un evento di test prima di ogni esecuzione.
@@ -67,8 +77,6 @@ public class EventoControllerTest {
             evento.setDescrizione("Partita finale della Champions");
             evento.setCategoria("Calcio");
             evento.setChiuso(false);
-            evento.setQuote(List.of()); // Nessuna quota per evitare cicli di riferimento
-
             // Serializzazione
             ObjectMapper objectMapper = new ObjectMapper();
             String json = objectMapper.writeValueAsString(evento);

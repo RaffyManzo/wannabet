@@ -3,16 +3,16 @@ package is.project.wannabet.test_controller;
 import is.project.wannabet.factory.ScommessaFactory;
 import is.project.wannabet.model.*;
 import is.project.wannabet.service.*;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +36,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@WithMockUser(username = "testSC@email.com", roles = {"UTENTE"})
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
 public class ScommessaControllerTest {
 
     @Autowired
@@ -71,7 +74,7 @@ public class ScommessaControllerTest {
     private Quota quotaDiTest;
     private Scommessa scommessaDiTest;
 
-    @BeforeEach
+    @BeforeAll
     public void setup() {
         // 1️⃣ Crea e salva Saldo Fedeltà
         SaldoFedelta saldoFedelta = new SaldoFedelta();
@@ -95,9 +98,9 @@ public class ScommessaControllerTest {
         accountDiTest.setNome("Pippo");
         accountDiTest.setCognome("Baudo");
         accountDiTest.setDataNascita(new Date());
-        accountDiTest.setCodiceFiscale("XYZ1234");
+        accountDiTest.setCodiceFiscale("JAKOORTIU848937");
         accountDiTest.setTipo(TipoAccount.UTENTE);
-        accountDiTest.setEmail("test@email.com");
+        accountDiTest.setEmail("testSC@email.com");
         accountDiTest.setConto(contoDiTest);
         accountDiTest.setPassword(sha256("abcde"));
         accountDiTest = accountService.saveAccount(accountDiTest);
@@ -119,6 +122,8 @@ public class ScommessaControllerTest {
         scommessaDiTest = scommessaService.creaScommessa(List.of(quotaDiTest), 100.0, accountDiTest.getIdAccount());
         assertNotNull(scommessaDiTest.getIdScommessa());
     }
+
+
 
     /**
      * Testa la creazione di una nuova scommessa.

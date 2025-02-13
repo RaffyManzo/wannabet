@@ -1,6 +1,7 @@
 package is.project.wannabet.controller;
 
 import is.project.wannabet.model.AccountRegistrato;
+import is.project.wannabet.model.AccountRegistratoDetails;
 import is.project.wannabet.model.Quota;
 import is.project.wannabet.model.Scontrino;
 import is.project.wannabet.service.*;
@@ -10,11 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,6 +25,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/scontrino")
 @SessionAttributes("scontrino")
+
 public class ScontrinoController {
 
     @Autowired
@@ -48,7 +52,7 @@ public class ScontrinoController {
      * Recupera lo stato attuale dello scontrino.
      */
     @GetMapping
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('UTENTE')")
     public ResponseEntity<Scontrino> getScontrino(@ModelAttribute("scontrino") Scontrino scontrino) {
         return ResponseEntity.ok(scontrino);
     }
@@ -57,7 +61,7 @@ public class ScontrinoController {
      * Aggiunge una quota allo scontrino e aggiorna la sessione.
      */
     @PostMapping("/aggiungi/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('UTENTE')")
     public ResponseEntity<Scontrino> aggiungiQuota(@ModelAttribute("scontrino") Scontrino scontrino,
                                                    @PathVariable Long id,
                                                    Model model) {
@@ -69,10 +73,6 @@ public class ScontrinoController {
 
         Quota quota = quotaOptional.get();
 
-        if (scontrino.getQuote().contains(quota)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(scontrino);
-        }
-
         scontrino.aggiungiQuota(quota);
         model.addAttribute("scontrino", scontrino);
 
@@ -80,11 +80,12 @@ public class ScontrinoController {
     }
 
 
+
     /**
      * Rimuove una quota dallo scontrino e aggiorna la sessione.
      */
     @DeleteMapping("/rimuovi/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('UTENTE')")
     public ResponseEntity<Scontrino> rimuoviQuota(@ModelAttribute("scontrino") Scontrino scontrino,
                                                   @PathVariable Long id,
                                                   Model model) {
@@ -110,7 +111,7 @@ public class ScontrinoController {
      * Svuota completamente lo scontrino e aggiorna la sessione.
      */
     @DeleteMapping("/svuota")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('UTENTE')")
     public ResponseEntity<String> svuotaScontrino(Model model) {
         model.addAttribute("scontrino", new Scontrino());
         return ResponseEntity.ok("Scontrino svuotato.");
@@ -120,7 +121,7 @@ public class ScontrinoController {
      * Conferma la scommessa e la registra nel sistema.
      */
     @PostMapping("/conferma")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('UTENTE')")
     public ResponseEntity<String> confermaScommessa(@ModelAttribute("scontrino") Scontrino scontrino,
                                                     @RequestParam double importo,
                                                     @RequestParam Long idAccount,
@@ -139,14 +140,11 @@ public class ScontrinoController {
                     .body("Lo scontrino contiene quote chiuse.");
         }
 
-        /// 🔹 Recupera l'account dalla sessione di Spring Security
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Errore: Utente non autenticato!");
-        }
+        AccountRegistratoDetails accountDetails = (AccountRegistratoDetails) authentication.getPrincipal();
+        AccountRegistrato account = accountDetails.getAccount();
 
-        // 🔹 Converti l'oggetto autenticato nel tuo `AccountRegistrato`
-        AccountRegistrato account = (AccountRegistrato) authentication.getPrincipal();
+
         if (account.getConto() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Errore: L'account non ha un conto associato.");
         }

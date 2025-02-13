@@ -11,6 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "scommessa")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id_scommessa")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Scommessa {
 
 
@@ -45,7 +46,7 @@ public class Scommessa {
     @JsonProperty("stato")
     private StatoScommessa stato;
 
-    @OneToMany(mappedBy = "scommessa", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "scommessa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JsonManagedReference
     @JsonProperty("quote_giocate")
     private List<QuotaGiocata> quoteGiocate = new ArrayList<>();

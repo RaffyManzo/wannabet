@@ -7,7 +7,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "evento")
-@JsonInclude(JsonInclude.Include.NON_NULL) // Esclude i campi nulli dalla serializzazione
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Evento {
 
     @Id
@@ -37,11 +37,6 @@ public class Evento {
     @Column(name = "categoria", length = 45)
     @JsonProperty("categoria")
     private String categoria;
-
-    @OneToMany(mappedBy = "evento", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnoreProperties("evento") // 🔴 Sostituisce @JsonManagedReference per evitare problemi ciclici
-    @JsonProperty("quote")
-    private List<Quota> quote;
 
     public Long getIdEvento() {
         return idEvento;
@@ -89,13 +84,5 @@ public class Evento {
 
     public void setCategoria(String categoria) {
         this.categoria = categoria;
-    }
-
-    public List<Quota> getQuote() {
-        return quote;
-    }
-
-    public void setQuote(List<Quota> quote) {
-        this.quote = quote;
     }
 }
