@@ -33,16 +33,21 @@ section {
 }
 
 h1 {
-    font-size: 2rem;
+    font-size: 3rem;
     color: #fff;
     text-align: center;
 }
 
 h2 {
-    font-size: 1rem;
+    font-size: 2rem;
     color: #fff;
     text-align: left;
+}
 
+h3 {
+    font-size: 1rem;
+    color: #fff;
+    text-align: center;
 }
 
 .inputbox {
@@ -140,13 +145,30 @@ button:hover {
     outline: none;
 }
 
-.categoryList, .matchList {
+
+
+.buttonBet {
+    border-radius: 10px;
+    margin: 3px;
+    background-color: rgba(255, 255, 255, 1);
+    border: none;
+    outline: none;
+}
+
+.categoryList, .matchList, .quoteList{
     display: grid;
 
 }
 
 .contentSection{
     width: 95%;
+    height: 100%;
+    display: inline;
+    vertical-align: middle;
+}
+
+.contentSectionBet{
+    width: 45%;
     height: 100%;
     display: inline;
     vertical-align: middle;
