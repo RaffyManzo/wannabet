@@ -1,9 +1,7 @@
 package is.project.wannabet.controller;
 
-import is.project.wannabet.model.AccountRegistrato;
-import is.project.wannabet.model.AccountRegistratoDetails;
-import is.project.wannabet.model.Quota;
-import is.project.wannabet.model.Scontrino;
+import is.project.wannabet.factory.ScommessaFactory;
+import is.project.wannabet.model.*;
 import is.project.wannabet.security.AuthenticationRequestAccountCheck;
 import is.project.wannabet.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +33,8 @@ public class ScontrinoController {
     @Autowired
     private QuotaService quotaService;
 
+    @Autowired
+    private PrenotazioneService prenotazioneService;
 
     @Autowired
     private AuthenticationRequestAccountCheck accountCheck;
@@ -129,7 +129,6 @@ public class ScontrinoController {
     @PreAuthorize("hasRole('UTENTE')")
     public ResponseEntity<?> confermaScommessa(@ModelAttribute("scontrino") Scontrino scontrino,
                                                     @RequestParam double importo,
-                                                    @RequestParam Long idAccount,
                                                     Model model, Authentication authentication) {
         if (scontrino.getQuote().isEmpty()) {
             return ResponseEntity.badRequest().body("Lo scontrino è vuoto, impossibile piazzare una scommessa.");
@@ -149,7 +148,7 @@ public class ScontrinoController {
         AccountRegistrato account = accountDetails.getAccount();
 
 
-        ResponseEntity<?> response = accountCheck.checkAccount(idAccount, authentication);
+        ResponseEntity<?> response = accountCheck.checkAccount(account.getIdAccount(), authentication);
 
         if(response.getStatusCode() == HttpStatus.OK) {
 
@@ -158,13 +157,47 @@ public class ScontrinoController {
             }
 
             // Creazione della scommessa
-            scommessaService.creaScommessa(scontrino.getQuote(), importo, idAccount);
+            scommessaService.creaScommessa(scontrino.getQuote(), importo, account.getIdAccount());
 
             // **Svuota lo scontrino dopo la conferma e aggiorna la sessione**
             scontrino.svuotaScontrino();
             model.addAttribute("scontrino", scontrino);
 
             return ResponseEntity.ok("Scommessa effettuata con successo!");
+        } else
+            return response;
+    }
+
+    @PostMapping("/prenota")
+    @PreAuthorize("hasRole('UTENTE')")
+    public ResponseEntity<?> prenotacommessa(@ModelAttribute("scontrino") Scontrino scontrino,
+                                             @RequestParam double importo,
+                                             Authentication authentication) {
+
+        if (scontrino.getQuote().isEmpty()) {
+            return ResponseEntity.badRequest().body("Lo scontrino è vuoto, impossibile piazzare una scommessa.");
+        }
+
+        AccountRegistratoDetails accountDetails = (AccountRegistratoDetails) authentication.getPrincipal();
+        AccountRegistrato account = accountDetails.getAccount();
+
+
+        ResponseEntity<?> response = accountCheck.checkAccount(account.getIdAccount(), authentication);
+
+        if(response.getStatusCode() == HttpStatus.OK) {
+            Scommessa scommessa = ScommessaFactory.createScommessaPrenotata(accountRegistratoService.getAccountById(account.getIdAccount()).get(),
+                    scontrino.getQuote(), importo);
+
+
+            scommessaService.saveScommessa(scommessa);
+
+            String codice = prenotazioneService.generaCodiceUnico();
+
+            Prenotazione prenotazione = new Prenotazione(codice, scommessa);
+
+            prenotazione = prenotazioneService.savePrenotazione(prenotazione);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(prenotazione.getCodice());
         } else
             return response;
     }

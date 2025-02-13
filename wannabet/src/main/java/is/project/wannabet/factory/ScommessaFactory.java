@@ -32,6 +32,45 @@ public class ScommessaFactory {
         scommessa.setAccount(account);
         scommessa.setData(new Date());
         scommessa.setImporto(importo);
+        scommessa.setTipo(TipoScommessa.GIOCATA);
+        scommessa.setStato(StatoScommessa.DA_REFERTARE);
+
+        // Creiamo la lista delle QuoteGiocate
+        List<QuotaGiocata> quoteGiocate = quote.stream()
+                .map(q -> new QuotaGiocata(scommessa, q)) // Creiamo le quote giocate congelando il moltiplicatore
+                .collect(Collectors.toList());
+
+        scommessa.setVincita(importo * quoteGiocate.stream()
+                .map(QuotaGiocata::getQuota)
+                .mapToDouble(Quota::getMoltiplicatore)
+                .reduce(1.0, (a, b) -> a * b)
+        );
+
+        scommessa.setQuoteGiocate(quoteGiocate);
+        return scommessa;
+    }
+
+    /**
+     * Prenota una nuova scommessa con l'importo e la lista di quote giocate.
+     *
+     * @param account L'account registrato che prenota la scommessa.
+     * @param quote La lista delle quote prenotate nella scommessa.
+     * @param importo L'importo scommesso.
+     * @return Una nuova istanza di {@link Scommessa}.
+     */
+    public static Scommessa createScommessaPrenotata(AccountRegistrato account, List<Quota> quote, double importo) {
+        if (quote == null || quote.isEmpty()) {
+            throw new IllegalArgumentException("Una scommessa deve contenere almeno una quota.");
+        }
+        if (importo <= 0) {
+            throw new IllegalArgumentException("L'importo della scommessa deve essere positivo.");
+        }
+
+        Scommessa scommessa = new Scommessa();
+        scommessa.setAccount(account);
+        scommessa.setData(new Date());
+        scommessa.setImporto(importo);
+        scommessa.setTipo(TipoScommessa.PRENOTATA);
         scommessa.setStato(StatoScommessa.DA_REFERTARE);
 
         // Creiamo la lista delle QuoteGiocate

@@ -45,19 +45,22 @@ public class ScommessaObserverManager implements QuotaObserver {
      * Aggiorna lo stato di una scommessa in base allo stato delle sue quote giocate.
      */
     private void aggiornaStatoScommessa(Scommessa scommessa) {
-        boolean almenoUnaPerdente = scommessa.getQuoteGiocate().stream()
-                .anyMatch(q -> q.getQuota().getStato() == StatoQuota.PERDENTE);
+        if(scommessa.getTipo() == TipoScommessa.GIOCATA) {
 
-        boolean tutteVincenti = scommessa.getQuoteGiocate().stream()
-                .allMatch(q -> q.getQuota().getStato() == StatoQuota.VINCENTE);
+            boolean almenoUnaPerdente = scommessa.getQuoteGiocate().stream()
+                    .anyMatch(q -> q.getQuota().getStato() == StatoQuota.PERDENTE);
 
-        if (almenoUnaPerdente) {
-            scommessa.setStato(StatoScommessa.PERSA);
-        } else if (tutteVincenti) {
-            scommessa.setStato(StatoScommessa.VINTA);
-            // contoService.aggiornaSaldoDopoVincita(scommessa); // TODO: disabilitato pere testing
+            boolean tutteVincenti = scommessa.getQuoteGiocate().stream()
+                    .allMatch(q -> q.getQuota().getStato() == StatoQuota.VINCENTE);
+
+            if (almenoUnaPerdente) {
+                scommessa.setStato(StatoScommessa.PERSA);
+            } else if (tutteVincenti) {
+                scommessa.setStato(StatoScommessa.VINTA);
+                // contoService.aggiornaSaldoDopoVincita(scommessa); // TODO: disabilitato pere testing
+            }
+
+            scommessaService.saveScommessa(scommessa);
         }
-
-        scommessaService.saveScommessa(scommessa);
     }
 }

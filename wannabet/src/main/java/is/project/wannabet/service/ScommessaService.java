@@ -80,6 +80,10 @@ public class ScommessaService {
         return scommessaRepository.findScommesseByQuotaId(idQuota);
     }
 
+    public boolean existsById(Long idScommessa) {
+        return scommessaRepository.existsById(idScommessa);
+    }
+
 
     /**
      * Crea una scommessa a partire da un elenco di quote e un importo.

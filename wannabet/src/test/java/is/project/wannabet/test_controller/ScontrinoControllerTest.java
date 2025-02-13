@@ -35,7 +35,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Transactional
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@WithMockUser(username = "test@email.com", roles = {"UTENTE"})
 public class ScontrinoControllerTest {
 
     @Autowired
@@ -104,7 +103,7 @@ public class ScontrinoControllerTest {
         assertNotNull(accountDiTest.getIdAccount());
 
         // **Verifica che l'account sia effettivamente presente**
-        AccountRegistrato dbAccount = accountService.getAccountByEmail("test@email.com");
+        AccountRegistrato dbAccount = accountService.getAccountByEmail("abcde@email.com");
         assertNotNull(dbAccount);
 
         // 4️⃣ Crea e salva Evento
@@ -137,6 +136,8 @@ public class ScontrinoControllerTest {
      * Testa la creazione automatica dello scontrino in sessione.
      */
     @Test
+    @WithUserDetails(value = "abcde@email.com", userDetailsServiceBeanName = "accountDetailsService")
+
     public void testGetScontrino() throws Exception {
         mockMvc.perform(get("/api/scontrino").session(session))
                 .andExpect(status().isOk())
@@ -146,6 +147,8 @@ public class ScontrinoControllerTest {
     /**
      * Testa l'aggiunta di una quota valida allo scontrino.
      */
+    @WithUserDetails(value = "abcde@email.com", userDetailsServiceBeanName = "accountDetailsService")
+
     @Test
     public void testAggiungiQuota() throws Exception {
         mockMvc.perform(post("/api/scontrino/aggiungi/" + quotaDiTest.getIdQuota()).session(session))
@@ -163,7 +166,6 @@ public class ScontrinoControllerTest {
 
         mockMvc.perform(post("/api/scontrino/conferma")
                         .param("importo", "100")
-                        .param("idAccount", accountDiTest.getIdAccount().toString())
                         .session(session))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Scommessa effettuata con successo!"));
@@ -173,6 +175,8 @@ public class ScontrinoControllerTest {
      * Testa la conferma di una scommessa con quote chiuse.
      */
     @Test
+
+    @WithUserDetails(value = "abcde@email.com", userDetailsServiceBeanName = "accountDetailsService")
     public void testConfermaScommessaConQuoteChiuse() throws Exception {
         quotaDiTest.setChiusa(true);
         quotaService.saveQuota(quotaDiTest);
@@ -181,9 +185,24 @@ public class ScontrinoControllerTest {
 
         mockMvc.perform(post("/api/scontrino/conferma")
                         .param("importo", "100")
-                        .param("idAccount", accountDiTest.getIdAccount().toString())
                         .session(session))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Lo scontrino contiene quote chiuse."));
+    }
+
+    /**
+     * Testa la prenotazione di una scommessa.
+     */
+    @Test
+
+    @WithUserDetails(value = "abcde@email.com", userDetailsServiceBeanName = "accountDetailsService")
+    public void testPrenotaScommessa() throws Exception {
+        mockMvc.perform(post("/api/scontrino/aggiungi/" + quotaDiTest.getIdQuota()).session(session));
+
+        mockMvc.perform(post("/api/scontrino/prenota")
+                        .param("importo", "100")
+                        .session(session))
+                .andExpect(status().isCreated())
+                .andExpect(content().string(matchesPattern("^[A-Z0-9]{5}$"))); // Il codice deve essere di 5 caratteri alfanumerici
     }
 }

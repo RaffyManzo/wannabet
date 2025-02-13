@@ -48,9 +48,6 @@ public class ScommessaControllerTest {
     private ScommessaService scommessaService;
 
     @Autowired
-    private QuotaGiocataService quotaGiocataService;
-
-    @Autowired
     private QuotaService quotaService;
 
     @Autowired
