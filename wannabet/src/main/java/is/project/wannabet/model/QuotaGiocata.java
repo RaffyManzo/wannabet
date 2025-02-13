@@ -1,10 +1,12 @@
 package is.project.wannabet.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "quota_giocata")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class QuotaGiocata {
 
     @Id

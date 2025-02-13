@@ -12,6 +12,8 @@ import is.project.wannabet.repository.EventoRepository;
 import is.project.wannabet.repository.QuotaRepository;
 import is.project.wannabet.service.EventoService;
 import is.project.wannabet.service.QuotaService;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -58,11 +60,11 @@ public class QuotaControllerTest {
     /**
      * Configura un evento di test prima di ogni esecuzione.
      */
-    @BeforeEach
+    @BeforeAll
     public void setup() {
         eventoDiTest = eventoService.createEvento("Sinner vs Medvedev", new Date(), "", "Tennis");
 
-        eventoService.flush(); // 🔴 Assicura che l'evento sia scritto immediatamente nel DB
+        eventoService.flush();
         eventoDiTest = eventoService.getEventoById(eventoDiTest.getIdEvento()).get();
         assertNotNull(eventoDiTest.getIdEvento()); // Assicura che l'evento abbia un ID valido
 
@@ -78,10 +80,6 @@ public class QuotaControllerTest {
      */
     @Test
     public void testCreateQuota() throws Exception {
-        while (eventoDiTest == null || eventoDiTest.getIdEvento() == null) {
-            Thread.sleep(100); // Aspetta finché l'evento non viene creato
-        }
-
         Quota nuovaQuota = new Quota();
         nuovaQuota.setMoltiplicatore(2.5);
         nuovaQuota.setEsito("1");
@@ -89,6 +87,10 @@ public class QuotaControllerTest {
         nuovaQuota.setCategoria("Risultato Finale");
         nuovaQuota.setEvento(eventoDiTest);
         nuovaQuota.setStato(StatoQuota.DA_REFERTARE);
+
+        System.out.println("JSON inviato: " + objectMapper.writeValueAsString(nuovaQuota));
+
+
 
         mockMvc.perform(post("/api/quota/create")
                         .contentType(MediaType.APPLICATION_JSON)

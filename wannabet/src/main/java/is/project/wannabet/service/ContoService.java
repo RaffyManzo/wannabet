@@ -67,11 +67,13 @@ public class ContoService {
      * @return true se il saldo è sufficiente, false altrimenti.
      */
     public boolean verificaSaldo(Long accountId, double importo) {
-        Double saldo = contoRepository.findById(accountId).get().getSaldo();
-        if (saldo == null) {
-            throw new IllegalArgumentException("Conto non trovato");
+        Conto conto = contoRepository.findContoByAccountId(accountId);
+
+        if (conto == null) {
+            throw new IllegalArgumentException("Errore: Conto con ID " + accountId + " non trovato.");
         }
-        return saldo >= importo;
+
+        return conto.getSaldo() >= importo;
     }
 
 
@@ -85,8 +87,11 @@ public class ContoService {
      */
     @Transactional
     public boolean preleva(Long accountId, double importo) {
-        Conto conto = getContoById(accountId)
-                .orElseThrow(() -> new IllegalArgumentException("Conto non trovato"));
+        Conto conto = contoRepository.findContoByAccountId(accountId);
+
+        if (conto == null) {
+            throw new IllegalArgumentException("Errore: Conto con ID " + accountId + " non trovato.");
+        }
 
         if (conto.getSaldo() < importo) {
             return false;
@@ -106,8 +111,11 @@ public class ContoService {
      */
     @Transactional
     public void deposita(Long accountId, double importo) {
-        Conto conto = getContoById(accountId)
-                .orElseThrow(() -> new IllegalArgumentException("Conto non trovato"));
+        Conto conto = contoRepository.findContoByAccountId(accountId);
+
+        if (conto == null) {
+            throw new IllegalArgumentException("Errore: Conto con ID " + accountId + " non trovato.");
+        }
 
         conto.deposita(importo);
         contoRepository.save(conto);
@@ -128,15 +136,14 @@ public class ContoService {
     @Transactional
     public void aggiornaSaldoDopoVincita(Scommessa scommessa) {
         if (scommessa.getStato() == is.project.wannabet.model.StatoScommessa.VINTA) {
-            Optional<Conto> contoOpt = contoRepository.findById(scommessa.getAccount().getIdAccount());
+            Conto conto = contoRepository.findContoByAccountId(scommessa.getAccount().getIdAccount());
 
-            if (contoOpt.isPresent()) {
-                Conto conto = contoOpt.get();
-                conto.aggiungiSaldo(scommessa.getVincita()); // Usa il campo `vincita` già presente
-                contoRepository.save(conto);
-            } else {
-                throw new IllegalArgumentException("Conto non trovato per l'account");
+            if (conto == null) {
+                throw new IllegalArgumentException("Errore: Conto dell'account con ID " + scommessa.getAccount().getIdAccount() + " non trovato.");
             }
+
+            conto.aggiungiSaldo(scommessa.getVincita()); // Usa il campo `vincita` già presente
+            contoRepository.save(conto);
         }
     }
 }

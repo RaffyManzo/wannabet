@@ -17,6 +17,34 @@ public class EventoController {
     @Autowired
     private EventoService eventoService;
 
+    /**
+     * API per trovare eventi per categoria.
+     */
+    @GetMapping("/categoria/{categoria}")
+    public ResponseEntity<List<Evento>> getEventoByCategoria(@PathVariable String categoria) {
+        List<Evento> eventi = eventoService.findEventoByCategoria(categoria);
+        return ResponseEntity.ok(eventi);
+    }
+
+    /**
+     * API per trovare eventi per categoria ordinati per data.
+     */
+    @GetMapping("/categoria/{categoria}/order-by-data")
+    public ResponseEntity<List<Evento>> getEventoByCategoriaOrderByDataAsc(@PathVariable String categoria) {
+        List<Evento> eventi = eventoService.findEventoByCategoriaOrderByDataAsc(categoria);
+        return ResponseEntity.ok(eventi);
+    }
+
+    /**
+     * API per trovare eventi per categoria e descrizione.
+     */
+    @GetMapping("/categoria/{categoria}/descrizione/{descrizione}")
+    public ResponseEntity<List<Evento>> getEventoByCategoriaAndDescrizione(@PathVariable String categoria, @PathVariable String descrizione) {
+        List<Evento> eventi = eventoService.findEventoByCategoriaAndDescrizione(categoria, descrizione);
+        return ResponseEntity.ok(eventi);
+    }
+
+
     @GetMapping
     public List<Evento> getAllEventi() {
         return eventoService.getAllEventi();

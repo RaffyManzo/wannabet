@@ -1,5 +1,6 @@
 package is.project.wannabet.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,7 +15,7 @@ import java.util.List;
 @Entity
 @Table(name = "account_registrato")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AccountRegistrato implements UserDetails {
+public class AccountRegistrato  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,6 +56,7 @@ public class AccountRegistrato implements UserDetails {
 
     @Column(name = "password", nullable = false)
     @JsonProperty("password")
+    @JsonIgnore
     private String password;
 
     @Column(name = "data_nascita")
@@ -62,32 +64,13 @@ public class AccountRegistrato implements UserDetails {
     @JsonProperty("data_nascita")
     private Date dataNascita;
 
-    // 🔹 Implementazione di `UserDetails`
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(() -> "ROLE_" + tipo.name()); // 🔹 Converte `TipoAccount` in Spring Roles (es. ROLE_ADMIN)
-    }
-
-    @Override
-    public String getUsername() { return email; } // 🔹 L'email è il campo per il login
-
-    @Override
-    public String getPassword() { return password; } // 🔹 Necessario per Spring Security
-
-    @Override
-    public boolean isAccountNonExpired() { return true; } // 🔹 L'account non scade mai
-
-    @Override
-    public boolean isAccountNonLocked() { return true; } // 🔹 L'account non viene bloccato
-
-    @Override
-    public boolean isCredentialsNonExpired() { return true; } // 🔹 Le credenziali non scadono
-
-    @Override
-    public boolean isEnabled() { return true; } // 🔹 L'account è attivo
 
     // Getters e Setters
+
+
+    public String getPassword() {
+        return password;
+    }
 
     public Long getIdAccount() { return idAccount; }
     public void setIdAccount(Long idAccount) { this.idAccount = idAccount; }

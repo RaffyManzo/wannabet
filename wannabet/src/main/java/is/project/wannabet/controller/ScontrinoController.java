@@ -1,6 +1,7 @@
 package is.project.wannabet.controller;
 
 import is.project.wannabet.model.AccountRegistrato;
+import is.project.wannabet.model.AccountRegistratoDetails;
 import is.project.wannabet.model.Quota;
 import is.project.wannabet.model.Scontrino;
 import is.project.wannabet.service.*;
@@ -10,11 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -70,15 +73,12 @@ public class ScontrinoController {
 
         Quota quota = quotaOptional.get();
 
-        if (scontrino.getQuote().contains(quota)) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(scontrino);
-        }
-
         scontrino.aggiungiQuota(quota);
         model.addAttribute("scontrino", scontrino);
 
         return ResponseEntity.ok(scontrino);
     }
+
 
 
     /**
@@ -140,14 +140,11 @@ public class ScontrinoController {
                     .body("Lo scontrino contiene quote chiuse.");
         }
 
-        /// 🔹 Recupera l'account dalla sessione di Spring Security
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Errore: Utente non autenticato!");
-        }
+        AccountRegistratoDetails accountDetails = (AccountRegistratoDetails) authentication.getPrincipal();
+        AccountRegistrato account = accountDetails.getAccount();
 
-        // 🔹 Converti l'oggetto autenticato nel tuo `AccountRegistrato`
-        AccountRegistrato account = (AccountRegistrato) authentication.getPrincipal();
+
         if (account.getConto() == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Errore: L'account non ha un conto associato.");
         }

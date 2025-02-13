@@ -61,6 +61,30 @@ public class EventoService {
         throw new EntityNotFoundException("Evento non trovato");
     }
 
+    /**
+     * Trova eventi per categoria.
+     */
+    @Transactional(readOnly = true)
+    public List<Evento> findEventoByCategoria(String categoria) {
+        return eventoRepository.findEventoByCategoria(categoria);
+    }
+
+    /**
+     * Trova eventi per categoria ordinati per data (dal più vecchio al più recente).
+     */
+    @Transactional(readOnly = true)
+    public List<Evento> findEventoByCategoriaOrderByDataAsc(String categoria) {
+        return eventoRepository.findEventoByCategoriaOrderByDataAsc(categoria);
+    }
+
+    /**
+     * Trova eventi per categoria e descrizione.
+     */
+    @Transactional(readOnly = true)
+    public List<Evento> findEventoByCategoriaAndDescrizione(String categoria, String descrizione) {
+        return eventoRepository.findEventoByCategoriaAndDescrizione(categoria, descrizione);
+    }
+
     @Transactional
     public void flush() {
         eventoRepository.flush(); // Forza Hibernate a salvare subito
