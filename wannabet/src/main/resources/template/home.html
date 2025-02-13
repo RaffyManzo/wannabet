@@ -5,28 +5,15 @@
     <title>WannaBet Home</title>
     <link rel="stylesheet" href="../static/css/HomeStyle.css">
     <script src="../static/script/signup-login.js" defer></script>
+    <script src="../static/script/home.js" defer></script>
 </head>
 <body>
 
 <header>
-<nav>
-    <ul class="sidebar">
-        <li onclick=hideSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 96 960 960" width="26"><path d="m249 849-42-42 231-231-231-231 42-42 231 231 231-231 42 42-231 231 231 231-42 42-231-231-231 231Z"/></svg></a></li>
-        <li><a href="#">Sports</a></li>
-        <li><a href="#">Esports</a></li>
-        <li><a href="#">Login</a></li>
-        <li><a href="#">Register</a></li>
-    </ul>
-    <ul>
-        <li><a href="#">Logo</a></li>
-        <li><a href="#">Sports</a></li>
-        <li><a href="#">Esports</a></li>
-        <li><a href="login.html">Login</a></li>
-        <li><a href="singup.html" class="nav__register">Register</a></li>
-        <li class="menu-button" onclick=showSidebar()><a href="#"><svg xmlns="http://www.w3.org/2000/svg" height="26" viewBox="0 96 960 960" width="26"><path d="M120 816v-60h720v60H120Zm0-210v-60h720v60H120Zm0-210v-60h720v60H120Z"/></svg></a></li>
-    </ul>
-</nav>
 
+<nav id ="nav">
+
+</nav>
 <script>
     function showSidebar(){
         const sidebar = document.querySelector('.sidebar')
@@ -38,6 +25,8 @@
     }
 </script>
 </header>
+
+
 
 <footer class = "footer">
     <div class = "footer__container">
