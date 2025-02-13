@@ -2,12 +2,11 @@ package is.project.wannabet.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import is.project.wannabet.model.AccountRegistrato;
-import is.project.wannabet.model.Conto;
-import is.project.wannabet.model.Scommessa;
+import is.project.wannabet.model.*;
 import is.project.wannabet.security.AuthenticationRequestAccountCheck;
 import is.project.wannabet.service.AccountRegistratoService;
 import is.project.wannabet.service.ContoService;
+import is.project.wannabet.service.PrenotazioneService;
 import is.project.wannabet.service.ScommessaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
@@ -31,6 +30,7 @@ public class ScommessaController {
 
     @Autowired
     private ScommessaService scommessaService;
+
 
     @Autowired
     private AuthenticationRequestAccountCheck accountCheck;
@@ -104,8 +104,6 @@ public class ScommessaController {
 
         if(response.getStatusCode() == HttpStatus.OK) {
 
-
-
                 if (!contoService.verificaSaldo(idAccount, scommessa.getImporto())) {
                     return ResponseEntity.status(HttpStatus.resolve(400)).body(Map.of("error", "Saldo insufficiente"));
                 }
@@ -118,6 +116,7 @@ public class ScommessaController {
             }
         else return response;
     }
+
 
 
 }

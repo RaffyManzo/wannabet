@@ -2,6 +2,7 @@ package is.project.wannabet.model;
 
 import com.fasterxml.jackson.annotation.*;
 import is.project.wannabet.util.StatoScommessaConverter;
+import is.project.wannabet.util.TipoScommessaConverter;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -26,6 +27,17 @@ public class Scommessa {
     @JoinColumn(name = "id_account", nullable = false)
     private AccountRegistrato account;
 
+    @Column(name = "tipo", nullable = false)
+    @Convert(converter = TipoScommessaConverter.class)
+    @Enumerated(EnumType.STRING)
+    @JsonProperty("tipo")
+    private TipoScommessa tipo;
+
+
+    @OneToOne(mappedBy = "scommessa", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    @JsonIgnore
+    private Prenotazione prenotazione;
 
     @Column(name = "importo", nullable = false)
     @JsonProperty("importo")
@@ -106,5 +118,13 @@ public class Scommessa {
 
     public void setStato(StatoScommessa stato) {
         this.stato = stato;
+    }
+
+    public TipoScommessa getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoScommessa tipo) {
+        this.tipo = tipo;
     }
 }

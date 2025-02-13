@@ -7,7 +7,7 @@ import java.util.List;
 
 public class AccountRegistratoDetails implements UserDetails {
 
-    private final AccountRegistrato account; // Il tuo oggetto personalizzato
+    private final AccountRegistrato account;
 
     public AccountRegistratoDetails(AccountRegistrato account) {
         this.account = account;

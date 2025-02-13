@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import is.project.wannabet.util.TipoAccountConverter;
 import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +28,7 @@ public class AccountRegistrato  {
     @JsonProperty("codice_fiscale")
     private String codiceFiscale;
 
+    @Convert(converter = TipoAccountConverter.class)
     @Column(name = "tipo", nullable = false)
     @Enumerated(EnumType.STRING)
     @JsonProperty("tipo")
