@@ -5,13 +5,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import is.project.wannabet.model.AccountRegistrato;
 import is.project.wannabet.model.Conto;
 import is.project.wannabet.model.Scommessa;
+import is.project.wannabet.security.AuthenticationRequestAccountCheck;
 import is.project.wannabet.service.AccountRegistratoService;
 import is.project.wannabet.service.ContoService;
 import is.project.wannabet.service.ScommessaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +31,9 @@ public class ScommessaController {
 
     @Autowired
     private ScommessaService scommessaService;
+
+    @Autowired
+    private AuthenticationRequestAccountCheck accountCheck;
 
     @Autowired
     private AccountRegistratoService accountRegistratoService;
@@ -58,15 +64,26 @@ public class ScommessaController {
      */
     @GetMapping("/account/{idAccount}/get/{idScommessa}")
 
-    @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('UTENTE')")
-    public ResponseEntity<Scommessa> getScommessaById(@PathVariable Long idAccount, @PathVariable Long idScommessa) {
-        Optional<Scommessa> scommessaOpt = scommessaService.getScommessaById(idScommessa);
+    @PreAuthorize("hasAnyRole('UTENTE', 'ADMIN')")
+    public ResponseEntity<?> getScommessaById(@PathVariable Long idAccount, @PathVariable Long idScommessa,
+                                                      Authentication authentication) {
 
-        if (scommessaOpt.isPresent() && scommessaOpt.get().getAccount().getIdAccount().equals(idAccount)) {
-            return ResponseEntity.ok(scommessaOpt.get());
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        ResponseEntity<?> response = accountCheck.checkAccount(idAccount, authentication);
+
+        if(response.getStatusCode() == HttpStatus.OK ||
+                authentication.getAuthorities().stream()
+                        .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))) {
+
+
+            Optional<Scommessa> scommessaOpt = scommessaService.getScommessaById(idScommessa);
+
+            if (scommessaOpt.isPresent() && scommessaOpt.get().getAccount().getIdAccount().equals(idAccount)) {
+                return ResponseEntity.ok(scommessaOpt.get());
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
         }
+        else return response;
     }
 
     /**
@@ -78,19 +95,28 @@ public class ScommessaController {
      */
     @PostMapping("/{idAccount}/crea")
 
-    @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('UTENTE')")
+    @PreAuthorize("hasRole('UTENTE')")
     public ResponseEntity<?> createScommessa(@PathVariable Long idAccount,
-                                                     @RequestBody Scommessa scommessa) {
+                                             @RequestBody Scommessa scommessa,
+                                             Authentication authentication) {
 
-        if(!contoService.verificaSaldo(idAccount, scommessa.getImporto())) {
-            return ResponseEntity.status(HttpStatus.resolve(400)).body(Map.of("error", "Saldo insufficiente"));
-        }
+        ResponseEntity<?> response = accountCheck.checkAccount(idAccount, authentication);
 
-        // 3️⃣ Scala l'importo dal saldo
-        contoService.preleva(idAccount, scommessa.getImporto());
+        if(response.getStatusCode() == HttpStatus.OK) {
 
-        Scommessa nuovaScommessa = scommessaService.saveScommessa(scommessa);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuovaScommessa);
+
+
+                if (!contoService.verificaSaldo(idAccount, scommessa.getImporto())) {
+                    return ResponseEntity.status(HttpStatus.resolve(400)).body(Map.of("error", "Saldo insufficiente"));
+                }
+
+                // 3️⃣ Scala l'importo dal saldo
+                contoService.preleva(idAccount, scommessa.getImporto());
+
+                Scommessa nuovaScommessa = scommessaService.saveScommessa(scommessa);
+                return ResponseEntity.status(HttpStatus.CREATED).body(nuovaScommessa);
+            }
+        else return response;
     }
 
 

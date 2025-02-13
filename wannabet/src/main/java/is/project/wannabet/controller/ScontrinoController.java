@@ -4,6 +4,7 @@ import is.project.wannabet.model.AccountRegistrato;
 import is.project.wannabet.model.AccountRegistratoDetails;
 import is.project.wannabet.model.Quota;
 import is.project.wannabet.model.Scontrino;
+import is.project.wannabet.security.AuthenticationRequestAccountCheck;
 import is.project.wannabet.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,10 @@ public class ScontrinoController {
 
     @Autowired
     private QuotaService quotaService;
+
+
+    @Autowired
+    private AuthenticationRequestAccountCheck accountCheck;
 
     @Autowired
     private ContoService contoService;
@@ -121,11 +126,11 @@ public class ScontrinoController {
      * Conferma la scommessa e la registra nel sistema.
      */
     @PostMapping("/conferma")
-    @PreAuthorize("#idAccount == authentication.principal.idAccount and hasRole('UTENTE')")
-    public ResponseEntity<String> confermaScommessa(@ModelAttribute("scontrino") Scontrino scontrino,
+    @PreAuthorize("hasRole('UTENTE')")
+    public ResponseEntity<?> confermaScommessa(@ModelAttribute("scontrino") Scontrino scontrino,
                                                     @RequestParam double importo,
                                                     @RequestParam Long idAccount,
-                                                    Model model) {
+                                                    Model model, Authentication authentication) {
         if (scontrino.getQuote().isEmpty()) {
             return ResponseEntity.badRequest().body("Lo scontrino è vuoto, impossibile piazzare una scommessa.");
         }
@@ -140,26 +145,27 @@ public class ScontrinoController {
                     .body("Lo scontrino contiene quote chiuse.");
         }
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         AccountRegistratoDetails accountDetails = (AccountRegistratoDetails) authentication.getPrincipal();
         AccountRegistrato account = accountDetails.getAccount();
 
 
-        if (account.getConto() == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Errore: L'account non ha un conto associato.");
-        }
+        ResponseEntity<?> response = accountCheck.checkAccount(idAccount, authentication);
 
-        if (!contoService.verificaSaldo(account.getConto().getIdConto(), importo)) {
-            return ResponseEntity.badRequest().body("Saldo insufficiente per piazzare la scommessa.");
-        }
+        if(response.getStatusCode() == HttpStatus.OK) {
 
-        // Creazione della scommessa
-        scommessaService.creaScommessa(scontrino.getQuote(), importo, idAccount);
+            if (!contoService.verificaSaldo(account.getConto().getIdConto(), importo)) {
+                return ResponseEntity.badRequest().body("Saldo insufficiente per piazzare la scommessa.");
+            }
 
-        // **Svuota lo scontrino dopo la conferma e aggiorna la sessione**
-        scontrino.svuotaScontrino();
-        model.addAttribute("scontrino", scontrino);
+            // Creazione della scommessa
+            scommessaService.creaScommessa(scontrino.getQuote(), importo, idAccount);
 
-        return ResponseEntity.ok("Scommessa effettuata con successo!");
+            // **Svuota lo scontrino dopo la conferma e aggiorna la sessione**
+            scontrino.svuotaScontrino();
+            model.addAttribute("scontrino", scontrino);
+
+            return ResponseEntity.ok("Scommessa effettuata con successo!");
+        } else
+            return response;
     }
 }

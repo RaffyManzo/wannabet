@@ -1,4 +1,4 @@
-package is.project.wannabet.auth;
+package is.project.wannabet.test_auth;
 
 import is.project.wannabet.model.AccountRegistrato;
 import is.project.wannabet.model.TipoAccount;
