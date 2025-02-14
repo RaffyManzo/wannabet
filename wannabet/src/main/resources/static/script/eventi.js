@@ -48,10 +48,11 @@ function setEventi(){
         console.log(eventi[i].name);
         innerButton.innerHTML = eventi[i].descrizione+": "+ eventi[i].nome;
         innerButton.style.gridColumn = (i%2)+1;
-        innerButton.setAttribute("class", "buttonEvent");
+        innerButton.style.height = "100px";
+        innerButton.setAttribute("class", "buttonCategory");
         listEventi.appendChild(innerButton);
     }
-    eventi.sort((a, b) =>{
+    eventi.sort((a, b) => {
         let x = new Date(a.data);
         let y = new Date(b.data);
         if(x.getTime() < y.getTime()){
