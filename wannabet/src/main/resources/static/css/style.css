@@ -155,7 +155,7 @@ button:hover {
     outline: none;
 }
 
-.categoryList, .matchList, .quoteList{
+.categoryList, .matchList, .quoteList, .actionButtonList{
     display: grid;
 }
 
@@ -204,20 +204,14 @@ button:hover {
 }
 
 
+.bookButton {
+    width: auto;
+    grid-column: 1;
+    margin: 10px;
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+.betButton {
+    width: auto;
+    grid-column: 2;
+    margin: 10px;
+}

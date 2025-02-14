@@ -2,12 +2,6 @@ let eventi = [];
 let listaEventi = document.getElementById("eventList");
 let quote = [];
 
-let statoScommessa = "VINTA";
-document.getElementById("statoScommessa").innerText = document.getElementById("statoScommessa").innerText+ " " +statoScommessa;
-let dataScommessa = new Date().getDate()+ "/"+ (new Date().getMonth()+1)+ "/"+ new Date().getFullYear();
-document.getElementById("dataScommessa").innerText = document.getElementById("dataScommessa").innerText+ " " +dataScommessa;
-
-
 loadEventAndBets();
 
 for(let i = 0; i < eventi.length; i++){
