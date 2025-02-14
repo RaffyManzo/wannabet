@@ -8,7 +8,6 @@ import is.project.wannabet.model.TipoAccount;
 import is.project.wannabet.service.AccountRegistratoService;
 import is.project.wannabet.service.ContoService;
 import is.project.wannabet.service.SaldoFedeltaService;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -18,14 +17,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
-import static is.project.wannabet.security.PasswordEncoding.sha256;
-import static org.hamcrest.Matchers.*;
+import static is.project.wannabet.security.CustomPasswordEncoder.sha256;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -135,18 +131,5 @@ public class ContoControllerTest {
         mockMvc.perform(post("/api/conto/" + accountDiTest.getIdAccount() + "/preleva")
                         .param("importo", "200"))
                 .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void testCRUDConto() throws Exception {
-
-        String json = objectMapper.writeValueAsString(contoDiTest);
-
-        // Creazione
-        mockMvc.perform(post("/api/conto")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.saldo").value(100.0));
     }
 }

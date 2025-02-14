@@ -1,12 +1,15 @@
 package is.project.wannabet.security;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import java.util.Base64;
 
-public class PasswordEncoding {
+@Component
+public class CustomPasswordEncoder implements PasswordEncoder {
 
     /**
      * Genera un hash SHA-256 della password fornita.
@@ -33,5 +36,15 @@ public class PasswordEncoding {
      */
     public static boolean verifyPassword(String password, String hashedPassword) {
         return sha256(password).equals(hashedPassword);
+    }
+
+    @Override
+    public String encode(CharSequence rawPassword) {
+        return sha256(rawPassword.toString());
+    }
+
+    @Override
+    public boolean matches(CharSequence rawPassword, String encodedPassword) {
+        return encode(rawPassword).equals(encodedPassword);
     }
 }

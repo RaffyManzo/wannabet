@@ -44,10 +44,6 @@ public class AccountRegistratoController {
             return Optional.empty();
     }
 
-    @PostMapping
-    public AccountRegistrato createAccount(@RequestBody AccountRegistrato account) {
-        return service.saveAccount(account);
-    }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('UTENTE', 'ADMIN')")

@@ -2,26 +2,19 @@ package is.project.wannabet.test_controller;
 
 import is.project.wannabet.model.*;
 import is.project.wannabet.service.*;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.ui.Model;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
-import static is.project.wannabet.security.PasswordEncoding.sha256;
+import static is.project.wannabet.security.CustomPasswordEncoder.sha256;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -103,7 +96,7 @@ public class ScontrinoControllerTest {
         assertNotNull(accountDiTest.getIdAccount());
 
         // **Verifica che l'account sia effettivamente presente**
-        AccountRegistrato dbAccount = accountService.getAccountByEmail("abcde@email.com");
+        AccountRegistrato dbAccount = accountService.getAccountByEmail("abcde@email.com").get();
         assertNotNull(dbAccount);
 
         // 4️⃣ Crea e salva Evento
