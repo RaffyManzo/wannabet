@@ -3,14 +3,17 @@ let listCategorie = document.getElementById("categorie");
 let eventi = [];
 let listEventi = document.getElementById("partiteRecenti");
 
+getEventi();
 setCategorie();
+setEventi();
 
-for ( let i  = 0; i < 6; i++){
-    let d = new Date();
-    d.setFullYear(2020);
-    d.setMonth(11%i);
-    d.setDate(i+1);
-    eventi[i] = {
+function getEventi(){
+    for ( let i  = 0; i < 6; i++){
+        let d = new Date();
+        d.setFullYear(2020);
+        d.setMonth(11%i);
+        d.setDate(i+1);
+        eventi[i] = {
             "idEvento": i,
             "nome": "nome"+i,
             "data": d,
@@ -18,17 +21,7 @@ for ( let i  = 0; i < 6; i++){
             "chiuso": false,
             "categoria": categorie[0]
         };
-}
-
-setEventi();
-
-function ricercaEventi(){
-    fetch("api/evento")
-        .then(response => response)
-        .then(data => {
-            console.log(data);
-        })
-        .catch(error => console.error("Errore", error));
+    }
 }
 
 function setCategorie(){

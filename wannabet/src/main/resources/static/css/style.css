@@ -1,5 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap");
-bas
 
 * {
     margin: 0;
@@ -197,12 +196,10 @@ button:hover {
 .quoteButton {
     width: auto;
     height: auto;
-
     font-size: 1.2rem;
     border-radius: 5px;
-    background-color: orange;
+    background-color: red;
 }
-
 
 .bookButton {
     width: auto;

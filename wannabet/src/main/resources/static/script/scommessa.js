@@ -6,7 +6,6 @@ loadEventAndBets();
 
 for(let i = 0; i < eventi.length; i++){
     let innerButton = document.createElement("button");
-    innerButton.innerText = eventi[i].nome;
     innerButton.innerHTML = "" +
         "<div class='eventInnerText1'>"+eventi[i].data+ " - "+ eventi[i].categoria+" - "+ eventi[i].descrizione+"</div>"+
         "<div class='eventInnerText2'>"+ eventi[i].nome+ "</div>"+

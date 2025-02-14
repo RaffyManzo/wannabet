@@ -87,8 +87,6 @@ let listQuote = document.getElementById("quoteList");
 setCategorie();
 setQuote();
 
-
-
 function findCategories(){
     let j = 0;
     for(let i = 0; i < quote.length; i++){
