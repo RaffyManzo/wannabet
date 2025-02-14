@@ -1,33 +1,23 @@
 package is.project.wannabet.test_service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import is.project.wannabet.factory.ScommessaFactory;
 import is.project.wannabet.model.*;
-import is.project.wannabet.repository.PrenotazioneRepository;
 import is.project.wannabet.service.*;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static is.project.wannabet.security.PasswordEncoding.sha256;
+import static is.project.wannabet.security.CustomPasswordEncoder.sha256;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc

@@ -1,6 +1,7 @@
 package is.project.wannabet.service;
 
 import is.project.wannabet.model.AccountRegistrato;
+import is.project.wannabet.model.Conto;
 import is.project.wannabet.repository.AccountRegistratoRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +38,8 @@ public class AccountRegistratoService {
         return accountRegistratoRepository.findByCodiceFiscale(codiceFicale).get();
     }
 
-    public AccountRegistrato getAccountByEmail(String email) {
-        return accountRegistratoRepository.findByEmail(email).get();
+    public Optional<AccountRegistrato> getAccountByEmail(String email) {
+        return accountRegistratoRepository.findByEmail(email);
     }
 
     @Transactional

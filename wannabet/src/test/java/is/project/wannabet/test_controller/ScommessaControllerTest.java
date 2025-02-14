@@ -3,11 +3,7 @@ package is.project.wannabet.test_controller;
 import is.project.wannabet.factory.ScommessaFactory;
 import is.project.wannabet.model.*;
 import is.project.wannabet.service.*;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.*;
-import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,9 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
-import static is.project.wannabet.security.PasswordEncoding.sha256;
+import static is.project.wannabet.security.CustomPasswordEncoder.sha256;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;

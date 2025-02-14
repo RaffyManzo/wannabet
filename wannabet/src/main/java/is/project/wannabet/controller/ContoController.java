@@ -37,11 +37,6 @@ public class ContoController {
         return contoService.getContoById(id);
     }
 
-    @PostMapping
-    @PreAuthorize("hasRole('UTENTE')")
-    public Conto createConto(@RequestBody Conto conto) {
-        return contoService.saveConto(conto);
-    }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('UTENTE')")
