@@ -25,22 +25,23 @@ DROP TABLE IF EXISTS `account_registrato`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `account_registrato` (
-  `id_account` int NOT NULL AUTO_INCREMENT,
+  `id_account` bigint NOT NULL AUTO_INCREMENT,
   `codice_fiscale` varchar(45) NOT NULL,
-  `tipo` varchar(255) NOT NULL,
-  `id_conto` int NOT NULL,
-  `id_fedelta` int NOT NULL,
-  `nome` varchar(45) DEFAULT NULL,
   `cognome` varchar(45) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
   `data_nascita` datetime(6) DEFAULT NULL,
-  PRIMARY KEY (`id_account`,`codice_fiscale`),
-  UNIQUE KEY `unq_account_registrato_idaccount` (`id_account`),
-  KEY `idConto` (`id_conto`),
-  KEY `idFedelta` (`id_fedelta`),
-  CONSTRAINT `fk_account_registrato` FOREIGN KEY (`id_fedelta`) REFERENCES `saldo_fedelta` (`id_saldo_fedelta`),
-  CONSTRAINT `fk_account_registrato_conto` FOREIGN KEY (`id_conto`) REFERENCES `conto` (`id_conto`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  `email` varchar(100) DEFAULT NULL,
+  `nome` varchar(45) DEFAULT NULL,
+  `tipo` varchar(255) NOT NULL,
+  `id_conto` bigint NOT NULL,
+  `id_fedelta` bigint NOT NULL,
+  `password` varchar(255) NOT NULL,
+  PRIMARY KEY (`id_account`),
+  UNIQUE KEY `UK3vr2qyy8qq00hdloxljeaeo56` (`codice_fiscale`),
+  KEY `FKsmqrxktvkbjsqk5jobvw45cpm` (`id_conto`),
+  KEY `FKjsago76xr8f7k34c91dgpkqjy` (`id_fedelta`),
+  CONSTRAINT `FKjsago76xr8f7k34c91dgpkqjy` FOREIGN KEY (`id_fedelta`) REFERENCES `saldo_fedelta` (`id_saldo_fedelta`),
+  CONSTRAINT `FKsmqrxktvkbjsqk5jobvw45cpm` FOREIGN KEY (`id_conto`) REFERENCES `conto` (`id_conto`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -49,6 +50,7 @@ CREATE TABLE `account_registrato` (
 
 LOCK TABLES `account_registrato` WRITE;
 /*!40000 ALTER TABLE `account_registrato` DISABLE KEYS */;
+INSERT INTO `account_registrato` VALUES (1,'ABCDEF12G34H567I','Rossi','2025-02-14 01:04:22.743000','alibaba@email.com','Mario','UTENTE',1,1,'75K3eLr+dx6JJFuJ7LwIpEpOFmwGZZkRiB84PURz6U8='),(3,'JAKOORGIU868937','Baudo','2025-02-14 01:04:24.397000','test@email.com','Pippo','UTENTE',3,3,'NrvlDtloQdEEQ7y2cNZVTwo0t2G+Z+ycSorSwMRMpCw='),(4,'JAKOORGIU848937','Baudo','2025-02-14 01:04:24.409000','test2@email.com','Pippo','UTENTE',3,3,'NrvlDtloQdEEQ7y2cNZVTwo0t2G+Z+ycSorSwMRMpCw='),(10,'JAKOORTIU848937','Baudo','2025-02-14 01:04:25.061000','testSC@email.com','Pippo','UTENTE',9,9,'NrvlDtloQdEEQ7y2cNZVTwo0t2G+Z+ycSorSwMRMpCw='),(11,'XYZ1234','Baudo','2025-02-14 01:04:25.245000','abcde@email.com','Pippo','UTENTE',10,10,'Y/ka5PNmFAK6Q7CGKfMvi5h64q1AKI0xkVgnlkh5oJE='),(12,'JAKOORTIU848637','Baudo','2025-02-14 01:04:25.827000','testS@email.com','Pippo','UTENTE',11,11,'NrvlDtloQdEEQ7y2cNZVTwo0t2G+Z+ycSorSwMRMpCw=');
 /*!40000 ALTER TABLE `account_registrato` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -60,12 +62,12 @@ DROP TABLE IF EXISTS `conto`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `conto` (
-  `id_conto` int NOT NULL AUTO_INCREMENT,
+  `id_conto` bigint NOT NULL AUTO_INCREMENT,
   `data_creazione` datetime(6) NOT NULL,
-  `saldo` double DEFAULT (_utf8mb4'0'),
   `indirizzo_fatturazione` varchar(100) DEFAULT NULL,
+  `saldo` double NOT NULL,
   PRIMARY KEY (`id_conto`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -74,6 +76,7 @@ CREATE TABLE `conto` (
 
 LOCK TABLES `conto` WRITE;
 /*!40000 ALTER TABLE `conto` DISABLE KEYS */;
+INSERT INTO `conto` VALUES (1,'2025-02-14 01:04:22.669000','Via abcde',0),(3,'2025-02-14 01:04:24.389000','Via .',900),(9,'2025-02-14 01:04:25.056000','Via .',1000),(10,'2025-02-14 01:04:25.239000','Via .',1000),(11,'2025-02-14 01:04:25.818000','Via .',1000);
 /*!40000 ALTER TABLE `conto` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -85,14 +88,14 @@ DROP TABLE IF EXISTS `evento`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `evento` (
-  `id_evento` int NOT NULL AUTO_INCREMENT,
+  `id_evento` bigint NOT NULL AUTO_INCREMENT,
   `data_evento` datetime NOT NULL,
   `descrizione` varchar(100) DEFAULT NULL,
   `categoria` varchar(45) DEFAULT NULL,
   `chiuso` tinyint(1) NOT NULL DEFAULT (false),
   `nome` varchar(100) NOT NULL,
   PRIMARY KEY (`id_evento`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -101,6 +104,7 @@ CREATE TABLE `evento` (
 
 LOCK TABLES `evento` WRITE;
 /*!40000 ALTER TABLE `evento` DISABLE KEYS */;
+INSERT INTO `evento` VALUES (1,'2025-02-14 01:04:25','','Tennis',0,'Sinner vs Medvedev'),(11,'2025-02-14 01:04:25','','Tennis',0,'Sinner vs Medvedev'),(12,'2025-02-14 01:04:25','','Tennis',0,'Sinner vs Medvedev'),(13,'2025-02-14 01:04:25','','Tennis',0,'Sinner vs Medvedev'),(17,'2025-02-14 01:04:26','','Tennis',0,'Sinner vs Medvedev');
 /*!40000 ALTER TABLE `evento` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -132,6 +136,34 @@ LOCK TABLES `premi_fedelta` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `prenotazione`
+--
+
+DROP TABLE IF EXISTS `prenotazione`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `prenotazione` (
+  `id_prenotazione` bigint NOT NULL AUTO_INCREMENT,
+  `codice` varchar(5) NOT NULL,
+  `id_scommessa` bigint NOT NULL,
+  PRIMARY KEY (`id_prenotazione`),
+  UNIQUE KEY `codice_unique` (`codice`),
+  KEY `fk_prenotazione_scommessa` (`id_scommessa`),
+  CONSTRAINT `fk_prenotazione_scommessa` FOREIGN KEY (`id_scommessa`) REFERENCES `scommessa` (`id_scommessa`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `prenotazione`
+--
+
+LOCK TABLES `prenotazione` WRITE;
+/*!40000 ALTER TABLE `prenotazione` DISABLE KEYS */;
+INSERT INTO `prenotazione` VALUES (2,'JILIL',5),(3,'B25HE',5);
+/*!40000 ALTER TABLE `prenotazione` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `quota`
 --
 
@@ -139,18 +171,17 @@ DROP TABLE IF EXISTS `quota`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `quota` (
-  `id_quota` int NOT NULL AUTO_INCREMENT,
-  `moltiplicatore` double NOT NULL,
-  `esito` varchar(100) NOT NULL,
-  `id_evento` int NOT NULL,
-  `stato` varchar(255) NOT NULL,
+  `id_quota` bigint NOT NULL AUTO_INCREMENT,
   `categoria` varchar(100) NOT NULL,
-  `referto` varchar(45) DEFAULT NULL,
-  `chiusa` tinyint(1) DEFAULT (false),
+  `chiusa` bit(1) NOT NULL,
+  `esito` varchar(100) NOT NULL,
+  `moltiplicatore` double NOT NULL,
+  `stato` varchar(255) NOT NULL,
+  `id_evento` bigint NOT NULL,
   PRIMARY KEY (`id_quota`),
-  KEY `fk_quota_evento1_idx` (`id_evento`),
-  CONSTRAINT `fk_quota_evento` FOREIGN KEY (`id_evento`) REFERENCES `evento` (`id_evento`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `FK6hw5waydlqixci785kiny019i` (`id_evento`),
+  CONSTRAINT `FK6hw5waydlqixci785kiny019i` FOREIGN KEY (`id_evento`) REFERENCES `evento` (`id_evento`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -159,6 +190,7 @@ CREATE TABLE `quota` (
 
 LOCK TABLES `quota` WRITE;
 /*!40000 ALTER TABLE `quota` DISABLE KEYS */;
+INSERT INTO `quota` VALUES (1,'Risultato Finale',_binary '\0','1',2.5,'Da Refertare',11),(3,'Risultato Finale',_binary '\0','1',2.5,'Da Refertare',12),(4,'Risultato Finale',_binary '\0','1',2.5,'Da Refertare',13),(8,'Risultato Finale',_binary '\0','1',2.5,'Da Refertare',17);
 /*!40000 ALTER TABLE `quota` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -171,15 +203,15 @@ DROP TABLE IF EXISTS `quota_giocata`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `quota_giocata` (
   `id_link` bigint NOT NULL AUTO_INCREMENT,
-  `id_scommessa` int NOT NULL,
-  `id_quota` int NOT NULL,
-  `moltiplicatore` double DEFAULT NULL COMMENT 'Questo valore e un valore congelato del moltiplicatore della quota giocata, non soggetto ai cambiamenti della quota',
+  `moltiplicatore` double NOT NULL,
+  `id_quota` bigint NOT NULL,
+  `id_scommessa` bigint NOT NULL,
   PRIMARY KEY (`id_link`),
-  KEY `fk_link_quota_scommessa_scommessa1_idx` (`id_scommessa`),
-  KEY `fk_link_quota_scommessa_quota1_idx` (`id_quota`),
-  CONSTRAINT `fk_link_quota_scommessa_quota1` FOREIGN KEY (`id_quota`) REFERENCES `quota` (`id_quota`),
-  CONSTRAINT `fk_quota_giocata_scommessa` FOREIGN KEY (`id_scommessa`) REFERENCES `scommessa` (`id_scommessa`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `FK9o01eecqc0mrs5gsjgrwq42rh` (`id_quota`),
+  KEY `FKqd8baagrckqy2hrgjsnns9c8q` (`id_scommessa`),
+  CONSTRAINT `FK9o01eecqc0mrs5gsjgrwq42rh` FOREIGN KEY (`id_quota`) REFERENCES `quota` (`id_quota`),
+  CONSTRAINT `FKqd8baagrckqy2hrgjsnns9c8q` FOREIGN KEY (`id_scommessa`) REFERENCES `scommessa` (`id_scommessa`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -188,6 +220,7 @@ CREATE TABLE `quota_giocata` (
 
 LOCK TABLES `quota_giocata` WRITE;
 /*!40000 ALTER TABLE `quota_giocata` DISABLE KEYS */;
+INSERT INTO `quota_giocata` VALUES (1,2.5,3,1),(5,2.5,8,5);
 /*!40000 ALTER TABLE `quota_giocata` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -199,10 +232,10 @@ DROP TABLE IF EXISTS `saldo_fedelta`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `saldo_fedelta` (
-  `id_saldo_fedelta` int NOT NULL AUTO_INCREMENT,
-  `punti` int(10) unsigned zerofill DEFAULT NULL,
+  `id_saldo_fedelta` bigint NOT NULL AUTO_INCREMENT,
+  `punti` int NOT NULL,
   PRIMARY KEY (`id_saldo_fedelta`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -211,6 +244,7 @@ CREATE TABLE `saldo_fedelta` (
 
 LOCK TABLES `saldo_fedelta` WRITE;
 /*!40000 ALTER TABLE `saldo_fedelta` DISABLE KEYS */;
+INSERT INTO `saldo_fedelta` VALUES (1,0),(3,100),(9,100),(10,100),(11,100);
 /*!40000 ALTER TABLE `saldo_fedelta` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -222,16 +256,17 @@ DROP TABLE IF EXISTS `scommessa`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `scommessa` (
-  `id_scommessa` int NOT NULL AUTO_INCREMENT,
-  `vincita` double NOT NULL,
+  `id_scommessa` bigint NOT NULL AUTO_INCREMENT,
   `data_scommessa` datetime(6) NOT NULL,
   `importo` double NOT NULL,
   `stato` varchar(255) NOT NULL,
-  `id_account` int NOT NULL,
+  `vincita` double NOT NULL,
+  `id_account` bigint NOT NULL,
+  `tipo` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id_scommessa`),
-  KEY `fk_scommessa_aaccount` (`id_account`),
-  CONSTRAINT `fk_scommessa_aaccount` FOREIGN KEY (`id_account`) REFERENCES `account_registrato` (`id_account`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `FK4qd9nnxf0vnffftt5gji1uu9x` (`id_account`),
+  CONSTRAINT `FK4qd9nnxf0vnffftt5gji1uu9x` FOREIGN KEY (`id_account`) REFERENCES `account_registrato` (`id_account`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -240,7 +275,7 @@ CREATE TABLE `scommessa` (
 
 LOCK TABLES `scommessa` WRITE;
 /*!40000 ALTER TABLE `scommessa` DISABLE KEYS */;
-INSERT INTO `scommessa` VALUES (1,300,'2025-02-10 12:21:08.797000',100,'Da refertare',9),(2,300,'2025-02-10 12:31:02.154000',100,'Da refertare',9);
+INSERT INTO `scommessa` VALUES (1,'2025-02-14 01:04:25.078000',100,'Da refertare',250,10,'GIOCATA'),(5,'2025-02-14 01:04:25.860000',100,'Da refertare',250,12,'PRENOTATA');
 /*!40000 ALTER TABLE `scommessa` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -252,15 +287,15 @@ DROP TABLE IF EXISTS `storico_riscossioni`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `storico_riscossioni` (
-  `id_storico_riscossioni` int NOT NULL,
+  `id_riscossione` bigint NOT NULL AUTO_INCREMENT,
   `data_riscossione` datetime(6) NOT NULL,
-  `id_saldo_fedelta` int NOT NULL,
   `id_premio` bigint NOT NULL,
-  PRIMARY KEY (`id_storico_riscossioni`),
+  `id_saldo_fedelta` bigint NOT NULL,
+  PRIMARY KEY (`id_riscossione`),
   KEY `FK4y8s9sxc9dkgbpvyf9g21k2p0` (`id_premio`),
-  KEY `fk_storico_riscossioni` (`id_saldo_fedelta`),
-  CONSTRAINT `FK4y8s9sxc9dkgbpvyf9g21k2p0` FOREIGN KEY (`id_premio`) REFERENCES `premi_fedelta` (`id_premio`),
-  CONSTRAINT `fk_storico_riscossioni` FOREIGN KEY (`id_saldo_fedelta`) REFERENCES `saldo_fedelta` (`id_saldo_fedelta`)
+  KEY `FK2s0ee7yi246e9o711dnmbk0rh` (`id_saldo_fedelta`),
+  CONSTRAINT `FK2s0ee7yi246e9o711dnmbk0rh` FOREIGN KEY (`id_saldo_fedelta`) REFERENCES `saldo_fedelta` (`id_saldo_fedelta`),
+  CONSTRAINT `FK4y8s9sxc9dkgbpvyf9g21k2p0` FOREIGN KEY (`id_premio`) REFERENCES `premi_fedelta` (`id_premio`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -272,32 +307,6 @@ LOCK TABLES `storico_riscossioni` WRITE;
 /*!40000 ALTER TABLE `storico_riscossioni` DISABLE KEYS */;
 /*!40000 ALTER TABLE `storico_riscossioni` ENABLE KEYS */;
 UNLOCK TABLES;
-
---
--- Table structure for table `storico_transazioni`
---
-
-DROP TABLE IF EXISTS `storico_transazioni`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `storico_transazioni` (
-  `id_transazione` int NOT NULL,
-  `importo` double DEFAULT NULL,
-  `data_transazione` datetime DEFAULT NULL,
-  `idconto` int DEFAULT NULL,
-  PRIMARY KEY (`id_transazione`),
-  KEY `fk_storico_transazioni_conto` (`idconto`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `storico_transazioni`
---
-
-LOCK TABLES `storico_transazioni` WRITE;
-/*!40000 ALTER TABLE `storico_transazioni` DISABLE KEYS */;
-/*!40000 ALTER TABLE `storico_transazioni` ENABLE KEYS */;
-UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -308,4 +317,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-02-10 13:07:35
+-- Dump completed on 2025-02-14  1:44:46
