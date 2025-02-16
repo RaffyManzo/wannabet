@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Palinsesto in evidenza - Demo</title>
+    <style>
+        /* Palette (promemoria)
+           Primario (pulsanti, attivi): #C80B37
+           Secondario (pulsanti/blocchi scuri): #334348
+           Sfondo body scuro: #0c0c0c
+           Sfondo contenitori chiari: #f0f0f0 / #ffffff
+           Testo scuro: #0c0c0c
+           Link / evidenziazione: #0787FA
+           Bordi: #dcdcdc
+        */
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .palinsesto-container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: #ffffff; /* Sfondo bianco */
+            border: 1px solid #dcdcdc;
+            border-radius: 6px;
+            padding: 20px;
+            color: #0c0c0c;
+        }
+
+        /* Header con icona e titolo */
+        .palinsesto-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .palinsesto-header .header-icon {
+            /* Inserisci qui un'icona, ad es. un'icona SVG o un'immagine */
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            background: url('data:image/svg+xml;charset=UTF-8,<svg%20fill="%230c0c0c"%20viewBox="0%200%2024%2024"%20xmlns="http://www.w3.org/2000/svg"><path%20d="M4.5%203h15a1.5%201.5%200%2001%201.5%201.5v1.05c0%20.206-.09.402-.247.54l-1.345%201.173v7.273c0%20.848-.332%201.66-.924%202.252a3.179%203.179%200%2001-2.252.924H7.768a3.179%203.179%200%2001-2.252-.924A3.179%203.179%200%20014.592%2014.5V7.273L3.247%206.063A.75.75%200%20013%205.51v-.96A1.55%201.55%200%20014.5%203zm4.5%2015.25a.75.75%200%2000.75.75h4.5a.75.75%200%20000-1.5h-4.5a.75.75%200%2000-.75.75z"/></svg>') no-repeat center center;
+            background-size: contain;
+        }
+        .palinsesto-header .header-title {
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        /* Navbar delle categorie sport */
+        .sport-nav {
+            margin-bottom: 15px;
+            border-bottom: 1px solid #dcdcdc;
+        }
+        .sport-nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+        }
+        .sport-nav li {
+            cursor: pointer;
+            padding-bottom: 5px;
+            color: #334348; /* Colore secondario di base */
+            font-weight: 500;
+            position: relative;
+        }
+        /* Stato attivo (ad es. Calcio) */
+        .sport-nav li.active {
+            color: #C80B37; /* Primario */
+            border-bottom: 2px solid #C80B37;
+        }
+        .sport-nav li:hover {
+            color: #C80B37; /* Passa al primario in hover */
+        }
+
+        /* Griglia delle competizioni */
+        .competitions-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .competition-card {
+            background-color: #f0f0f0;
+            border: 1px solid #dcdcdc;
+            border-radius: 4px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+        .competition-card:hover {
+            border-color: #C80B37; /* Primario in hover */
+        }
+        .competition-icon {
+            width: 20px;
+            height: 20px;
+            background: #0787FA; /* Per simulare un'icona colorata */
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .competition-label {
+            font-size: 0.9em;
+            color: #0c0c0c;
+            white-space: nowrap;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="palinsesto-container">
+    <!-- Header con icona e titolo -->
+    <div class="palinsesto-header">
+        <div class="header-icon"></div>
+        <div class="header-title">Palinsesto in evidenza</div>
+    </div>
+
+    <!-- Navbar sport -->
+    <nav class="sport-nav">
+        <ul>
+            <li class="active">Calcio</li>
+            <li>Basket</li>
+            <li>Tennis</li>
+        </ul>
+    </nav>
+
+    <!-- Griglia competizioni/eventi -->
+    <div class="competitions-grid">
+        <!-- Esempi di card: potresti aggiungere bandiere, loghi, etc. -->
+        <div class="competition-card">
+            <div class="competition-icon"></div>
+            <div class="competition-label">CHAMPIONS LEAGUE</div>
+        </div>
+        <div class="competition-card">
+            <div class="competition-icon"></div>
+            <div class="competition-label">EUROPA LEAGUE</div>
+        </div>
+        <div class="competition-card">
+            <div class="competition-icon"></div>
+            <div class="competition-label">CONFERENCE LEAGUE</div>
+        </div>
+        <div class="competition-card">
+            <div class="competition-icon"></div>
+            <div class="competition-label">SERIE A</div>
+        </div>
+        <div class="competition-card">
+            <div class="competition-icon"></div>
+            <div class="competition-label">SERIE B</div>
+        </div>
+        <div class="competition-card">
+            <div class="competition-icon"></div>
+            <div class="competition-label">PREMIER LEAGUE</div>
+        </div>
+        <div class="competition-card">
+            <div class="competition-icon"></div>
+            <div class="competition-label">LIGA</div>
+        </div>
+        <div class="competition-card">
+            <div class="competition-icon"></div>
+            <div class="competition-label">BUNDESLIGA</div>
+        </div>
+        <div class="competition-card">
+            <div class="competition-icon"></div>
+            <div class="competition-label">LIGUE 1</div>
+        </div>
+        <div class="competition-card">
+            <div class="competition-icon"></div>
+            <div class="competition-label">QUOTE MAGGIORATE</div>
+        </div>
+        <div class="competition-card">
+            <div class="competition-icon"></div>
+            <div class="competition-label">FAVORITE</div>
+        </div>
+        <div class="competition-card">
+            <div class="competition-icon"></div>
+            <div class="competition-label">SUPERCUP</div>
+        </div>
+        <div class="competition-card">
+            <div class="competition-icon"></div>
+            <div class="competition-label">CALCIO IN PARTENZA</div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

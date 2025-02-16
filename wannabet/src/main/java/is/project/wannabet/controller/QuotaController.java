@@ -92,6 +92,8 @@ public class QuotaController {
         return savedQuota;
     }
 
+    // TODO: getAllQuoteOfEventoGroupedByCategoria
+
     /**
      * Elimina una quota dal database e dal monitoraggio.
      */

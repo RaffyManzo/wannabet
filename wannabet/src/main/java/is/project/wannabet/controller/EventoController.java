@@ -44,6 +44,8 @@ public class EventoController {
         return ResponseEntity.ok(eventi);
     }
 
+    // TODO: getAllDescrizioniGroupedByCategoria
+
 
     @GetMapping
     public List<Evento> getAllEventi() {

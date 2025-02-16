@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Schedina</title>
+    <style>
+        .scontrino-container {
+            width: 300px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            border: 1px solid #ddd;
+        }
+        .scontrino-container h1 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        .evento-block {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            padding: 10px;
+            position: relative;
+        }
+        .evento-categoria {
+            font-size: 0.85em;
+            color: #888;
+            margin-bottom: 3px;
+        }
+        .evento-descrizione {
+            font-size: 0.75em;
+            color: #666;
+        }
+        .evento-data {
+            font-size: 0.75em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        .evento-nome {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        .quota-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #eee;
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .quota-categoria {
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .quota-esito {
+            font-size: 0.85em;
+        }
+        .quota-moltiplicatore {
+            font-size: 0.85em;
+            color: #007bff;
+        }
+        .btn-rimuovi {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #ff5c5c;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .btn-rimuovi:hover {
+            background-color: #ff2c2c;
+        }
+        .importo-scommessa {
+            margin-top: 15px;
+        }
+        .importo-scommessa label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .importo-scommessa input {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+        .riepilogo {
+            margin-bottom: 15px;
+        }
+        .riepilogo div {
+            margin-bottom: 5px;
+        }
+        .btn-prenota, .btn-scommetti {
+            width: 48%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-prenota {
+            background-color: #f0ad4e;
+            color: #fff;
+        }
+        .btn-prenota:hover {
+            background-color: #ec971f;
+        }
+        .btn-scommetti {
+            background-color: #5cb85c;
+            color: #fff;
+        }
+        .btn-scommetti:hover {
+            background-color: #4cae4c;
+        }
+    </style>
+</head>
+<body>
+<div class="scontrino-container">
+    <h1>Schedina</h1>
+
+    <!-- Se non ci sono quote -->
+    <div th:if="${#lists.isEmpty(scontrino.quote)}">
+        <p>Nessuna quota presente nello scontrino.</p>
+    </div>
+
+    <!-- Iterazione su ogni Quota -->
+    <div th:each="quota : ${scontrino.quote}" th:unless="${#lists.isEmpty(scontrino.quote)}">
+        <div class="evento-block">
+            <!-- Pulsante rimuovi -->
+            <button class="btn-rimuovi"
+                    th:onclick="'location.href=\'/scontrino/rimuovi/' + ${quota.idQuota} + '\'">
+                X
+            </button>
+
+            <!-- Categoria, descrizione e data evento -->
+            <div class="evento-categoria"
+                 th:text="${quota.evento.categoria}">Categoria evento</div>
+            <div class="evento-descrizione"
+                 th:text="${quota.evento.descrizione}">Descrizione evento</div>
+            <div class="evento-data"
+                 th:text="${#temporals.format(quota.evento.data, 'dd/MM/yyyy HH:mm')}">Data evento</div>
+
+            <!-- Nome evento -->
+            <div class="evento-nome" th:text="${quota.evento.nome}">Nome evento</div>
+
+            <!-- Informazioni quota -->
+            <div class="quota-info">
+                <div class="quota-categoria" th:text="${quota.categoria}">Categoria Quota</div>
+                <div class="quota-esito" th:text="${quota.esito}">Esito</div>
+                <div class="quota-moltiplicatore" th:text="${quota.moltiplicatore}">1.00</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Se vuoi gestire l'invio dell'importo con un form POST -->
+    <form th:action="@{/scontrino/scommetti}" method="post">
+        <div class="importo-scommessa">
+            <label for="importo">Importo da scommettere</label>
+            <input type="number" step="0.01" id="importo" name="importo"
+                   th:value="${importo}" required/>
+        </div>
+
+        <div class="riepilogo">
+            <div>Quota Totale:
+                <span th:text="${quotaTotale}">0.00</span>
+            </div>
+            <div>Vincita Potenziale:
+                <span th:text="${vincitaPotenziale}">0.00</span>
+            </div>
+        </div>
+
+        <div style="display: flex; justify-content: space-between;">
+            <button class="btn-prenota" type="button">Prenota</button>
+            <button class="btn-scommetti" type="submit">Scommetti</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>

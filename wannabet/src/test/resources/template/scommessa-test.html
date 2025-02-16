@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Dettaglio Scommessa</title>
+  <style>
+    /*
+     * PALETTE
+     * Primario (pulsanti / perso):      #C80B37
+     * Secondario (blocchi scuri):       #334348
+     * Sfondo body scuro:               #0c0c0c
+     * Sfondo contenitori chiari:       #ffffff / #f0f0f0
+     * Testo scuro:                     #0c0c0c
+     * Bordi leggeri:                   #dcdcdc
+     * Blu (highlight):                 #0787FA
+     * Verde (vinto):                   #5cb85c
+     * Giallo (pending):                #f0ad4e
+    */
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .scommessa-container {
+      max-width: 900px;
+      margin: 20px auto;
+      background-color: #ffffff; /* Sfondo chiaro */
+      border: 1px solid #dcdcdc;
+      border-radius: 6px;
+      padding: 20px;
+      color: #0c0c0c;
+    }
+
+    /* Titoli */
+    .scommessa-container h1 {
+      margin: 0 0 5px 0;
+      font-size: 1.2em;
+    }
+    .scommessa-container h2 {
+      margin: 0 0 20px 0;
+      font-size: 1em;
+      font-weight: normal;
+      color: #666;
+    }
+
+    /* Contenitore delle quote giocate */
+    .quote-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px; /* Spazio tra una quota e l'altra */
+    }
+
+    /* Singolo blocco quota strutturato in due colonne */
+    .quote-item {
+      display: flex;
+      background-color: #f0f0f0;
+      border: 1px solid #dcdcdc;
+      border-radius: 6px;
+      padding: 15px;
+      gap: 10px;
+    }
+
+    /* Colonna sinistra: contiene il pallino */
+    .quote-status-container {
+      width: 30px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .status-won {
+      background-color: #5cb85c; /* Verde */
+    }
+    .status-lost {
+      background-color: #C80B37; /* Rosso (primario) */
+    }
+    .status-pending {
+      background-color: #f0ad4e; /* Giallo */
+    }
+
+    /* Colonna destra: contiene il contenuto della quota */
+    .quote-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    /* Riga con data/ora e categoria */
+    .quote-meta {
+      font-size: 0.85em;
+      color: #666;
+    }
+
+    /* Nome evento in grassetto */
+    .quote-event-name {
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+
+    /* Descrizione giocata */
+    .quote-description {
+      font-size: 0.85em;
+      color: #333;
+    }
+
+    /* Sezione con quota */
+    .quote-odds-status {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 5px;
+    }
+    .quote-odds {
+      background-color: #C80B37;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 0.85em;
+      color: #dcdcdc;
+      cursor: default;
+    }
+
+    /* Riepilogo finale */
+    .summary {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 0.9em;
+    }
+    .summary div {
+      color: #333;
+    }
+    .summary .highlight {
+      font-weight: bold;
+    }
+
+    /* Pulsante per tornare indietro alla lista scommesse */
+    .btn-back {
+      background-color: #334348; /* Secondario */
+      color: #ffffff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 15px;
+      cursor: pointer;
+      font-size: 1em;
+      margin-top: 20px;
+      display: block;
+      text-align: center;
+      width: 50%;
+      text-decoration: none;
+    }
+    .btn-back:hover {
+      background-color: #1F2F37;
+    }
+  </style>
+</head>
+<body>
+
+<div class="scommessa-container">
+  <!-- Titolo e sottotitolo (ID e stato della scommessa) -->
+  <h1>Giocata con id: 1234</h1>
+  <h2>Stato: Da refertare</h2>
+
+  <!-- Elenco delle quote giocate -->
+  <div class="quote-list">
+
+    <!-- Esempio di quota "pending" (giallo) -->
+    <div class="quote-item">
+      <div class="quote-status-container">
+        <div class="status-dot status-pending"></div>
+      </div>
+      <div class="quote-content">
+        <div class="quote-meta">12/02/2025 21:00 - Calcio - Champions League</div>
+        <div class="quote-event-name">Celtic vs Bayern Monaco</div>
+        <div class="quote-description">GG/NG</div>
+        <div class="quote-odds-status">
+          <div class="quote-odds">GG | 1.59</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Esempio di quota "won" (verde) -->
+    <div class="quote-item">
+      <div class="quote-status-container">
+        <div class="status-dot status-won"></div>
+      </div>
+      <div class="quote-content">
+        <div class="quote-meta">12/02/2025 21:00 - Calcio - Champions League</div>
+        <div class="quote-event-name">Feyenoord vs Milan</div>
+        <div class="quote-description">Under/Over</div>
+        <div class="quote-odds-status">
+          <div class="quote-odds">Over | 1.85</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Esempio di quota "lost" (rosso) -->
+    <div class="quote-item">
+      <div class="quote-status-container">
+        <div class="status-dot status-lost"></div>
+      </div>
+      <div class="quote-content">
+        <div class="quote-meta">12/02/2025 21:00 - Calcio - Champions League</div>
+        <div class="quote-event-name">Monaco vs Benfica</div>
+        <div class="quote-description">Risultato finale</div>
+        <div class="quote-odds-status">
+          <div class="quote-odds">1 | 2.50</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Riepilogo finale -->
+  <div class="summary">
+    <div>Quota totale: <span class="highlight">12</span></div>
+    <div>Importo giocato: <span class="highlight">4 €</span></div>
+    <div>Vincita potenziale: <span class="highlight">48 €</span></div>
+  </div>
+
+  <!-- Pulsante per tornare alla lista scommesse -->
+  <a href="lista_scommesse.html" class="btn-back">Torna alla lista scommesse</a>
+</div>
+
+</body>
+</html>
