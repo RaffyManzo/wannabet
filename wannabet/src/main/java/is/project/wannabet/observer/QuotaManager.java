@@ -1,6 +1,6 @@
 package is.project.wannabet.observer;
 
-import is.project.wannabet.cache.QuotaCache;
+import is.project.wannabet.observer.QuotaCache;
 import is.project.wannabet.model.Quota;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

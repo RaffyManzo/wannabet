@@ -1,36 +1,51 @@
 package is.project.wannabet.config;
 
+import is.project.wannabet.service.AccountRegistratoService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
-/**
- * Configurazione della sicurezza dell'applicazione tramite Spring Security.
- * Questa classe definisce le regole di accesso alle API e la gestione della protezione CSRF.
- */
+import static org.springframework.security.config.Customizer.withDefaults;
 
-// TODO: Implementar l'effettiva sicurezza disabilitata per testing
 @Configuration
-@EnableWebSecurity
 public class SecurityConfig {
 
-    /**
-     * Definisce la catena di filtri di sicurezza per l'applicazione.
-     * - Disabilita la protezione CSRF (Cross-Site Request Forgery).
-     * - Permette a tutte le richieste di accedere senza autenticazione.
-     *
-     * @param http Oggetto {@link HttpSecurity} per configurare la sicurezza.
-     * @return Una istanza di {@link SecurityFilterChain} con le configurazioni applicate.
-     * @throws Exception Eccezione generata in caso di errore nella configurazione.
-     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+        http
+                .csrf(csrf -> csrf.disable()) // 🔹 Disabilita CSRF per le API REST
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/auth/**").permitAll() // 🔹 Permette l'accesso libero a register e login
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
+                        .anyRequest().authenticated()
+                )
+                .sessionManagement(session -> session
+                        .maximumSessions(1) // 🔹 Ogni utente può avere solo 1 sessione attiva
+                        .maxSessionsPreventsLogin(true) // 🔹 Se si logga da un altro dispositivo, blocca il login
+                )
+                .formLogin(withDefaults()) // 🔹 Gestisce il login automaticamente
+                .logout(logout -> logout
+                        .logoutUrl("/api/auth/logout") // 🔹 Endpoint per il logout
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                );
 
         return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 }

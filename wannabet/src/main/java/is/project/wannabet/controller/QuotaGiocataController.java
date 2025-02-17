@@ -4,6 +4,7 @@ import is.project.wannabet.model.QuotaGiocata;
 import is.project.wannabet.service.QuotaGiocataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class QuotaGiocataController {
     private QuotaGiocataService quotaGiocataService;
 
     @GetMapping("/scommessa/{idScommessa}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<QuotaGiocata>> getQuoteGiocateByScommessa(@PathVariable Long idScommessa) {
         return ResponseEntity.ok(quotaGiocataService.getQuoteGiocateByScommessa(idScommessa));
     }

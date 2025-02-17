@@ -1,5 +1,6 @@
 package is.project.wannabet.test_controller;
 
+import is.project.wannabet.factory.ScommessaFactory;
 import is.project.wannabet.model.*;
 import is.project.wannabet.service.*;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,11 +15,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static is.project.wannabet.security.PasswordEncoding.sha256;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -28,9 +31,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Classe di test per verificare il corretto funzionamento del controller ScommessaController.
  * Testa la creazione, il recupero delle scommesse e la gestione delle quote giocate.
  */
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
+
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 public class ScommessaControllerTest {
 
     @Autowired
@@ -51,67 +56,67 @@ public class ScommessaControllerTest {
     @Autowired
     private EventoService eventoService;
 
+    @Autowired
+    private ContoService contoService;
 
-    private AccountRegistrato accountMock;
-    private Conto contoMock;
+    @Autowired
+    private AccountRegistratoService accountService;
+
+    @Autowired
+    private SaldoFedeltaService saldoFedeltaService;
+
+    private AccountRegistrato accountDiTest;
+    private Conto contoDiTest;
     private Evento eventoDiTest;
     private Quota quotaDiTest;
     private Scommessa scommessaDiTest;
 
-    @Mock
-    private ContoService contoService;
-
-    @Mock
-    private AccountRegistratoService accountService;
-
-    @Mock
-    private SaldoFedeltaService saldoFedeltaService;
-
-    @BeforeAll
+    @BeforeEach
     public void setup() {
-        // 1️⃣ Creazione Saldo Fedeltà
+        // 1️⃣ Crea e salva Saldo Fedeltà
         SaldoFedelta saldoFedelta = new SaldoFedelta();
         saldoFedelta.setPunti(100);
         saldoFedelta = saldoFedeltaService.saveSaldoFedelta(saldoFedelta);
-
         saldoFedeltaService.flush();
         assertNotNull(saldoFedelta.getIdSaldoFedelta());
 
-        // 2️⃣ Creazione Conto
-        contoMock = new Conto();
-        contoMock.setSaldo(1000.0);
-        contoMock = contoService.saveConto(contoMock);
-
+        // 2️⃣ Crea e salva Conto
+        contoDiTest = new Conto();
+        contoDiTest.setSaldo(1000.0);
+        contoDiTest.setDataCreazione(new Date());
+        contoDiTest.setIndirizzoFatturazione("Via .");
+        contoDiTest = contoService.saveConto(contoDiTest);
         contoService.flush();
-        assertNotNull(contoMock.getIdConto());
+        assertNotNull(contoDiTest.getIdConto());
 
-        // 3️⃣ Creazione Account
-        accountMock = new AccountRegistrato();
-        accountMock.setSaldoFedelta(saldoFedelta);
-        accountMock.setNome("Pippo");
-        accountMock.setCognome("Baudo");
-        accountMock.setDataNascita(new Date());
-        accountMock.setCodiceFiscale("XYZ1234");
-        accountMock.setTipo(TipoAccount.UTENTE);
-        accountMock.setEmail("test@email.com");
-        accountMock.setConto(contoMock);
-        accountMock = accountService.saveAccount(accountMock);
+        // 3️⃣ Crea e salva Account
+        accountDiTest = new AccountRegistrato();
+        accountDiTest.setSaldoFedelta(saldoFedelta);
+        accountDiTest.setNome("Pippo");
+        accountDiTest.setCognome("Baudo");
+        accountDiTest.setDataNascita(new Date());
+        accountDiTest.setCodiceFiscale("XYZ1234");
+        accountDiTest.setTipo(TipoAccount.UTENTE);
+        accountDiTest.setEmail("test@email.com");
+        accountDiTest.setConto(contoDiTest);
+        accountDiTest.setPassword(sha256("abcde"));
+        accountDiTest = accountService.saveAccount(accountDiTest);
         accountService.flush();
-        assertNotNull(accountMock.getIdAccount());
+        assertNotNull(accountDiTest.getIdAccount());
 
-        // 4️⃣ Creazione Evento
+        // 4️⃣ Crea e salva Evento
         eventoDiTest = eventoService.createEvento("Sinner vs Medvedev", new Date(), "", "Tennis");
         eventoService.flush();
         eventoDiTest = eventoService.getEventoById(eventoDiTest.getIdEvento()).get();
         assertNotNull(eventoDiTest.getIdEvento());
 
-        // 5️⃣ Creazione Quota
+        // 5️⃣ Crea e salva Quota
         quotaDiTest = quotaService.createQuota("1", "Risultato Finale", 2.5, eventoDiTest);
         quotaService.flush();
         assertNotNull(quotaDiTest.getIdQuota());
 
-        // 6️⃣ Creazione Scommessa
-        scommessaDiTest = scommessaService.creaScommessa(List.of(quotaDiTest), 100.0, accountMock.getIdAccount());
+        // 6️⃣ Crea e salva Scommessa
+        scommessaDiTest = scommessaService.creaScommessa(List.of(quotaDiTest), 100.0, accountDiTest.getIdAccount());
         assertNotNull(scommessaDiTest.getIdScommessa());
     }
 
@@ -120,14 +125,29 @@ public class ScommessaControllerTest {
      */
     @Test
     public void testCreateScommessa() throws Exception {
-        Scommessa nuovaScommessa = new Scommessa();
-        nuovaScommessa.setImporto(100.0);
+        Scommessa nuovaScommessa = ScommessaFactory.createScommessa(accountDiTest, List.of(quotaDiTest), 100);
 
-        mockMvc.perform(post("/api/scommesse/"+accountMock.getIdAccount()+"/crea")
+        mockMvc.perform(post("/api/scommesse/" + accountDiTest.getIdAccount() + "/crea")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(nuovaScommessa)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.importo").value(100.0));
+    }
+
+
+    /**
+     * Testa la creazione di una scommessa con credito insufficiente.
+     */
+    @Test
+    public void testCreateScommessaWithInsufficientCredit() throws Exception {
+        Scommessa nuovaScommessa = ScommessaFactory.createScommessa(accountDiTest, List.of(quotaDiTest), 2000);
+
+
+        mockMvc.perform(post("/api/scommesse/" + accountDiTest.getIdAccount() + "/crea")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(nuovaScommessa)))
+                .andExpect(status().isBadRequest());
+
     }
 
     /**
@@ -135,7 +155,7 @@ public class ScommessaControllerTest {
      */
     @Test
     public void testGetScommesseByAccount() throws Exception {
-        mockMvc.perform(get("/api/scommesse/account/" + accountMock.getIdAccount()))
+        mockMvc.perform(get("/api/scommesse/account/" + accountDiTest.getIdAccount()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(greaterThanOrEqualTo(0))));
     }
@@ -145,7 +165,7 @@ public class ScommessaControllerTest {
      */
     @Test
     public void testGetScommessaById() throws Exception {
-        mockMvc.perform(get("/api/scommesse/account/"+accountMock.getIdAccount()+"/get/" + scommessaDiTest.getIdScommessa()))
+        mockMvc.perform(get("/api/scommesse/account/" + accountDiTest.getIdAccount() + "/get/" + scommessaDiTest.getIdScommessa()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id_scommessa").value(scommessaDiTest.getIdScommessa()));
     }
