@@ -1,87 +1,73 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap");
+
 *{
+    box-sizing: border-box;
     margin: 0;
-    padding: 0;
-}
-body{
-    min-height: 100vh;
-    font-family: 'Poppins', sans-serif;
-    background-color: white;
+    background-color: black;
 }
 
-header nav{
-    display: grid;
-    background-color: grey;
-    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
+li, a, button{
+    font-family: "Monotserrat", sans-serif;
+    font-weight: 500;
+    font-size: 26px;
+    color: #edf0f1;
+    text-decoration: none;
 }
-header nav ul{
-    width: 100%;
-    list-style: none;
+
+header{
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    padding: 20px 5%;
 }
-header nav li{
-    height: 100px;
-}
-header nav a{
-    height: 100%;
-    padding: 0 30px;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    color: Black;
-}
-header nav a:hover{
-    background-color: #f0f0f0;
-}
-header nav li:first-child{
+.logo{
+    cursor: pointer;
     margin-right: auto;
 }
-.sidebar{
-    position: fixed;
-    top: 0;
-    right: 0;
-    height: 100vh;
-    width: 250px;
-    background-color: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(12px);
-    box-shadow: -10px 0 10px rgba(0, 0, 0, 0.1);
+.menu{
     list-style: none;
-    display: none;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-}
-.sidebar li{
-    width: 100%;
-}
-.sidebar a{
-    width: 100%;
-}
-.menu-button{
-    display: none;
-}
-@media(max-width: 800px){
-    .hideOnMobile{
-        display: none;
-    }
-    .menu-button{
-        display: block;
-    }
-}
-@media(max-width: 400px){
-    .sidebar{
-        width: 100%;
-    }
 }
 
-.nav__register{
-
+.menu li{
+    display: inline-block;
+    padding: 0px 20px;
 }
+.menu li a{
+    transition: 0.3s ;
+}
+
+.menu li a:hover{
+    transition: 0.3s ;
+}
+
+button{
+    margin-left: 10px;
+    padding: 9px 25px;
+    background-color: rgb(169, 0, 0);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease 0s;
+}
+
+button:hover{
+    background-color: rgba(126, 6, 6, 0.8);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .footer{
-    background-color: grey;
     padding: 70px 0;
 }
 .footer__container{
@@ -121,7 +107,7 @@ header nav li:first-child{
     width: 50px;
 }
 .footer--col ul li:not(:last-child){
- margin_bottom: 10px;
+    margin_bottom: 10px;
 }
 .footer--col ul li a{
     font-size: 16px;
@@ -129,7 +115,7 @@ header nav li:first-child{
     color: #ffffff;
     text-decoration: none;
     font-weight: 300;
-    color: #bbbbbb;
+
     display: block;
     transition: all 0.3s ease;
 }
