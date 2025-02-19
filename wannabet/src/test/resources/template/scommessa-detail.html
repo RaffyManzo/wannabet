@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Dettaglio Scommessa</title>
+  <link rel="stylesheet" th:href="@{/css/scommessa-detail.css}" />
+</head>
+<body>
+
+<div class="scommessa-container">
+  <!-- Titolo e sottotitolo: visualizza l'ID e lo stato della scommessa -->
+  <h1 th:text="'Giocata con id: ' + ${scommessa.idScommessa}">Giocata con id: 1234</h1>
+  <h2 th:text="'Stato: ' + ${scommessa.stato}">Stato: Da refertare</h2>
+
+  <!-- Elenco delle quote giocate (assumendo che scommessa.quoteGiocate sia una lista) -->
+  <div class="quote-list">
+    <div th:each="q : ${scommessa.quoteGiocate}" class="quote-item">
+      <div class="quote-status-container">
+        <!-- Seleziona l'icona in base allo stato della quota (q.stato) -->
+        <div th:if="${q.stato}=='PENDING'" class="status-dot status-pending"></div>
+        <div th:if="${q.stato}=='WON'" class="status-dot status-won"></div>
+        <div th:if="${q.stato}=='LOST'" class="status-dot status-lost"></div>
+      </div>
+      <div class="quote-content">
+        <div class="quote-meta"
+             th:text="${#dates.format(q.evento.data, 'dd/MM/yyyy HH:mm')} + ' - ' + q.evento.categoria + ' - ' + q.evento.nome">
+          12/02/2025 21:00 - Calcio - Champions League
+        </div>
+        <div class="quote-event-name" th:text="${q.evento.nome}">
+          Nome Evento
+        </div>
+        <div class="quote-description" th:text="${q.esito}">
+          Descrizione giocata
+        </div>
+        <div class="quote-odds-status">
+          <div class="quote-odds" th:text="q.moltiplicatore + ' | ' + q.esito">
+            Quota | 1.59
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Riepilogo finale -->
+  <div class="summary">
+    <div>Quota totale: <span class="highlight" th:text="${scommessa.vincita != null ? scommessa.vincita : 0}">12</span></div>
+    <div>Importo giocato: <span class="highlight" th:text="${scommessa.importo}">4 €</span></div>
+    <div>Vincita potenziale: <span class="highlight" th:text="${scommessa.vincita}">48 €</span></div>
+  </div>
+
+  <!-- Pulsante per tornare alla lista scommesse -->
+  <a th:href="@{/lista-scommesse}" class="btn-back">Torna alla lista scommesse</a>
+</div>
+
+</body>
+</html>

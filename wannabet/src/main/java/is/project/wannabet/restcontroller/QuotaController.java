@@ -1,5 +1,6 @@
-package is.project.wannabet.controller;
+package is.project.wannabet.restcontroller;
 
+import is.project.wannabet.model.Evento;
 import is.project.wannabet.model.Quota;
 import is.project.wannabet.service.QuotaService;
 import is.project.wannabet.observer.QuotaManager;
@@ -10,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -92,7 +94,6 @@ public class QuotaController {
         return savedQuota;
     }
 
-    // TODO: getAllQuoteOfEventoGroupedByCategoria
 
     /**
      * Elimina una quota dal database e dal monitoraggio.
@@ -110,5 +111,15 @@ public class QuotaController {
         quotaCache.rimuoviQuota(id); // Rimuove la quota dal sistema di monitoraggio
 
         return ResponseEntity.ok("Quota eliminata con successo.");
+    }
+
+    // Endpoint per ottenere tutte le quote di un evento raggruppate per categoria
+    @GetMapping("/event/{eventId}")
+    public ResponseEntity<Map<String, List<Quota>>> getQuotesByEventGroupedByCategory(@PathVariable Long eventId) {
+        Map<String, List<Quota>> groupedQuotes = quotaService.getQuotesByEventGroupedByCategory(eventId);
+        if (groupedQuotes == null || groupedQuotes.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(groupedQuotes);
     }
 }

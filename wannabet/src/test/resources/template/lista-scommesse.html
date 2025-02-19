@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Elenco Scommesse - Demo</title>
+    <link rel="stylesheet" th:href="@{/css/lista-scommesse.css}" />
+</head>
+<body>
+
+<div class="lista-scommesse-container">
+    <h2>Le tue scommesse</h2>
+    <div class="scommesse-grid">
+        <!-- Itera sulla lista delle scommesse passata dal controller -->
+        <div th:each="scommessa : ${lista-scommesse}" class="scommessa-card">
+            <div class="scommessa-header">
+                <div class="scommessa-id" th:text="'ID Scommessa: ' + ${scommessa.idScommessa}">ID Scommessa: 101</div>
+                <!-- Visualizza l'icona in base allo stato -->
+                <img th:if="${scommessa.stato} == 'Da refertare'"
+                     class="scommessa-stato-icon"
+                     th:src="@{/images/question_mark.png}"
+                     alt="Da refertare" />
+                <img th:if="${scommessa.stato} == 'Persa'"
+                     class="scommessa-stato-icon"
+                     th:src="@{/images/x_mark.png}"
+                     alt="Persa" />
+                <img th:if="${scommessa.stato} == 'Vinta'"
+                     class="scommessa-stato-icon"
+                     th:src="@{/images/check_mark.png}"
+                     alt="Vinta" />
+            </div>
+            <div class="scommessa-info">
+                <div class="scommessa-data"
+                     th:text="'Data: ' + ${#dates.format(scommessa.data, 'yyyy-MM-dd HH:mm:ss')}">
+                    Data: 2025-01-01 12:00:00
+                </div>
+                <!-- Se la scommessa è da refertare, mostra la vincita potenziale, altrimenti mostra 0 o la vincita -->
+                <div class="scommessa-vincita" th:if="${scommessa.stato} == 'Da refertare'"
+                     th:text="'Vincita potenziale: ' + ${scommessa.vincita} + ' €'">
+                    Vincita potenziale: 100.00 €
+                </div>
+                <div class="scommessa-vincita" th:if="${scommessa.stato} == 'Persa'"
+                     th:text="'Vincita: 0.00 €'">
+                    Vincita: 0.00 €
+                </div>
+                <div class="scommessa-vincita" th:if="${scommessa.stato} == 'Vinta'"
+                     th:text="'Vincita: ' + ${scommessa.vincita} + ' €'">
+                    Vincita: 150.00 €
+                </div>
+            </div>
+            <!-- Pulsante per mostrare i dettagli della scommessa -->
+            <button class="btn-mostra"
+                    th:onclick="'location.href=\'/scommessa/' + ${scommessa.idScommessa} + '\'"'>
+            Mostra scommessa
+            </button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

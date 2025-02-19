@@ -1,0 +1,48 @@
+/* Palette di riferimento:
+   Primario: #C80B37
+   Secondario: #334348
+   Sfondo body scuro: #0c0c0c
+   Sfondo contenitori chiari: #ffffff o #f0f0f0
+   Testo scuro: #0c0c0c
+   Link/evidenziazione: #0787FA
+   Bordi: #dcdcdc
+*/
+
+/* Navbar principale */
+.main-navbar {
+    background-color: #334348;  /* Secondario */
+    padding: 10px 20px;
+}
+.main-navbar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+.main-navbar li {
+    display: inline;
+}
+.main-navbar a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+}
+.main-navbar a:hover {
+    color: #C80B37; /* Primario */
+}
+
+/* Container principale per le sezioni */
+.content-wrapper {
+    max-width: 1200px;
+    margin: 20px auto;
+}
+
+/* ========== Footer ========== */
+.main-footer {
+    background-color: #334348;  /* Secondario */
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 20px;
+    margin-top: 40px;
+}

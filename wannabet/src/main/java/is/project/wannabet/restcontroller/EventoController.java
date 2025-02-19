@@ -1,4 +1,4 @@
-package is.project.wannabet.controller;
+package is.project.wannabet.restcontroller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +8,7 @@ import is.project.wannabet.model.Evento;
 import is.project.wannabet.service.EventoService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -44,7 +45,14 @@ public class EventoController {
         return ResponseEntity.ok(eventi);
     }
 
-    // TODO: getAllDescrizioniGroupedByCategoria
+    @GetMapping("/descriptions")
+    public ResponseEntity<Map<String, List<String>>> getAllDescrizioniGroupedByCategoria() {
+        Map<String, List<String>> groupedDescriptions = eventoService.getAllDescrizioniGroupedByCategoria();
+        if (groupedDescriptions == null || groupedDescriptions.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(groupedDescriptions);
+    }
 
 
     @GetMapping

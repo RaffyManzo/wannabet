@@ -9,11 +9,16 @@ import is.project.wannabet.observer.QuotaObserver;
 import is.project.wannabet.repository.QuotaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Servizio per la gestione delle quote nel sistema di scommesse.
@@ -72,6 +77,32 @@ public class QuotaService {
         return savedQuota;
     }
 
+    // Ottiene tutte le quote di un evento raggruppate per categoria
+    public Map<String, List<Quota>> getQuotesByEventGroupedByCategory(Long eventId) {
+        List<Quota> quotes = quotaRepository.findByEvento_IdEvento(eventId);
+        return quotes.stream().collect(Collectors.groupingBy(Quota::getCategoria));
+    }
+
+    // Ottiene le 6 quote con la data evento più imminente
+    /**
+     * Ritorna 6 eventi imminenti per la categoria selezionata
+     * e la mappa Evento -> List<Quota>.
+     */
+    public Map<Evento, List<Quota>> getTop6UpcomingEventsAndQuotes(String categoria) {
+        // 1) Recupera i 6 eventi per la categoria
+        List<Evento> eventi = quotaRepository
+                .findTop6ByCategoria(categoria, PageRequest.of(0, 6))
+                .getContent();
+
+        // 2) Per ogni evento, recupera le quote
+        Map<Evento, List<Quota>> result = new LinkedHashMap<>();
+        for (Evento e : eventi) {
+            List<Quota> quoteEvento = quotaRepository.findByEvento_IdEvento(e.getIdEvento());
+            result.put(e, quoteEvento);
+        }
+        return result;
+
+    }
     /**
      * Salva la mopdifica della quota nel database e la registra nel `QuotaManager`.
      *

@@ -1,0 +1,88 @@
+/* Palette (promemoria)
+   Primario (pulsanti, attivi): #C80B37
+   Secondario (pulsanti/blocchi scuri): #334348
+   Sfondo body scuro: #0c0c0c
+   Sfondo contenitori chiari: #f0f0f0 / #ffffff
+   Testo scuro: #0c0c0c
+   Link / evidenziazione: #0787FA
+   Bordi: #dcdcdc
+*/
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.palinsesto-container {
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: #ffffff; /* Sfondo bianco */
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    padding: 20px;
+    color: #0c0c0c;
+}
+
+/* Header con titolo */
+.palinsesto-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.palinsesto-header .header-title {
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+/* Navbar delle categorie sport */
+.sport-nav {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #dcdcdc;
+}
+.sport-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+}
+.sport-nav li {
+    cursor: pointer;
+    padding-bottom: 5px;
+    color: #334348; /* Colore secondario di base */
+    font-weight: 500;
+    position: relative;
+}
+.sport-nav li.active {
+    color: #C80B37; /* Primario */
+    border-bottom: 2px solid #C80B37;
+}
+.sport-nav li:hover {
+    color: #C80B37; /* In hover passa al primario */
+}
+
+/* Griglia delle competizioni */
+.competitions-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.competition-card {
+    background-color: #f0f0f0;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+.competition-card:hover {
+    border-color: #C80B37; /* Primario in hover */
+}
+.competition-label {
+    font-size: 0.9em;
+    color: #0c0c0c;
+    white-space: nowrap;
+}

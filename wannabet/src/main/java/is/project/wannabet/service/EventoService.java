@@ -12,7 +12,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.stream.Collectors;
 
 /**
  * Servizio per la gestione degli eventi nel sistema di scommesse.
@@ -35,6 +40,29 @@ public class EventoService {
      */
     public List<Evento> getAllEventi() {
         return eventoRepository.findAll();
+    }
+
+    /**
+     * Raggruppa tutte le descrizioni degli eventi per categoria.
+     * Le chiavi della mappa sono le categorie e i valori sono le liste di descrizioni degli eventi.
+     */
+    public Map<String, List<String>> getAllDescrizioniGroupedByCategoria() {
+        List<Evento> events = eventoRepository.findAll();
+
+        return events.stream()
+                .collect(Collectors.groupingBy(
+                        Evento::getCategoria,                         // Chiave: categoria
+                        LinkedHashMap::new,                           // Manteniamo l'ordine delle chiavi
+                        Collectors.mapping(
+                                Evento::getDescrizione,                // Valore: descrizione
+                                Collectors.collectingAndThen(
+                                        // Raccogliamo in un LinkedHashSet per evitare duplicati e preservare l'ordine
+                                        Collectors.toCollection(LinkedHashSet::new),
+                                        // Converting the set into a list
+                                        ArrayList::new
+                                )
+                        )
+                ));
     }
 
     /**

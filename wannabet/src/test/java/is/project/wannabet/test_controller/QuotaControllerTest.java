@@ -1,19 +1,11 @@
 package is.project.wannabet.test_controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import is.project.wannabet.WannabetApplication;
-import is.project.wannabet.controller.QuotaController;
-import is.project.wannabet.factory.EventoFactory;
-import is.project.wannabet.factory.QuotaFactory;
 import is.project.wannabet.model.Evento;
 import is.project.wannabet.model.Quota;
 import is.project.wannabet.model.StatoQuota;
-import is.project.wannabet.repository.EventoRepository;
-import is.project.wannabet.repository.QuotaRepository;
 import is.project.wannabet.service.EventoService;
 import is.project.wannabet.service.QuotaService;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

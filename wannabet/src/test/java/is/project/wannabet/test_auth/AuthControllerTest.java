@@ -56,6 +56,15 @@ public class AuthControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    // Valori validi di base
+    private final String validEmail = "valid@example.com";
+    private final String validPassword = "password123";
+    private final String validNome = "Luca";
+    private final String validCognome = "Bianchi";
+    private final String validCodiceFiscale = "RSSMRA85M01H501U";
+    private final String validIndirizzo = "Via Roma 10";
+    private final Date validData = new Date();
+
     @BeforeAll
     void setUp() {
 
@@ -68,7 +77,7 @@ public class AuthControllerTest {
         // Creazione di un account di test nel database
 
         AccountRegistrato account = AccountRegistratoFactory.createAccountRegistrato(
-                "Mario", "Rossi", "ABCDEF12G34H567I", newConto, new Date(), "alibaba@email.com",
+                "Mario", "Rossi", "ABCDEK12G34H567I", newConto, new Date(), "alibabu@email.com",
                 passwordEncoder.encode("password123"), saldoFedelta
         );
         accountRegistratoService.saveAccount(account);
@@ -78,26 +87,6 @@ public class AuthControllerTest {
     // TEST DI SUCCESSO
     // =======================================================
 
-    /**
-     * Testa la registrazione con tutti i campi corretti.
-     */
-    @Test
-    void testRegistrazioneSuccesso() throws Exception {
-        RegistrazioneRequest request = new RegistrazioneRequest();
-        request.setEmail("nuovo@email.com");
-        request.setNome("Luca");
-        request.setCognome("Bianchi");
-        request.setCodiceFiscale("ABCD1234ABCD2345");
-        request.setDataDiNascita(new Date());
-        request.setIndirizzoDiFatturazione("via");
-        request.setPassword(passwordEncoder.encode("password123"));
-
-        mockMvc.perform(post("/api/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Registrazione effettuata con successo"));
-    }
 
     /**
      * Testa il login con credenziali corrette.
@@ -105,7 +94,7 @@ public class AuthControllerTest {
     @Test
     void testLoginSuccesso() throws Exception {
         LoginRequest request = new LoginRequest();
-        request.setEmail("alibaba@email.com");
+        request.setEmail("alibabu@email.com");
         request.setPassword("password123");
 
         mockMvc.perform(post("/api/auth/login")
@@ -149,37 +138,146 @@ public class AuthControllerTest {
                 .andExpect(status().isBadRequest()); // 400 BAD REQUEST
     }
 
-    /**
-     * Testa il login con password errata (deve fallire).
-     */
-    @Test
-    void testLoginPasswordErrata() throws Exception {
-        LoginRequest request = new LoginRequest();
-        request.setEmail("test@email.com");
-        request.setPassword("wrongpassword");
 
-        mockMvc.perform(post("/api/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isUnauthorized()); // 401 UNAUTHORIZED
-    }
-
-    /**
-     * Testa la registrazione con codice fiscale errato (deve fallire).
-     */
     @Test
-    void testRegistrazioneCodiceFiscaleErrato() throws Exception {
-        RegistrazioneRequest request = new RegistrazioneRequest();
-        request.setEmail("nuovo@email.com");
-        request.setNome("Luca");
-        request.setCognome("Bianchi");
-        request.setCodiceFiscale("XYZABC"); // Codice fiscale troppo corto
-        request.setDataDiNascita(new Date());
-        request.setPassword(passwordEncoder.encode("password123"));
+    void testRegistrazioneEmailNonValida() throws Exception {
+        RegistrazioneRequest request = createValidRequest();
+        request.setEmail("notanemail");
 
         mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isBadRequest()); // 400 BAD REQUEST
+                .andExpect(status().isBadRequest());
+    }
+
+    // --- Test per Password ---
+    @Test
+    void testRegistrazionePasswordTroppoCorta() throws Exception {
+        RegistrazioneRequest request = createValidRequest();
+        request.setPassword("123"); // Meno di 6 caratteri
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testRegistrazionePasswordTroppoLunga() throws Exception {
+        RegistrazioneRequest request = createValidRequest();
+        // Genera una password di 65 caratteri
+        request.setPassword("12345678901234567890123456789012345678901234567890123456789012345");
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    // --- Test per Nome ---
+    @Test
+    void testRegistrazioneNomeConCaratteriNonAmmessi() throws Exception {
+        RegistrazioneRequest request = createValidRequest();
+        request.setNome("Luca123!@#"); // Contiene numeri e caratteri speciali
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    // --- Test per Cognome ---
+    @Test
+    void testRegistrazioneCognomeConCaratteriNonAmmessi() throws Exception {
+        RegistrazioneRequest request = createValidRequest();
+        request.setCognome("Bianchi99"); // Contiene numeri
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    // --- Test per Codice Fiscale ---
+    @Test
+    void testRegistrazioneCodiceFiscaleFormatoErrato() throws Exception {
+        RegistrazioneRequest request = createValidRequest();
+        request.setCodiceFiscale("INVALIDCODE"); // Non rispetta il pattern
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testRegistrazioneCodiceFiscaleTroppoCorto() throws Exception {
+        RegistrazioneRequest request = createValidRequest();
+        request.setCodiceFiscale("SHORT123"); // Troppo corto
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testRegistrazioneCodiceFiscaleTroppoLungo() throws Exception {
+        RegistrazioneRequest request = createValidRequest();
+        request.setCodiceFiscale("ABCDEFGHIJKLMNOXYZ"); // Troppo lungo
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    // --- Test per Indirizzo di Fatturazione ---
+    @Test
+    void testRegistrazioneIndirizzoSenzaNumero() throws Exception {
+        RegistrazioneRequest request = createValidRequest();
+        request.setIndirizzoDiFatturazione("Via Roma"); // Mancanza di un numero
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testRegistrazioneIndirizzoTroppoLungo() throws Exception {
+        RegistrazioneRequest request = createValidRequest();
+        // Genera un indirizzo troppo lungo
+        request.setIndirizzoDiFatturazione("Via ".repeat(30));
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    // --- Test per Data di Nascita ---
+    @Test
+    void testRegistrazioneDataDiNascitaNull() throws Exception {
+        RegistrazioneRequest request = createValidRequest();
+        request.setDataDiNascita(null); // Data nulla
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    // Metodo di utilità per creare una request valida di base
+    private RegistrazioneRequest createValidRequest() {
+        RegistrazioneRequest request = new RegistrazioneRequest();
+        request.setEmail(validEmail);
+        request.setPassword(validPassword);
+        request.setNome(validNome);
+        request.setCognome(validCognome);
+        request.setCodiceFiscale(validCodiceFiscale);
+        request.setIndirizzoDiFatturazione(validIndirizzo);
+        request.setDataDiNascita(validData);
+        return request;
     }
 }

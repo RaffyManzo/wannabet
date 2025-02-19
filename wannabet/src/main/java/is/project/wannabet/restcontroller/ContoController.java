@@ -1,7 +1,6 @@
-package is.project.wannabet.controller;
+package is.project.wannabet.restcontroller;
 
 
-import is.project.wannabet.model.AccountRegistrato;
 import is.project.wannabet.security.AuthenticationRequestAccountCheck;
 import is.project.wannabet.service.AccountRegistratoService;
 import jakarta.validation.constraints.Min;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import is.project.wannabet.model.Conto;
 import is.project.wannabet.service.ContoService;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController

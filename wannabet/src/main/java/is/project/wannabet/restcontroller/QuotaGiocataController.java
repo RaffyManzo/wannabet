@@ -1,6 +1,5 @@
-package is.project.wannabet.controller;
+package is.project.wannabet.restcontroller;
 
-import is.project.wannabet.model.QuotaGiocata;
 import is.project.wannabet.security.AuthenticationRequestAccountCheck;
 import is.project.wannabet.service.QuotaGiocataService;
 import is.project.wannabet.service.ScommessaService;
@@ -10,8 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/quota_giocata")

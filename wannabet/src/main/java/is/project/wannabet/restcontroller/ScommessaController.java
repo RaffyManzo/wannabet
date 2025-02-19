@@ -1,15 +1,11 @@
-package is.project.wannabet.controller;
+package is.project.wannabet.restcontroller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import is.project.wannabet.model.*;
 import is.project.wannabet.security.AuthenticationRequestAccountCheck;
 import is.project.wannabet.service.AccountRegistratoService;
 import is.project.wannabet.service.ContoService;
-import is.project.wannabet.service.PrenotazioneService;
 import is.project.wannabet.service.ScommessaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

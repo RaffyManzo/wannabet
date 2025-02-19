@@ -1,7 +1,6 @@
-package is.project.wannabet.controller;
+package is.project.wannabet.restcontroller;
 
 import is.project.wannabet.model.Quota;
-import is.project.wannabet.repository.PrenotazioneRepository;
 import is.project.wannabet.service.PrenotazioneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -91,15 +91,24 @@ public class AuthController {
      * Se l'utente è autenticato, carichiamo i suoi dati nella sessione.
      */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );
 
+        // Imposta l'autenticazione nel SecurityContext
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // Forza la creazione della sessione e memorizza il SecurityContext sotto la chiave standard
+        HttpSession session = request.getSession(true);
+        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
+
+        System.out.println("✅ Sessione creata con ID: " + session.getId());
 
         return ResponseEntity.ok("Login effettuato con successo");
     }
+
+
 
     /**
      * Logout: Invalida la sessione dell'utente.

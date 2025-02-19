@@ -1,4 +1,4 @@
-package is.project.wannabet.controller;
+package is.project.wannabet.restcontroller;
 
 import is.project.wannabet.model.AccountRegistrato;
 import is.project.wannabet.security.AuthenticationRequestAccountCheck;
@@ -44,6 +44,10 @@ public class AccountRegistratoController {
             return Optional.empty();
     }
 
+    @GetMapping("/{email}")
+    public Optional<AccountRegistrato> getAccountByEmail(@PathVariable String email, Authentication authentication) {
+       return service.getAccountByEmail(email);
+    }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('UTENTE', 'ADMIN')")

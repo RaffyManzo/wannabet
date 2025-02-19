@@ -1,4 +1,4 @@
-package is.project.wannabet.controller;
+package is.project.wannabet.restcontroller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
