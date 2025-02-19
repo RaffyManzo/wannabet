@@ -20,10 +20,12 @@ header{
     align-items: center;
     padding: 20px 5%;
 }
+
 .logo{
     cursor: pointer;
     margin-right: auto;
 }
+
 .menu{
     list-style: none;
 }

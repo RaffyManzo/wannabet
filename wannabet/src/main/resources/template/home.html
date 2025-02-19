@@ -1,19 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:sec="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>WannaBet Home</title>
     <link rel="stylesheet" href="../static/css/HomeStyle.css">
     <script src="../static/script/signup-login.js" defer></script>
-    <script src="../static/script/home.js" defer></script>
+    <!--<script src="../static/script/home.js" defer></script>-->
 </head>
 <body>
 
-<header id = header>
+<header>
+
+    <a href="#" class ="logo">Wannabet</a>
+
+    <nav>
+        <ul class ="menu">
+            <li><a href = "#">Sports</a>
+                <ul class ="SubSports"></ul>
+            </li>
+            <li><a href="#">Esports</a>
+                <ul class="SubEsports"></ul>
+            </li>
+        </ul>
+        </ul>
+    </nav>
+
+    <div th:if="${!#authorization.expression('isAuthenticated()')}">
+        <a href="login.html"><button>Login</button></a>
+        <a href = "singup.html"><button>Registrati</button></a>
+    </div>
+    <div th:if="${#authorization.expression('isAuthenticated()')}">
+        <a href="#"><button>Area Personale</button></a>
+    </div>
 
 </header>
-
-
 
 <footer class = "footer">
     <div class = "footer__container">

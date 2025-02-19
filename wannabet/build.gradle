@@ -26,6 +26,8 @@ dependencies {
 	implementation 'junit:junit:4.13.1'
 	implementation 'org.junit.jupiter:junit-jupiter:5.8.1'
 
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 
