@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:sec="http://www.thymeleaf.org" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org/" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <meta charset="UTF-8">
     <title>WannaBet Home</title>
@@ -22,15 +22,13 @@
                 <ul class="SubEsports"></ul>
             </li>
         </ul>
-        </ul>
     </nav>
-
-    <div th:if="${!#authorization.expression('isAuthenticated()')}">
+    <div sec:authorized="isAnonymous()">
         <a href="login.html"><button>Login</button></a>
         <a href = "singup.html"><button>Registrati</button></a>
     </div>
-    <div th:if="${#authorization.expression('isAuthenticated()')}">
-        <a href="#"><button>Area Personale</button></a>
+    <div sec:authorized="isAuthenticated()">
+        <a href="area_utente.html"><button>Area Personale</button></a>
     </div>
 
 </header>
@@ -39,30 +37,19 @@
     <div class = "footer__container">
         <div class="footer__row">
             <div class="footer--col">
-                <h4>DataFooter1</h4>
+                <h4>WannaBet</h4>
                 <ul>
-                    <li><a href="#">dati</a></li>
-                    <li><a href="#">dati</a></li>
-                    <li><a href="#">dati</a></li>
-                    <li><a href="#">dati</a></li>
-                </ul>
-            </div>
-            <div class="footer--col">
-                <h4>DataFooter2</h4>
-                <ul>
-                    <li><a href="#">dati</a></li>
-                    <li><a href="#">dati</a></li>
-                    <li><a href="#">dati</a></li>
-                    <li><a href="#">dati</a></li>
+                    <li><a href="#">Privacy/Policy</a></li>
+                    <li><a href="#">Termini e condizioni</a></li>
                 </ul>
             </div>
             <div class="footer--col">
                 <h4>Contatti</h4>
                 <ul>
-                    <li><a href="#">dati</a></li>
-                    <li><a href="#">dati</a></li>
-                    <li><a href="#">dati</a></li>
-                    <li><a href="#">dati</a></li>
+                    <li><a href="#">l.tufano15@studenti.unisa.it</a></li>
+                    <li><a href="#">l.giammattei@studenti.unisa.it</a></li>
+                    <li><a href="#">e.distasio1@studenti.unisa.it</a></li>
+                    <li><a href="#">r.manzo43@studenti.unisa.it</a></li>
                 </ul>
             </div>
         </div>
@@ -70,8 +57,3 @@
 </footer>
 </body>
 </html>
-
-
-
-
-
