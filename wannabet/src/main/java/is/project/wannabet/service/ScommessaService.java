@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Servizio per la gestione delle scommesse.
@@ -61,9 +63,15 @@ public class ScommessaService {
 
         // Verifica che tutte le quote esistano prima di salvare la scommessa
         List<QuotaGiocata> quoteGiocate = scommessa.getQuoteGiocate().stream()
-                .map(qg -> new QuotaGiocata(scommessa, quotaService.getQuotaById(qg.getQuota().getIdQuota())
-                        .orElseThrow(() -> new IllegalArgumentException("Quota non trovata con ID: " + qg.getQuota().getIdQuota()))))
-                .toList();
+                .map(qg -> new QuotaGiocata(scommessa,
+                        quotaService.getQuotaById(qg.getQuota().getIdQuota())
+                                .orElseThrow(() -> new IllegalArgumentException("Quota non trovata con ID: " + qg.getQuota().getIdQuota()))))
+                .collect(Collectors.toCollection(ArrayList::new));
+
+
+        scommessa.getQuoteGiocate().forEach(q -> q.setScommessa(null)); // Dissocia le quote
+        scommessa.getQuoteGiocate().clear(); // Poi rimuovile
+
 
         scommessa.setQuoteGiocate(quoteGiocate);
 

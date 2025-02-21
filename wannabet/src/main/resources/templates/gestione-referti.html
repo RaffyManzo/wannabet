@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Referta Quote - WannaBet</title>
+    <link rel="stylesheet" th:href="@{/css/referta-quote.css}" />
+    <script th:src="@{/script/referta-quote.js}" defer></script>
+</head>
+<body>
+<!-- Navbar principale (placeholder) -->
+<nav class="main-navbar">
+    <ul>
+        <li><a th:href="@{/home}">Home</a></li>
+        <li><a th:href="@{/referta-quote}">Referta Quote</a></li>
+    </ul>
+</nav>
+
+<div class="container">
+    <h1>Referta Quote</h1>
+
+    <!-- Barra di ricerca -->
+    <div class="search-bar">
+        <form th:action="@{/referta-quote}" method="get">
+            <input type="text" name="search" placeholder="Cerca quote..." th:value="${search}" />
+            <button type="submit">Cerca</button>
+        </form>
+    </div>
+
+    <!-- Lista delle quote -->
+    <div class="quote-list">
+        <table>
+            <thead>
+            <tr>
+                <th>ID Quota</th>
+                <th>Evento</th>
+                <th>Categoria</th>
+                <th>Esito</th>
+                <th>Moltiplicatore</th>
+                <th>Stato</th>
+                <th>Azioni</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="q : ${quoteList}">
+                <td th:text="${q.idQuota}">1</td>
+                <td th:text="${q.evento.nome}">Nome Evento</td>
+                <td th:text="${q.categoria}">Categoria</td>
+                <td th:text="${q.esito}">Esito</td>
+                <td th:text="${q.moltiplicatore}">1.90</td>
+                <td th:text="${q.stato}">Da Refertare</td>
+                <td>
+                    <!-- Pulsante "Referta" con l'attributo data-id impostato -->
+                    <button type="button" class="btn-referta" th:attr="data-id=${q.idQuota}">
+                        Referta
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal per inserire il referto -->
+    <div id="refertaModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Inserisci Referto</h2>
+            <!-- Il form usa un URL con segnaposto __id__ che verrà sostituito via JS -->
+            <form id="refertaForm" th:action="@{/referta-quote/__id__}" method="post">
+                <input type="hidden" name="idQuota" id="modalIdQuota" value=""/>
+                <div class="form-group">
+                    <label for="referto">Referto:</label>
+                    <input type="text" id="referto" name="referto" required/>
+                </div>
+                <button type="submit" class="btn-submit">Invia</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer class="main-footer">
+    <p>&copy; 2025 WannaBet. Tutti i diritti riservati.</p>
+</footer>
+</body>
+</html>

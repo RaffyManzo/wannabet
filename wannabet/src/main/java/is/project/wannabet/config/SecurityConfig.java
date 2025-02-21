@@ -1,5 +1,6 @@
 package is.project.wannabet.config;
 
+import is.project.wannabet.auth.CustomAuthenticationSuccessHandler;
 import is.project.wannabet.security.CustomPasswordEncoder;
 import is.project.wannabet.service.AccountDetailsService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,7 +26,8 @@ public class SecurityConfig {
     private AccountDetailsService accountDetailsService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   CustomAuthenticationSuccessHandler successHandler) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable) // Disabilita CSRF per le API REST
                 .authorizeHttpRequests(auth -> auth
@@ -33,6 +35,10 @@ public class SecurityConfig {
                         .requestMatchers("/css/**", "/script/**", "/images/**", "/login.html", "/signup.html").permitAll()
 
                         .anyRequest().authenticated() // 🔒 Tutto il resto richiede autenticazione
+                )
+                .formLogin(form -> form
+                        .loginPage("/login.html")
+                        .permitAll()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
@@ -43,7 +49,8 @@ public class SecurityConfig {
 
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint((request, response, authException) -> {
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                            // Reindirizza alla pagina di login per le richieste non autorizzate
+                            response.sendRedirect(request.getContextPath() + "/login.html");
                         })
                 )
                 .logout(logout -> logout

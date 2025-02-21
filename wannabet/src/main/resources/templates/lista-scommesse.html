@@ -3,56 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <title>Elenco Scommesse - Demo</title>
+    <!-- Collega un tuo CSS personalizzato -->
     <link rel="stylesheet" th:href="@{/css/lista-scommesse.css}" />
 </head>
 <body>
 
+<!-- Nav bar per filtrare GIOCATE / PRENOTATE -->
+<nav class="scommesse-type-nav">
+    <ul>
+        <li th:classappend="${selectedType} == 'ALL' ? 'active' : ''"
+            th:onclick="|window.location.href='@{/lista-scommesse}'|">
+            Tutte
+        </li>
+        <li th:classappend="${selectedType} == 'GIOCATA' ? 'active' : ''"
+            th:onclick="|window.location.href='@{/lista-scommesse(type=GIOCATA)}'|">
+            Giocate
+        </li>
+        <li th:classappend="${selectedType} == 'PRENOTATA' ? 'active' : ''"
+            th:onclick="|window.location.href='@{/lista-scommesse(type=PRENOTATA)}'|">
+            Prenotate
+        </li>
+    </ul>
+</nav>
+
 <div class="lista-scommesse-container">
     <h2>Le tue scommesse</h2>
-    <div class="scommesse-grid">
+
+    <!-- Messaggio di errore se l'account non è trovato o altro -->
+    <div th:if="${error}">
+        <p th:text="${error}" class="error-msg"></p>
+    </div>
+
+    <div class="scommesse-grid" th:if="${scommesse}">
         <!-- Itera sulla lista delle scommesse passata dal controller -->
-        <div th:each="scommessa : ${lista-scommesse}" class="scommessa-card">
+        <div th:each="scommessa : ${scommesse}" class="scommessa-card">
             <div class="scommessa-header">
-                <div class="scommessa-id" th:text="'ID Scommessa: ' + ${scommessa.idScommessa}">ID Scommessa: 101</div>
-                <!-- Visualizza l'icona in base allo stato -->
-                <img th:if="${scommessa.stato} == 'Da refertare'"
-                     class="scommessa-stato-icon"
-                     th:src="@{/images/question_mark.png}"
-                     alt="Da refertare" />
-                <img th:if="${scommessa.stato} == 'Persa'"
-                     class="scommessa-stato-icon"
-                     th:src="@{/images/x_mark.png}"
-                     alt="Persa" />
-                <img th:if="${scommessa.stato} == 'Vinta'"
-                     class="scommessa-stato-icon"
-                     th:src="@{/images/check_mark.png}"
-                     alt="Vinta" />
+                <!-- Se scommessa è PRENOTATA -->
+                <div th:if="${scommessa.tipo == T(is.project.wannabet.model.TipoScommessa).PRENOTATA}"
+                     class="scommessa-id"
+                     th:text="'Prenotazione: ' + ${scommessa.prenotazione.codice}">
+                    Prenotazione: AB123
+                </div>
+                <!-- Altrimenti, mostra l'ID della scommessa -->
+                <div th:if="${scommessa.tipo != T(is.project.wannabet.model.TipoScommessa).PRENOTATA}"
+                     class="scommessa-id"
+                     th:text="'ID Scommessa: ' + ${scommessa.idScommessa}">
+                    ID Scommessa: 101
+                </div>
+
+                <!-- Icona di stato, visibile solo se la scommessa NON è prenotata -->
+                <div th:if="${scommessa.tipo != T(is.project.wannabet.model.TipoScommessa).PRENOTATA}">
+                    <img th:if="${scommessa.stato == T(is.project.wannabet.model.StatoScommessa).DA_REFERTARE}"
+                         class="scommessa-stato-icon"
+                         th:src="@{/images/question_mark.png}"
+                         alt="Da refertare" />
+                    <img th:if="${scommessa.stato == T(is.project.wannabet.model.StatoScommessa).VINTA}"
+                         class="scommessa-stato-icon"
+                         th:src="@{/images/check_mark.png}"
+                         alt="Vinta" />
+                    <img th:if="${scommessa.stato == T(is.project.wannabet.model.StatoScommessa).PERSA}"
+                         class="scommessa-stato-icon"
+                         th:src="@{/images/x_mark.png}"
+                         alt="Persa" />
+                </div>
+
             </div>
+
             <div class="scommessa-info">
                 <div class="scommessa-data"
                      th:text="'Data: ' + ${#dates.format(scommessa.data, 'yyyy-MM-dd HH:mm:ss')}">
                     Data: 2025-01-01 12:00:00
                 </div>
-                <!-- Se la scommessa è da refertare, mostra la vincita potenziale, altrimenti mostra 0 o la vincita -->
-                <div class="scommessa-vincita" th:if="${scommessa.stato} == 'Da refertare'"
-                     th:text="'Vincita potenziale: ' + ${scommessa.vincita} + ' €'">
-                    Vincita potenziale: 100.00 €
+                <div class="scommessa-importo"
+                     th:text="'Importo: ' + ${scommessa.importo} + ' €'">
+                    Importo: 10.00 €
                 </div>
-                <div class="scommessa-vincita" th:if="${scommessa.stato} == 'Persa'"
-                     th:text="'Vincita: 0.00 €'">
-                    Vincita: 0.00 €
-                </div>
-                <div class="scommessa-vincita" th:if="${scommessa.stato} == 'Vinta'"
-                     th:text="'Vincita: ' + ${scommessa.vincita} + ' €'">
-                    Vincita: 150.00 €
+                <!-- Mostra le informazioni sulla vincita solo se la scommessa NON è prenotata -->
+                <div th:if="${scommessa.tipo != T(is.project.wannabet.model.TipoScommessa).PRENOTATA}">
+                    <div th:if="${scommessa.stato == 'Da refertare'}"
+                         class="scommessa-vincita"
+                         th:text="'Vincita potenziale: ' + ${scommessa.vincita} + ' €'">
+                        Vincita potenziale: 100.00 €
+                    </div>
+                    <div th:if="${scommessa.stato == 'Persa'}"
+                         class="scommessa-vincita"
+                         th:text="'Vincita: 0.00 €'">
+                        Vincita: 0.00 €
+                    </div>
+                    <div th:if="${scommessa.stato == 'Vinta'}"
+                         class="scommessa-vincita"
+                         th:text="'Vincita: ' + ${scommessa.vincita} + ' €'">
+                        Vincita: 150.00 €
+                    </div>
                 </div>
             </div>
-            <!-- Pulsante per mostrare i dettagli della scommessa -->
-            <button class="btn-mostra"
-                    th:onclick="'location.href=\'/scommessa/' + ${scommessa.idScommessa} + '\'"'>
-            Mostra scommessa
-            </button>
+
+            <!-- Azioni: -->
+            <!-- Se la scommessa NON è prenotata, mostra il pulsante "Mostra scommessa" -->
+            <div th:if="${scommessa.tipo != T(is.project.wannabet.model.TipoScommessa).PRENOTATA}">
+                <button class="btn-mostra"
+                        th:onclick="|window.location.href='@{/scommessa/{id}(id=${scommessa.idScommessa})}'|">
+                    Mostra scommessa
+                </button>
+            </div>
+            <!-- Se la scommessa è prenotata, mostra il pulsante "Carica" -->
+            <div th:if="${scommessa.tipo == T(is.project.wannabet.model.TipoScommessa).PRENOTATA}">
+                <button class="btn-carica">Carica</button>
+            </div>
         </div>
+
+    </div>
+
+    <!-- Se la lista è vuota -->
+    <div th:if="${#lists.isEmpty(scommesse)}">
+        <p>Nessuna scommessa trovata.</p>
     </div>
 </div>
 

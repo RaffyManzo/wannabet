@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.stream.Collectors;
 
 /**
@@ -25,6 +27,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class QuotaService {
+    private static final Logger logger = LoggerFactory.getLogger(QuotaService.class);
+
 
     @Autowired
     private is.project.wannabet.observer.QuotaCache quotaCache;
@@ -152,20 +156,38 @@ public class QuotaService {
      * @param referto Referto assegnato alla quota.
      */
     public void refertaQuota(Long idQuota, String referto) {
+        logger.debug("Inizio refertazione per quota id: {} con referto: {}", idQuota, referto);
         Optional<Quota> quotaOpt = quotaRepository.findById(idQuota);
         if (quotaOpt.isPresent()) {
             Quota quota = quotaOpt.get();
+            logger.debug("Quota trovata: id: {} - Esito previsto: {}", quota.getIdQuota(), quota.getEsito());
             if (referto.equals(quota.getEsito())) {
                 quota.setStato(StatoQuota.VINCENTE);
+                logger.debug("Referto corretto: stato impostato a VINCENTE");
             } else {
                 quota.setStato(StatoQuota.PERDENTE);
+                logger.debug("Referto errato: stato impostato a PERDENTE");
             }
             quotaRepository.save(quota);
-
-            // Notifica gli observer della modifica dello stato
-            quotaManager.aggiornaQuota(quota);
+            logger.debug("Quota id: {} salvata nel DB", quota.getIdQuota());
+            // Ricarica la quota aggiornata per sicurezza
+            Quota updatedQuota = quotaRepository.findById(idQuota).orElse(quota);
+            logger.debug("Quota aggiornata ricaricata: id: {} - Stato: {}", updatedQuota.getIdQuota(), updatedQuota.getStato());
+            quotaManager.aggiornaQuota(updatedQuota);
+            logger.debug("QuotaManager notificato per quota id: {}", updatedQuota.getIdQuota());
+        } else {
+            logger.warn("Quota con id: {} non trovata", idQuota);
         }
     }
+
+    public void loadQuotaInQuotaCache(Long idQuota) {
+        Quota quota = quotaRepository.findById(idQuota).get();
+
+        quotaCache.aggiornaQuota(quota);
+        quotaManager.aggiornaQuota(quota);
+
+    }
+
 
     @Transactional
     public void flush() {

@@ -33,12 +33,6 @@ public class Scommessa {
     @JsonProperty("tipo")
     private TipoScommessa tipo;
 
-
-    @OneToOne(mappedBy = "scommessa", cascade = CascadeType.ALL)
-    @JsonManagedReference
-    @JsonIgnore
-    private Prenotazione prenotazione;
-
     @Column(name = "importo", nullable = false)
     @JsonProperty("importo")
     private double importo;
@@ -59,9 +53,21 @@ public class Scommessa {
     private StatoScommessa stato;
 
     @OneToMany(mappedBy = "scommessa", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JsonManagedReference
     @JsonProperty("quote_giocate")
     private List<QuotaGiocata> quoteGiocate = new ArrayList<>();
+
+    @OneToOne(mappedBy = "scommessa")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Prenotazione prenotazione;
+
+
+    public Prenotazione getPrenotazione() {
+        return prenotazione;
+    }
+
+    public void setPrenotazione(Prenotazione prenotazione) {
+        this.prenotazione = prenotazione;
+    }
 
 
     public List<QuotaGiocata> getQuoteGiocate() {
@@ -69,7 +75,10 @@ public class Scommessa {
     }
 
     public void setQuoteGiocate(List<QuotaGiocata> quoteGiocate) {
-        this.quoteGiocate = quoteGiocate;
+        this.quoteGiocate.clear(); // Svuota la lista mantenendo il riferimento
+        if (quoteGiocate != null) {
+            this.quoteGiocate.addAll(quoteGiocate); // Aggiungi i nuovi elementi
+        }
     }
 
     public Long getIdScommessa() {

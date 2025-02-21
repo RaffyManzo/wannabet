@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -111,7 +112,7 @@ public class ScommessaControllerTest {
         assertNotNull(quotaDiTest.getIdQuota());
 
         // 6️⃣ Crea e salva Scommessa
-        scommessaDiTest = scommessaService.creaScommessa(List.of(quotaDiTest), 100.0, accountDiTest.getIdAccount());
+        scommessaDiTest = scommessaService.creaScommessa(new ArrayList<>(List.of(quotaDiTest)), 100.0, accountDiTest.getIdAccount());
         assertNotNull(scommessaDiTest.getIdScommessa());
     }
 
@@ -122,7 +123,7 @@ public class ScommessaControllerTest {
      */
     @Test
     public void testCreateScommessa() throws Exception {
-        Scommessa nuovaScommessa = ScommessaFactory.createScommessa(accountDiTest, List.of(quotaDiTest), 100);
+        Scommessa nuovaScommessa = ScommessaFactory.createScommessa(accountDiTest, new ArrayList<>(List.of(quotaDiTest)), 100);
 
         mockMvc.perform(post("/api/scommesse/" + accountDiTest.getIdAccount() + "/crea")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -137,7 +138,7 @@ public class ScommessaControllerTest {
      */
     @Test
     public void testCreateScommessaWithInsufficientCredit() throws Exception {
-        Scommessa nuovaScommessa = ScommessaFactory.createScommessa(accountDiTest, List.of(quotaDiTest), 2000);
+        Scommessa nuovaScommessa = ScommessaFactory.createScommessa(accountDiTest, new ArrayList<>(List.of(quotaDiTest)), 2000);
 
 
         mockMvc.perform(post("/api/scommesse/" + accountDiTest.getIdAccount() + "/crea")

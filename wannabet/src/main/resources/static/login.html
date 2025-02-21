@@ -1,67 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <title>Log-In</title>
+    <title>WannaBet - Login</title>
     <link rel="stylesheet" href="css/login.css">
-    <script src="script/signup-login.js" defer></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Seleziona il form per il login tramite il suo id
-            const loginForm = document.getElementById('loginForm');
-
-            loginForm.addEventListener('submit', function(e) {
-                // Impedisci il comportamento predefinito del form (invio tradizionale)
-                e.preventDefault();
-
-                // Ottieni i valori dai campi del form
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-
-                // Crea l'oggetto JSON con i dati del form
-                const payload = {
-                    email: email,
-                    password: password
-                };
-
-                // Esegui la chiamata fetch per inviare i dati come JSON
-                fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(payload)
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            window.location.href = "/home"; // Reindirizzamento manuale
-                            console.log(response)
-                        } else {
-                            console.error('Login fallito');
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Errore durante il login:', error);
-                    });
-            });
-        });
-    </script>
+    <script src="script/login-request-handler.js"></script>
 </head>
 <body>
-    <section>
-        <form id="loginForm">
-            <h1>WannaBet</h1>
-            <div class="inputbox">
-                <input type="email" id="email" name="email" required /><br>
-            </div>
-            <div class="inputbox">
-                <input type="password" id="password" name="password" required /><br>
-            </div>
-            <button type="submit">Login</button>
-            <div class="register">
-                <p>Don't have an account yet? <a href="singup.html">Sign Up</a> </p>
-            </div>
-        </form>
-    </section>
+<div class="login-container">
+    <form id="loginForm" class="login-form">
+        <h1 class="logo">WannaBet</h1>
+        <div class="input-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="Inserisci la tua email" required>
+        </div>
+        <div class="input-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Inserisci la tua password" required>
+        </div>
+        <button type="submit" class="btn-primary">Login</button>
+        <div class="signup-link">
+            <p>Non hai un account? <a href="singup.html">Registrati</a></p>
+        </div>
+    </form>
+</div>
 </body>
 </html>

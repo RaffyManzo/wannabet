@@ -4,6 +4,7 @@ import is.project.wannabet.model.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -37,8 +38,9 @@ public class ScommessaFactory {
 
         // Creiamo la lista delle QuoteGiocate
         List<QuotaGiocata> quoteGiocate = quote.stream()
-                .map(q -> new QuotaGiocata(scommessa, q)) // Creiamo le quote giocate congelando il moltiplicatore
-                .collect(Collectors.toList());
+                .map(q -> new QuotaGiocata(scommessa, q))
+                .collect(Collectors.toCollection(ArrayList::new));
+
 
         scommessa.setVincita(importo * quoteGiocate.stream()
                 .map(QuotaGiocata::getQuota)
@@ -75,8 +77,8 @@ public class ScommessaFactory {
 
         // Creiamo la lista delle QuoteGiocate
         List<QuotaGiocata> quoteGiocate = quote.stream()
-                .map(q -> new QuotaGiocata(scommessa, q)) // Creiamo le quote giocate congelando il moltiplicatore
-                .collect(Collectors.toList());
+                .map(q -> new QuotaGiocata(scommessa, q))
+                .collect(Collectors.toCollection(ArrayList::new));
 
         scommessa.setVincita(importo * quoteGiocate.stream()
                 .map(QuotaGiocata::getQuota)

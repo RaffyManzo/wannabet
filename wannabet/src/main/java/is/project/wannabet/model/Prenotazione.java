@@ -18,7 +18,6 @@ public class Prenotazione {
 
     @OneToOne
     @JoinColumn(name = "id_scommessa", nullable = false, unique = true)
-    @JsonBackReference
     private Scommessa scommessa;
 
     public Prenotazione() {}
