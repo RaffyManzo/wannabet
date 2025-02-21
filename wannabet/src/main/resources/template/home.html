@@ -5,59 +5,17 @@
     <title>WannaBet Home</title>
     <link rel="stylesheet" href="../static/css/HomeStyle.css">
     <script src="../static/script/signup-login.js" defer></script>
-    <!--<script src="../static/script/home.js" defer></script>-->
+    <script src="../static/script/headerwannabet.js" defer></script>
+    <script src="../static/script/footerwannabet.js" defer></script>
 </head>
 <body>
 
-<header>
-
-    <a href="#" class ="logo">Wannabet</a>
-
-    <nav>
-        <ul class ="menu">
-            <li><a href = "#">Sports</a>
-                <ul class ="SubSports"></ul>
-            </li>
-            <li><a href="#">Esports</a>
-                <ul class="SubEsports"></ul>
-            </li>
-        </ul>
-    </nav>
-
-    <div id="functions">
-
-    </div>
-    <div sec:authorized="isAnonymous()">
-        <a href="login.html"><button>Login</button></a>
-        <a href = "singup.html"><button>Registrati</button></a>
-    </div>
-    <div sec:authorized="isAuthenticated()">
-        <a href="area_utente.html"><button>Area Utente</button></a>
-    </div>
+<header id ="headerwannabet">
 
 </header>
 
-<footer class = "footer">
-    <div class = "footer__container">
-        <div class="footer__row">
-            <div class="footer--col">
-                <h4>WannaBet</h4>
-                <ul>
-                    <li><a href="#">Privacy/Policy</a></li>
-                    <li><a href="#">Termini e condizioni</a></li>
-                </ul>
-            </div>
-            <div class="footer--col">
-                <h4>Contatti</h4>
-                <ul>
-                    <li><a href="#">l.tufano15@studenti.unisa.it</a></li>
-                    <li><a href="#">l.giammattei@studenti.unisa.it</a></li>
-                    <li><a href="#">e.distasio1@studenti.unisa.it</a></li>
-                    <li><a href="#">r.manzo43@studenti.unisa.it</a></li>
-                </ul>
-            </div>
-        </div>
-    </div>
+<footer class = "footer" id="footerwannabet">
+
 </footer>
 </body>
 </html>
