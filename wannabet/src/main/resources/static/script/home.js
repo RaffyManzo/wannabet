@@ -1,35 +1,30 @@
-let header2 = document.getElementById('header2');
-let header1 = document.getElementById('header1');
+function isAuthenticated() {
+// Questa è una simulazione. Sostituisci con la tua logica di autenticazione.
+    return !!sessionStorage.getItem('authenticated');
+}
 
-header1.innerHTML = '' +
-    '<a href="#" class ="logo">Wannabet</a>' +
-    '<nav>' +
-    '<ul class ="menu">' +
-    '<li><a href = "#">Sports</a>' +
-    '<ul class ="SubSports">' +
-    '</ul>' +
-    '</li>' +
-    '<li><a href="#">Esports</a>' +
-    '<ul class="SubEsports">' +
-    '</li>' +
-    '</ul>' +
-    '</ul>' +
-    '</nav>' +
-    '<a href="login.html"><button>Login</button></a>' +
-    '<a href = "singup.html"><button>Registrati</button></a>';
+// Aggiorna i link di autenticazione in base allo stato di autenticazione
+function updateAuthLinks() {
+    const authLinks = document.getElementById('functions');
+    authLinks.innerHTML = ''; // Svuota i link esistenti
 
-header2.innerHTML = '' +
-    '<a href="#" class ="logo">Wannabet</a>' +
-    '<nav>' +
-    '<ul class ="menu">' +
-    '<li><a href = "#">Sports</a>' +
-    '<ul class ="SubSports">' +
-    '</ul>' +
-    '</li>' +
-    '<li><a href="#">Esports</a>' +
-    '<ul class="SubEsports">' +
-    '</li>' +
-    '</ul>' +
-    '</ul>' +
-    '</nav>' +
-    '<a href = "#"><button>Area Personale</button></a>';
+    if (isAuthenticated()) {
+// Se l'utente è autenticato, mostra i link "Logout" e "Area Utente"
+        authLinks.innerHTML ='' +
+            '<a href="/api/auth/logout">Logout</a>' +
+        '<a href="/user/profile">Area Utente</a>'
+        ;
+    } else {
+// Se l'utente non è autenticato, mostra i link "Login" e "Sign Up"
+        authLinks.innerHTML ='' +
+            '<a href="/login">Login</a>' +
+        '<a href="/sign-up">Sign Up</a>'
+        ;
+    }
+}
+
+// Esegui l'aggiornamento dei link di autenticazione quando la pagina viene caricata
+window.onload = updateAuthLinks;
+
+// Simulazione per test: fai il login al caricamento della pagina (rimuovi per la versione reale)
+sessionStorage.setItem('authenticated', 'true');
