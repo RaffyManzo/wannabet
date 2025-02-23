@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en"xmlns:th="http://www.thymeleaf.org/" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>WannaBet Home</title>
+    <link rel="stylesheet" href="../static/css/header_footer.css">
+</head>
+<body>
+
+
+<header>
+    <a href="header_footer.html" class ="logo">Wannabet</a>
+    <nav>
+        <ul class ="menu">
+            <li><a href = "#">Sports</a>
+                <ul class ="SubSports"></ul>
+            </li>
+            <li><a href="#">Esports</a>
+                <ul class="SubEsports"></ul>
+            </li>
+        </ul>
+    </nav>
+
+    <div>
+        <a href="login.html"><button class="headbutton">Login</button></a>
+        <a href = "singup.html"><button class="headbutton">Registrati</button></a>
+    </div>
+
+    <div>
+        <button onclick="openSlideInPopup()">Apri Area Personale</button>
+        <div id="popupContainer" class="popup-container">
+            <div class="popup-content">
+                <div class="container">
+
+                    <div class="section">
+                        <h2>Dati Personali</h2>
+                        <div class="data-grid" id="userData">
+                            <div class="data-item">Nome: </div>
+                            <div class="data-item">Cognome: </div>
+                            <div class="data-item">Codice Fiscale: </div>
+                            <div class="data-item">Data di Nascita: </div>
+                            <div class="data-item">Email: </div>
+                            <div class="data-item">Indirizzo: </div>
+                        </div>
+                        <button class="secondaryButton" onclick="openUserPopup()">Modifica Dati</button>
+                    </div>
+
+                    <hr class="horizontal-line">
+
+                    <div class="section">
+                        <h2>Conto Utente</h2>
+                        <p><b>ID:</b> <span id="saldoID"></span></p>
+                        <p><b>Saldo:</b> <span id="saldo"></span> &euro;</p>
+                        <p><b>Punti:</b> <span id="saldoFedelta"></span> pt</p>
+                        <button class="primaryButton" onclick="openPopup('preleva')">Preleva</button>
+                        <button class="primaryButton" onclick="openPopup('deposita')">Deposita</button>
+                    </div>
+
+                    <hr class="horizontal-line">
+
+                    <div class="section">
+                        <button class="primaryButton" onclick="window.location.href = '/listascommesse'">Vai alla lista scommesse</button>
+                    </div>
+
+                    <button class="primaryButton" onclick="closeSlideInPopup()">Chiudi</button>
+                </div>
+                <div id="userPopup" class="popup">
+                    <h3>Modifica Dati</h3>
+                    <input type="text" id="newName" placeholder="Nome">
+                    <input type="text" id="newSurname" placeholder="Cognome">
+                    <input type="text" id="newCF" placeholder="Codice Fiscale">
+                    <input type="date" id="newDOB" placeholder="Data di Nascita">
+                    <input type="email" id="newEmail" placeholder="Email">
+                    <input type="text" id="newAddress" placeholder="Indirizzo">
+                    <button class="primaryButton" onclick="saveUserData()">Salva</button>
+                    <button class="secondaryButton" onclick="closePopup('userPopup')">Annulla</button>
+                </div>
+                <div id="transactionPopup" class="popup">
+                    <h3 id="transactionTitle"></h3>
+                    <input type="number" id="amount" placeholder="Importo">
+                    <button class="primaryButton" onclick="processTransaction()">Conferma</button>
+                    <button class="secondaryButton" onclick="closePopup('transactionPopup')">Annulla</button>
+                </div>
+            </div>
+        </div>
+        <script>
+            let saldo = 1000;
+            let currentTransaction = '';
+
+            function caricautente(){
+
+            }
+            function openSlideInPopup() {
+                document.getElementById("popupContainer").classList.add("show");
+            }
+
+            function closeSlideInPopup() {
+                if(document.getElementById("popupContainer").classList.contains("show")){
+                    document.getElementById("popupContainer").classList.remove("show");
+                }
+            }
+
+            function openUserPopup() {
+                document.getElementById("userPopup").style.display = "block";
+            }
+
+            function validateInput() {
+                const email = document.getElementById("newEmail").value;
+                const cf = document.getElementById("newCF").value;
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const cfPattern = /^[A-Z0-9]{16}$/;
+
+                if (!emailPattern.test(email)) {
+                    alert("Formato email non valido");
+                    return false;
+                }
+                if (!cfPattern.test(cf)) {
+                    alert("Formato codice fiscale non valido");
+                    return false;
+                }
+                return true;
+            }
+
+            function saveUserData() {
+                let newName = document.getElementById("newName").value;
+                let newSurname = document.getElementById("newSurname").value;
+                let newCF = document.getElementById("newCF").value;
+                let newDOB = document.getElementById("newDOB").value;
+                let newEmail = document.getElementById("newEmail").value;
+                let newAddress = document.getElementById("newAddress").value;
+                if(newName && newSurname && newCF && newDOB && newEmail && newAddress && validateInput()) {
+                    document.getElementById("userData").innerHTML = `
+                            <div class="data-item">Nome: ${newName}</div>
+                            <div class="data-item">Cognome: ${newSurname}</div>
+                            <div class="data-item">Codice Fiscale: ${newCF}</div>
+                            <div class="data-item">Data di Nascita: ${newDOB}</div>
+                            <div class="data-item">Email: ${newEmail}</div>
+                            <div class="data-item">Indirizzo: ${newAddress}</div>
+                        `;
+                    closePopup('userPopup');
+                }
+            }
+
+            function openPopup(type) {
+                currentTransaction = type;
+                document.getElementById("transactionTitle").innerText = type === 'preleva' ? "Preleva denaro" : "Deposita denaro";
+                document.getElementById("transactionPopup").style.display = "block";
+            }
+
+            function processTransaction() {
+                let amount = parseFloat(document.getElementById("amount").value);
+                if (isNaN(amount) || amount <= 0) {
+                    alert("Inserisci un importo valido");
+                    return;
+                }
+                if (currentTransaction === 'preleva' && amount > saldo) {
+                    alert("Saldo insufficiente");
+                    return;
+                }
+                saldo = currentTransaction === 'preleva' ? saldo - amount : saldo + amount;
+                document.getElementById("saldo").innerText = saldo;
+                closePopup('transactionPopup');
+            }
+
+            function closePopup(id) {
+                document.getElementById(id).style.display = "none";
+            }
+        </script>
+    </div>
+
+</header>
+
+<footer class = "footer">
+    <div class = "footer__container">
+        <div class="footer__row">
+            <!--<div class="footer--col">
+                <h4>WannaBet</h4>
+                <ul>
+                    <li><a href="#">Privacy/Policy</a></li>
+                    <li><a href="#">Termini e condizioni</a></li>
+                </ul>
+            </div>-->
+                <div class="footer--col">
+                    <h4>Contatti</h4>
+                    <ul>
+                        <li><a href="#">l.tufano15@studenti.unisa.it</a></li>
+                        <li><a href="#">l.giammattei@studenti.unisa.it</a></li>
+                        <li><a href="#">e.distasio1@studenti.unisa.it</a></li>
+                        <li><a href="#">r.manzo43@studenti.unisa.it</a></li>
+                    </ul>
+                </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
