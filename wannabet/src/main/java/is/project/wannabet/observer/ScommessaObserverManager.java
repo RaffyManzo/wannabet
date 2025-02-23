@@ -71,6 +71,7 @@ public class ScommessaObserverManager implements QuotaObserver {
             } else if (tutteVincenti) {
                 logger.debug("Scommessa id: {} impostata a VINTA", refreshed.getIdScommessa());
                 refreshed.setStato(StatoScommessa.VINTA);
+                contoService.aggiornaSaldoDopoVincita(refreshed);
             } else {
                 logger.debug("Scommessa id: {} non aggiornata (condizioni non soddisfatte)", refreshed.getIdScommessa());
             }

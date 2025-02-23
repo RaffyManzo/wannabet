@@ -21,6 +21,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.security.Principal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 public class HomeController {
@@ -67,6 +68,13 @@ public class HomeController {
 
         // Ottieni la mappa degli eventi imminenti e relative quote per la categoria selezionata
         Map<Evento, java.util.List<Quota>> upcomingEventsMap = quotaService.getTop6UpcomingEventsAndQuotes(selectedCategory);
+
+        // Filtra gli eventi che sono chiusi (supponendo che Evento abbia il metodo isChiuso())
+        upcomingEventsMap = upcomingEventsMap.entrySet().stream()
+                .filter(entry -> !entry.getKey().isChiuso())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
+
+
         model.addAttribute("upcomingEventsMap", upcomingEventsMap);
 
 

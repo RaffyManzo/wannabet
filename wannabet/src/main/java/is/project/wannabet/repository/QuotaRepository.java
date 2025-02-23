@@ -28,6 +28,9 @@ public interface QuotaRepository extends JpaRepository<Quota, Long> {
      */
     List<Quota> findByEvento_IdEvento(Long eventoId);
 
+    @Query("SELECT q FROM Quota q JOIN q.evento e WHERE e.descrizione LIKE %:descrizione%")
+    List<Quota> findAllByEventoDescrizione(@Param("descrizione") String descrizione);
+
     // Seleziona i 6 eventi prossimi per una categoria specifica, ordinati per data
     @Query("""
         SELECT e

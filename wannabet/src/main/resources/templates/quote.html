@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quote - Demo</title>
+    <link rel="stylesheet" th:href="@{/css/quote.css}" />
+    <link rel="stylesheet" th:href="@{/css/scontrino.css}" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script th:src="@{/script/quote.js}"></script>
+</head>
+<body>
+
+<!-- Navbar principale (placeholder) -->
+<nav class="main-navbar">
+    <ul>
+        <li><a th:href="@{/home}">Home</a></li>
+        <li><a th:href="@{/lista-scommesse}">Le tue scommesse</a></li>
+    </ul>
+</nav>
+
+<!-- Contenitore per le informazioni dell'evento o della ricerca -->
+<div class="event-info-container">
+    <!-- Se c'è un solo evento, mostra la card di dettaglio -->
+    <div th:if="${eventi.size() == 1}">
+        <div class="event-card-dettaglio">
+            <h3 th:text="${eventi[0].nome}">Nome Evento</h3>
+            <p><strong>Categoria:</strong> <span th:text="${eventi[0].categoria}">Categoria</span></p>
+            <p><strong>Data:</strong> <span th:text="${#dates.format(eventi[0].data, 'dd/MM/yyyy HH:mm')}">Data</span></p>
+            <p><strong>Descrizione:</strong> <span th:text="${eventi[0].descrizione}">Descrizione evento</span></p>
+        </div>
+    </div>
+    <!-- Altrimenti, se la ricerca è per descrizione, mostra l'header della ricerca -->
+    <div th:if="${eventi.size() != 1}">
+        <div class="category-info">
+            <h3 th:text="'Risultati per: ' + ${param.descrizione}">Risultati per: ...</h3>
+        </div>
+    </div>
+</div>
+
+<div class="quote-screen-container">
+
+    <!-- Navbar delle categorie di quote -->
+    <div class="quote-categories-nav">
+        <ul>
+            <!-- Itera sulle categorie ottenute dinamicamente -->
+            <li th:each="cat : ${categorieQuote}"
+                th:text="${cat}"
+                th:classappend="${categoriaSelezionata == cat} ? ' active' : ''"
+                th:onclick="|window.location.href='@{/quote(categoria=${cat}, descrizione=${param.descrizione}, event=${param.event})}'|">
+
+            </li>
+        </ul>
+    </div>
+
+    <!-- Barra dei filtri -->
+    <div class="quote-filter-bar">
+        <div class="search-box">
+            <label for="searchTeam">Cerca squadra</label>
+            <input type="text" id="searchTeam" placeholder="Es. Milan" oninput="filtraQuote()">
+        </div>
+        <div class="quote-range">
+            <input type="number" step="0.01" min="1.01" id="minQuota" value="1.02" oninput="filtraQuote()">
+            <span>-</span>
+            <input type="number" step="0.01" max="20" id="maxQuota" value="10.00" oninput="filtraQuote()">
+        </div>
+    </div>
+
+    <!-- Sezione degli eventi -->
+    <div class="events-grid">
+        <div class="event-card" th:each="evento : ${eventi}"
+             th:attr="data-evento-id=${evento.idEvento}"
+
+             style="cursor: pointer;">
+            <!-- Info evento -->
+            <div class="quote-info-left">
+                <div class="quote-datetime" th:text="${#dates.format(evento.data, 'dd/MM - HH:mm')}">18/02 - 21:00</div>
+                <div class="quote-event" th:text="${evento.nome}"
+                     th:onclick="|window.location.href='@{/quote(event=${evento.idEvento}, categoria=${categoriaSelezionata})}'|"
+                >Nome Evento</div>
+            </div>
+            <!-- Sezione delle quote per l'evento, limitata a 3 quote -->
+            <div class="quote-odds-right">
+                <div class="quote-cell"
+                     th:each="q : ${quotePerEvento[evento.idEvento]}"
+                     th:attr="data-categoria=${q.categoria},
+              data-quota=${q.moltiplicatore},
+              data-id=${q.idQuota},
+              data-action=${(scontrino != null and #lists.contains(#aggregates.collect(scontrino.quote, 'id_quota'), q.idQuota)) ? 'remove' : 'add'}"
+                     th:text="${q.esito + ' | @' + q.moltiplicatore}"
+                     th:classappend="${scontrino != null and #lists.contains(#aggregates.collect(scontrino.quote, 'id_quota'), q.idQuota) ? ' active' : ''}">
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Includi il fragment dello scontrino -->
+<div th:replace="fragments/scontrino :: scontrinoFragment"></div>
+
+<script th:src="@{/script/scontrino.js}"></script>
+
+<!-- Footer -->
+<footer class="main-footer">
+    <p>&copy; 2025 Demo. Tutti i diritti riservati.</p>
+</footer>
+
+</body>
+</html>

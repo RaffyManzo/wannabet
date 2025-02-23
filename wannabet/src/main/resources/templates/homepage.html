@@ -3,14 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>Home - Demo</title>
-    <!-- Collega il CSS statico -->
+    <!-- Collega i CSS statici -->
     <link rel="stylesheet" th:href="@{/css/home.css}">
     <link rel="stylesheet" th:href="@{/css/eventi-lista.css}">
     <link rel="stylesheet" th:href="@{/css/upcoming-event.css}">
+    <link rel="stylesheet" th:href="@{/css/scontrino.css}" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Il file JS per gestire i filtri e il cambio di categoria (implementazione lato frontend) -->
+    <script th:src="@{/js/home.js}"></script>
+
 </head>
 <body>
 
-<!-- Navbar principale (place holder) -->
+<!-- Navbar principale -->
 <nav class="main-navbar">
     <ul>
         <li><a th:href="@{/home}">Home</a></li>
@@ -21,54 +29,66 @@
 <!-- Container principale per le due sezioni -->
 <div class="content-wrapper">
 
-    <!-- Navbar principale per le categorie -->
+    <!-- Navbar per le categorie ottenute dinamicamente -->
     <nav class="sport-nav">
         <ul>
-            <!-- Itera su tutte le categorie ottenute dinamicamente -->
+            <!-- Itera su tutte le categorie ottenute dinamicamente (variabile allCategories) -->
             <li th:each="cat : ${allCategories}"
                 th:text="${cat}"
-                th:classappend="${selectedCategory == cat ? ' active' : ''}"
-                th:onclick="|window.location='@{/home(cat=${cat})}';|">
+                th:classappend="${selectedCategory == cat} ? ' active' : ''"
+                th:onclick="|window.location.href='@{/home(cat=${cat})}'|">
             </li>
         </ul>
     </nav>
 
     <!-- Griglia competizioni/eventi per la categoria selezionata -->
     <div class="competitions-grid">
-        <!-- Itera su competitionLabels, ovvero la lista di competizioni per la categoria attiva -->
-        <div class="competition-card" th:each="comp : ${competitionLabels}">
+        <!-- Itera su competitionLabels (lista di competizioni per la categoria attiva) -->
+        <div class="competition-card" th:each="comp : ${competitionLabels}"
+             th:onclick="|window.location.href='@{/quote(descrizione=${comp})}'|"
+             style="cursor: pointer;">
             <div class="competition-label" th:text="${comp}">Competition</div>
         </div>
     </div>
 
-
     <!-- Sezione: Eventi imminenti e relative quote -->
     <div class="scadenza-container">
         <h2>I più giocati / Prossimi Eventi</h2>
-
         <div class="events-grid">
             <!-- upcomingEventsMap => Map<Evento, List<Quota>> -->
-            <div class="event-card" th:each="entry : ${upcomingEventsMap}">
-                <!-- Event header: ad esempio "Serie A, 16/4 - 15:00" -->
+            <div class="event-card"
+                 th:each="entry : ${upcomingEventsMap}"
+                 th:onclick="|window.location.href='@{/quote?event={id}(id=${entry.key.idEvento})}'|"
+                 style="cursor: pointer;">
+                <!-- Event header -->
                 <div class="event-header"
                      th:text="${entry.key.categoria} + ', ' + ${#dates.format(entry.key.data, 'dd/MM - HH:mm')}">
                     Serie A, 16/4 - 15:00
                 </div>
-
-                <!-- Teams row (placeholder, se hai info su team A e B) -->
+                <!-- Nome evento -->
                 <a class="teams-row">
-                    <span th:text="${entry.key.nome}">Team A</span>
+                    <span th:text="${entry.key.nome}">Evento Nome</span>
                 </a>
-
-                <!-- Odds row: per ogni quota di questo evento
-                <div class="odds-row" th:each="q : ${entry.value}">
-                    <div class="odd" th:text="${q.esito} ${q.moltiplicatore}">1 2.23</div>
-                </div>-->
+                <!-- Odds row (limitata a 3 quote)
+                <div class="odds-row">
+                    <div class="odd"
+                         th:each="q : ${quotePerEvento[evento.idEvento]}"
+                         th:attr="data-categoria=${q.categoria},
+              data-quota=${q.moltiplicatore},
+              data-id=${q.idQuota},
+              data-action=${(scontrino != null and #lists.contains(#aggregates.collect(scontrino.quote, 'idQuota'), q.idQuota)) ? 'remove' : 'add'}"
+                         th:text="${q.esito} + ' | ' + ${q.moltiplicatore}"
+                         th:classappend="${scontrino != null and #lists.contains(#aggregates.collect(scontrino.quote, 'idQuota'), q.idQuota) ? ' active' : ''}">
+                    </div>
+                </div> -->
             </div>
         </div>
     </div>
 
+    <!-- Includi il fragment dello scontrino -->
+    <div th:replace="fragments/scontrino :: scontrinoFragment"></div>
 
+    <script th:src="@{/script/scontrino.js}"></script>
 
 </div>
 

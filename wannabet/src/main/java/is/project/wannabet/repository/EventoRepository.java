@@ -29,4 +29,5 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
 
     List<Evento> findEventoByCategoriaAndDescrizione(String categoria, String descrizione);
 
+    List<Evento> findEventoByDescrizione(String descrizione);
 }

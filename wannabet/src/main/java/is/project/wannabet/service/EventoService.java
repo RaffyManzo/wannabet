@@ -42,6 +42,11 @@ public class EventoService {
         return eventoRepository.findAll();
     }
 
+
+    public List<Evento> getEventiByDescrizione(String descrizione) {
+        return eventoRepository.findEventoByDescrizione(descrizione);
+    }
+
     /**
      * Raggruppa tutte le descrizioni degli eventi per categoria.
      * Le chiavi della mappa sono le categorie e i valori sono le liste di descrizioni degli eventi.

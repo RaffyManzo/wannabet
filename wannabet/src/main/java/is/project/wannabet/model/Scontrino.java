@@ -10,7 +10,6 @@ import java.util.List;
 
 public class Scontrino {
 
-    @JsonIgnoreProperties("evento")
     @JsonProperty("quote")
     private List<Quota> quote;
 

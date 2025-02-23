@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<body>
+<!-- Fragment riutilizzabile: -->
+<div th:fragment="scontrinoFragment">
+    <!-- Pulsante flottante -->
+    <button id="toggleScontrino" class="floating-button">
+        🧾 <span id="scontrinoBadge" class="badge">0</span>
+    </button>
+
+    <!-- Popup dello scontrino -->
+    <div id="scontrinoPopup" class="scontrino-popup">
+        <div id="scontrino-content" class="scontrino-content">
+            <!-- Il contenuto verrà popolato via AJAX -->
+        </div>
+
+        <!-- Sezione importo -->
+        <div class="importo-scommessa">
+            <label for="importo">Importo da scommettere</label>
+            <input type="number" step="0.50" id="importo" name="importo" value="3.00"/>
+        </div>
+
+        <!-- Riepilogo -->
+        <div class="riepilogo">
+            <div>Quota Totale: <span id="totaleQuota">0.00</span></div>
+            <div>Vincita Potenziale: <span id="vincitaPotenziale">0.00</span></div>
+        </div>
+
+        <!-- Pulsanti azione -->
+        <div class="scontrino-buttons">
+            <button id="btnPrenota">Prenota</button>
+            <button id="btnScommetti">Scommetti</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

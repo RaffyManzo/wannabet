@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import java.util.List;
 import java.util.Optional;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/scontrino")
 @SessionAttributes("scontrino")
@@ -111,7 +112,7 @@ public class ScontrinoController {
     /**
      * Svuota completamente lo scontrino e aggiorna la sessione.
      */
-    @DeleteMapping("/svuota")
+    @GetMapping("/svuota")
     @PreAuthorize("hasRole('UTENTE')")
     public ResponseEntity<String> svuotaScontrino(Model model) {
         model.addAttribute("scontrino", new Scontrino());
@@ -148,18 +149,19 @@ public class ScontrinoController {
 
         if(response.getStatusCode() == HttpStatus.OK) {
 
-            if (!contoService.verificaSaldo(account.getConto().getIdConto(), importo)) {
+            if (!contoService.verificaSaldo(account.getIdAccount(), importo)) {
                 return ResponseEntity.badRequest().body("Saldo insufficiente per piazzare la scommessa.");
             }
 
             // Creazione della scommessa
-            scommessaService.creaScommessa(scontrino.getQuote(), importo, account.getIdAccount());
+            Scommessa scommessa = scommessaService.creaScommessa(scontrino.getQuote(), importo, account.getIdAccount());
+            contoService.preleva(account.getIdAccount(), importo);
 
             // **Svuota lo scontrino dopo la conferma e aggiorna la sessione**
             scontrino.svuotaScontrino();
             model.addAttribute("scontrino", scontrino);
 
-            return ResponseEntity.ok("Scommessa effettuata con successo!");
+            return ResponseEntity.ok(scommessa);
         } else
             return response;
     }

@@ -5,6 +5,9 @@
     <title>Elenco Scommesse - Demo</title>
     <!-- Collega un tuo CSS personalizzato -->
     <link rel="stylesheet" th:href="@{/css/lista-scommesse.css}" />
+    <link rel="stylesheet" th:href="@{/css/scontrino.css}" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
 </head>
 <body>
 
@@ -40,7 +43,7 @@
             <div class="scommessa-header">
                 <!-- Se scommessa è PRENOTATA -->
                 <div th:if="${scommessa.tipo == T(is.project.wannabet.model.TipoScommessa).PRENOTATA}"
-                     class="scommessa-id"
+                     class="prenotazione-codice"
                      th:text="'Prenotazione: ' + ${scommessa.prenotazione.codice}">
                     Prenotazione: AB123
                 </div>
@@ -108,8 +111,12 @@
             </div>
             <!-- Se la scommessa è prenotata, mostra il pulsante "Carica" -->
             <div th:if="${scommessa.tipo == T(is.project.wannabet.model.TipoScommessa).PRENOTATA}">
-                <button class="btn-carica">Carica</button>
+                <button class="btn-carica"
+                        th:attr="data-prenotazione-code=${scommessa.prenotazione.codice}">
+                    Carica
+                </button>
             </div>
+
         </div>
 
     </div>
@@ -119,6 +126,11 @@
         <p>Nessuna scommessa trovata.</p>
     </div>
 </div>
+
+<!-- Includi il fragment dello scontrino -->
+<div th:replace="fragments/scontrino :: scontrinoFragment"></div>
+
+<script th:src="@{/script/scontrino.js}"></script>
 
 </body>
 </html>

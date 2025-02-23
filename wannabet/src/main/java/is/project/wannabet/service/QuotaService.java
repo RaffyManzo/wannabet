@@ -107,6 +107,15 @@ public class QuotaService {
         return result;
 
     }
+
+
+
+    public Map<String, List<Quota>> getQuotesGroupedByCategoryForEventDescription(String descrizione) {
+        List<Quota> quotes = quotaRepository.findAllByEventoDescrizione(descrizione);
+        return quotes.stream()
+                .collect(Collectors.groupingBy(Quota::getCategoria));
+    }
+
     /**
      * Salva la mopdifica della quota nel database e la registra nel `QuotaManager`.
      *
