@@ -13,7 +13,7 @@
           <span th:each="entry : ${accountMap}"
                 th:text="${#numbers.formatDecimal(entry.value.saldo, 1, 2)}">-- , --</span> $
         </span>
-        <button class="btn-deposit">
+        <button class="btn-deposit" th:onclick="|window.location.href='/deposita'|">
             <i class="fa fa-plus-circle"></i> Deposita
         </button>
         <button class="btn-profile" th:onclick="|document.getElementById('popupContainer').classList.add('show'); document.getElementById('parent-popup-container').classList.add('show')|">
@@ -55,7 +55,7 @@
                         <!-- <p><b>Punti:</b> <span th:text="${entry.key.punti}"></span> pt</p> -->
 
                         <button class="primaryButton"
-                                th:onclick="|window.location.href='/home'|">
+                                th:onclick="|window.location.href='/deposita'|">
                             <i class="fa-solid fa-right-to-bracket"></i> Deposita
                         </button>
 
@@ -79,15 +79,6 @@
                         </button>
                     </div>
 
-                    <!-- Popup per Transazioni -->
-                    <div id="transactionPopup" class="popup">
-                        <h3 id="transactionTitle"></h3>
-                        <input type="number" id="amount" placeholder="Importo">
-                        <button class="primaryButton" th:onclick="|window.location.href='salva'|">Conferma</button>
-                        <button class="secondaryButton" th:onclick="|document.getElementById('transactionPopup').style.display='none'|">
-                            Annulla
-                        </button>
-                    </div>
 
                     <hr class="horizontal-line">
 

@@ -1,8 +1,10 @@
 package is.project.wannabet.restcontroller;
 
 
+import is.project.wannabet.payload.DepositoRequest;
 import is.project.wannabet.security.AuthenticationRequestAccountCheck;
 import is.project.wannabet.service.AccountRegistratoService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -45,17 +47,20 @@ public class ContoController {
     @PostMapping("/{accountId}/deposita")
     @PreAuthorize("hasRole('UTENTE')")
     public ResponseEntity<?> deposita(@PathVariable Long accountId,
-                                           @RequestParam @Min(value = 1, message = "L'importo deve essere maggiore di zero") double importo,
-                                           Authentication authentication) {
+                                      @Valid @RequestBody DepositoRequest depositoRequest,
+                                      Authentication authentication) {
 
         ResponseEntity<?> response = accountCheck.checkAccount(accountId, authentication);
 
         if(response.getStatusCode() == HttpStatus.OK) {
-            // 🔹 Esegui il deposito
+            double importo = depositoRequest.getImporto();
             contoService.deposita(accountId, importo);
             return ResponseEntity.ok("Deposito di " + importo + " effettuato con successo.");
-        } else return response;
+        } else {
+            return response;
+        }
     }
+
 
 
     @PostMapping("/{accountId}/preleva")

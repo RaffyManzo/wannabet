@@ -56,10 +56,11 @@ public class ScommessaDetailsController {
         }
         Scommessa scommessa = scommessaOpt.get();
 
-        double sommaQuote = scommessa.getQuoteGiocate().stream()
+        double prodottoQuote = scommessa.getQuoteGiocate().stream()
                 .mapToDouble(QuotaGiocata::getMoltiplicatore)
-                .sum();
-        model.addAttribute("quotaTotale", sommaQuote);
+                .reduce(1, (a, b) -> a * b);
+
+        model.addAttribute("quotaTotale", prodottoQuote);
 
         AccountRegistrato accountRegistrato = accountRegistratoService.getAccountByEmail(authentication.getName()).get();
         Map<AccountRegistrato, Conto> accountMap = new HashMap<>();
