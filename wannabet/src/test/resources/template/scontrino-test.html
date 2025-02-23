@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Schedina - Demo con sfondo chiaro</title>
+    <style>
+        /* Palette (promemoria)
+           Primario (pulsanti / hover quote): #C80B37
+           Secondario (pulsanti / blocchi scuri): #334348
+           Elemento generico scuro: #00141e
+           Navbar/footer scuro: #0c0c0c
+           Bianco (testo, se necessario): #e1e1e4
+           Sfondo chiaro: #dcdcdc o #f0f0f0
+           Link / evidenziazione: #0787FA
+        */
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .scontrino-container {
+            width: 300px;
+            background-color: #f0f0f0; /* Sfondo leggermente chiaro per il contenitore */
+            color: #0c0c0c;           /* Testo scuro per contrasto */
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px auto;        /* Centro la schedina */
+        }
+
+        .scontrino-container h1 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        /* Box di ogni evento */
+        .evento-block {
+            background-color: #ffffff; /* Sfondo chiaro per il box evento */
+            color: #0c0c0c;           /* Testo scuro */
+            border: 1px solid #dcdcdc;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            padding: 10px;
+            position: relative;
+        }
+
+        .evento-categoria {
+            font-size: 0.85em;
+            color: #666;
+            margin-bottom: 3px;
+        }
+        .evento-descrizione {
+            font-size: 0.75em;
+            color: #888;
+        }
+        .evento-data {
+            font-size: 0.75em;
+            color: #888;
+            margin-bottom: 5px;
+        }
+        .evento-nome {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /* Info Quota */
+        .quota-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #eeeeee; /* Leggero contrasto */
+            padding: 5px;
+            border-radius: 4px;
+        }
+        .quota-categoria {
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+        .quota-esito {
+            font-size: 0.85em;
+        }
+        .quota-moltiplicatore {
+            font-size: 0.85em;
+            color: #0787FA; /* Blu evidenziato */
+        }
+
+        /* Pulsante rimuovi (X) */
+        .btn-rimuovi {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #C80B37; /* Primario */
+            color: #e1e1e4;
+            border: none;
+            border-radius: 4px;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .btn-rimuovi:hover {
+            background-color: #a5092c; /* Tonalità più scura in hover */
+        }
+
+        /* Sezione per inserire importo */
+        .importo-scommessa {
+            margin-top: 15px;
+        }
+        .importo-scommessa label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .importo-scommessa input {
+            width: 100%;
+            padding: 5px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+
+        /* Riepilogo Quota e Vincita */
+        .riepilogo {
+            margin-bottom: 15px;
+        }
+        .riepilogo div {
+            margin-bottom: 5px;
+        }
+
+        /* Pulsanti in basso */
+        .btn-prenota,
+        .btn-scommetti {
+            width: 48%;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            color: #e1e1e4; /* Testo chiaro */
+        }
+        /* Pulsante secondario (Prenota) */
+        .btn-prenota {
+            background-color: #334348;
+        }
+        .btn-prenota:hover {
+            background-color: #1F2F37;
+        }
+        /* Pulsante primario (Scommetti) */
+        .btn-scommetti {
+            background-color: #C80B37;
+        }
+        .btn-scommetti:hover {
+            background-color: #a5092c;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="scontrino-container">
+    <h1>Schedina</h1>
+
+    <!-- Evento 1 -->
+    <div class="evento-block">
+        <button class="btn-rimuovi">X</button>
+        <div class="evento-categoria">Calcio</div>
+        <div class="evento-descrizione">Europa - Champions League</div>
+        <div class="evento-data">18/02 21:00</div>
+        <div class="evento-nome">Milan - Feyenoord</div>
+        <div class="quota-info">
+            <div class="quota-categoria">Esito Finale</div>
+            <div class="quota-esito">1X2</div>
+            <div class="quota-moltiplicatore">1.48</div>
+        </div>
+    </div>
+
+    <!-- Evento 2 -->
+    <div class="evento-block">
+        <button class="btn-rimuovi">X</button>
+        <div class="evento-categoria">Calcio</div>
+        <div class="evento-descrizione">Europa - Champions League</div>
+        <div class="evento-data">18/02 21:00</div>
+        <div class="evento-nome">Atalanta - Club Brugge</div>
+        <div class="quota-info">
+            <div class="quota-categoria">Esito Finale</div>
+            <div class="quota-esito">1X2</div>
+            <div class="quota-moltiplicatore">4.35</div>
+        </div>
+    </div>
+
+    <!-- Evento 3 -->
+    <div class="evento-block">
+        <button class="btn-rimuovi">X</button>
+        <div class="evento-categoria">Calcio</div>
+        <div class="evento-descrizione">Europa - Champions League</div>
+        <div class="evento-data">18/02 21:00</div>
+        <div class="evento-nome">Bayern Monaco - Celtic</div>
+        <div class="quota-info">
+            <div class="quota-categoria">Esito Finale</div>
+            <div class="quota-esito">1X2</div>
+            <div class="quota-moltiplicatore">8.25</div>
+        </div>
+    </div>
+
+    <!-- Controllo Importo -->
+    <div class="importo-scommessa">
+        <label for="importo">Importo da scommettere</label>
+        <input type="number" step="0.01" id="importo" name="importo" value="10.00"/>
+    </div>
+
+    <!-- Riepilogo -->
+    <div class="riepilogo">
+        <div>Quota Totale: <span>212.45</span></div>
+        <div>Vincita Potenziale: <span>2124.50</span></div>
+    </div>
+
+    <!-- Pulsanti -->
+    <div style="display: flex; justify-content: space-between;">
+        <button class="btn-prenota" type="button">Prenota</button>
+        <button class="btn-scommetti" type="button">Scommetti</button>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,240 @@
+
+/* Palette colori */
+:root {
+    --primary-color: #C80B37;
+    --secondary-color: #334348;
+    --background-light: #ffffff;
+    --background-gray: #f0f0f0;
+    --text-dark: #0c0c0c;
+    --border-light: #dcdcdc;
+    --inactive-color: #cccccc; /* Tonalità grigia per elementi non attivi */
+}
+
+/* Stili di base */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Pulsante flottante */
+.floating-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+/* Badge nel pulsante flottante */
+.floating-button .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #0787FA;
+    color: #fff;
+    border-radius: 50%;
+    padding: 3px 6px;
+    font-size: 12px;
+}
+
+/* Popup dello scontrino */
+.scontrino-popup {
+    display: none; /* Nascosto di default */
+    position: fixed;
+    bottom: 100px;
+    right: 20px;
+    z-index: 999;
+
+    background-color: var(--background-light);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    color: var(--text-dark);
+    padding: 15px;
+    border-radius: 8px;
+    border: var(--inactive-color) solid 0.5px;
+    margin: 20px auto;
+}
+/* Visualizza il popup quando ha la classe active */
+.scontrino-popup.active {
+    display: block;
+}
+
+/* Quando lo scontrino è vuoto: box di codice */
+.scontrino-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.scontrino-empty p {
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.code-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.code-input-container label {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.code-input-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.code-input-wrapper input[type="text"] {
+    width: 100px;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-right: none;
+    border-radius: 4px 0 0 4px;
+    outline: none;
+    font-size: 1rem;
+}
+
+.code-input-wrapper button {
+    padding: 0.5rem;
+    border: none;
+    background-color: var(--primary-color);
+    color: #fff;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+.code-input-wrapper button:hover {
+    background-color: var(--primary-color);
+}
+
+
+.scontrino-content {
+    background-color: var(--background-light);
+    width: 300px;
+    color: var(--text-dark);
+    border-radius: 8px;
+}
+
+/* Blocco evento */
+.evento-block {
+    background-color: var(--background-light);
+    color: var(--text-dark);
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    padding: 10px;
+    position: relative;
+}
+.evento-categoria {
+    font-size: 0.85em;
+    color: #666;
+    margin-bottom: 3px;
+}
+.evento-descrizione,
+.evento-data {
+    font-size: 0.75em;
+    color: #888;
+    margin-bottom: 5px;
+}
+.evento-nome {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+/* Quote */
+.quota-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #eeeeee;
+    padding: 5px;
+    border-radius: 4px;
+}
+.quota-categoria,
+.quota-esito,
+.quota-moltiplicatore {
+    font-size: 0.85em;
+}
+.quota-moltiplicatore {
+    color: #0787FA;
+}
+
+/* Pulsante rimuovi */
+.btn-rimuovi {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--primary-color);
+    color: #e1e1e4;
+    border: none;
+    border-radius: 4px;
+    padding: 5px;
+    cursor: pointer;
+}
+.btn-rimuovi:hover {
+    background-color: #a5092c;
+}
+
+/* Sezione importo */
+.importo-scommessa {
+    margin-top: 15px;
+}
+.importo-scommessa label {
+    display: block;
+    margin-bottom: 5px;
+}
+.importo-scommessa input {
+    width: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+/* Riepilogo */
+.riepilogo {
+    margin-bottom: 15px;
+}
+.riepilogo div {
+    margin-bottom: 5px;
+}
+
+/* Pulsanti azione */
+#btnPrenota,
+#btnScommetti {
+    width: 48%;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #e1e1e4;
+}
+#btnPrenota {
+    background-color: var(--secondary-color);
+}
+#btnPrenota:hover {
+    background-color: #1F2F37;
+}
+#btnScommetti {
+    background-color: var(--primary-color);
+}
+#btnScommetti:hover {
+    background-color: #a5092c;
+}

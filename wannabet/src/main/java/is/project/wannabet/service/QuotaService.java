@@ -9,17 +9,26 @@ import is.project.wannabet.observer.QuotaObserver;
 import is.project.wannabet.repository.QuotaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.stream.Collectors;
 
 /**
  * Servizio per la gestione delle quote nel sistema di scommesse.
  */
 @Service
 public class QuotaService {
+    private static final Logger logger = LoggerFactory.getLogger(QuotaService.class);
+
 
     @Autowired
     private is.project.wannabet.observer.QuotaCache quotaCache;
@@ -72,6 +81,41 @@ public class QuotaService {
         return savedQuota;
     }
 
+    // Ottiene tutte le quote di un evento raggruppate per categoria
+    public Map<String, List<Quota>> getQuotesByEventGroupedByCategory(Long eventId) {
+        List<Quota> quotes = quotaRepository.findByEvento_IdEvento(eventId);
+        return quotes.stream().collect(Collectors.groupingBy(Quota::getCategoria));
+    }
+
+    // Ottiene le 6 quote con la data evento più imminente
+    /**
+     * Ritorna 6 eventi imminenti per la categoria selezionata
+     * e la mappa Evento -> List<Quota>.
+     */
+    public Map<Evento, List<Quota>> getTop6UpcomingEventsAndQuotes(String categoria) {
+        // 1) Recupera i 6 eventi per la categoria
+        List<Evento> eventi = quotaRepository
+                .findTop6ByCategoria(categoria, PageRequest.of(0, 6))
+                .getContent();
+
+        // 2) Per ogni evento, recupera le quote
+        Map<Evento, List<Quota>> result = new LinkedHashMap<>();
+        for (Evento e : eventi) {
+            List<Quota> quoteEvento = quotaRepository.findByEvento_IdEvento(e.getIdEvento());
+            result.put(e, quoteEvento);
+        }
+        return result;
+
+    }
+
+
+
+    public Map<String, List<Quota>> getQuotesGroupedByCategoryForEventDescription(String descrizione) {
+        List<Quota> quotes = quotaRepository.findAllByEventoDescrizione(descrizione);
+        return quotes.stream()
+                .collect(Collectors.groupingBy(Quota::getCategoria));
+    }
+
     /**
      * Salva la mopdifica della quota nel database e la registra nel `QuotaManager`.
      *
@@ -121,20 +165,38 @@ public class QuotaService {
      * @param referto Referto assegnato alla quota.
      */
     public void refertaQuota(Long idQuota, String referto) {
+        logger.debug("Inizio refertazione per quota id: {} con referto: {}", idQuota, referto);
         Optional<Quota> quotaOpt = quotaRepository.findById(idQuota);
         if (quotaOpt.isPresent()) {
             Quota quota = quotaOpt.get();
+            logger.debug("Quota trovata: id: {} - Esito previsto: {}", quota.getIdQuota(), quota.getEsito());
             if (referto.equals(quota.getEsito())) {
                 quota.setStato(StatoQuota.VINCENTE);
+                logger.debug("Referto corretto: stato impostato a VINCENTE");
             } else {
                 quota.setStato(StatoQuota.PERDENTE);
+                logger.debug("Referto errato: stato impostato a PERDENTE");
             }
             quotaRepository.save(quota);
-
-            // Notifica gli observer della modifica dello stato
-            quotaManager.aggiornaQuota(quota);
+            logger.debug("Quota id: {} salvata nel DB", quota.getIdQuota());
+            // Ricarica la quota aggiornata per sicurezza
+            Quota updatedQuota = quotaRepository.findById(idQuota).orElse(quota);
+            logger.debug("Quota aggiornata ricaricata: id: {} - Stato: {}", updatedQuota.getIdQuota(), updatedQuota.getStato());
+            quotaManager.aggiornaQuota(updatedQuota);
+            logger.debug("QuotaManager notificato per quota id: {}", updatedQuota.getIdQuota());
+        } else {
+            logger.warn("Quota con id: {} non trovata", idQuota);
         }
     }
+
+    public void loadQuotaInQuotaCache(Long idQuota) {
+        Quota quota = quotaRepository.findById(idQuota).get();
+
+        quotaCache.aggiornaQuota(quota);
+        quotaManager.aggiornaQuota(quota);
+
+    }
+
 
     @Transactional
     public void flush() {

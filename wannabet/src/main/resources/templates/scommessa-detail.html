@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Dettaglio Scommessa - WannaBet</title>
+  <link rel="stylesheet" th:href="@{/css/scommessa-detail.css}" />
+  <link rel="stylesheet" th:href="@{/css/scontrino.css}" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<body>
+
+<main class="scommessa-container">
+  <!-- Sezione Header: Visualizza ID e stato della scommessa -->
+  <section class="scommessa-header">
+    <h2 th:text="'Giocata con id: ' + ${scommessa.idScommessa}">Giocata con id: 1234</h2>
+    <h3 th:text="'Stato: ' + ${scommessa.stato}">Stato: Da refertare</h3>
+  </section>
+
+  <!-- Sezione Quote: Elenco delle quote giocate -->
+  <section class="quote-list">
+    <div th:each="q : ${scommessa.quoteGiocate}" class="quote-item">
+      <div class="quote-status-container">
+        <!-- Icona in base allo stato della quota -->
+        <div th:if="${q.quota.stato == T(is.project.wannabet.model.StatoQuota).DA_REFERTARE}"
+             class="status-dot status-pending"></div>
+        <div th:if="${q.quota.stato == T(is.project.wannabet.model.StatoQuota).VINCENTE}"
+             class="status-dot status-won"></div>
+        <div th:if="${q.quota.stato == T(is.project.wannabet.model.StatoQuota).PERDENTE}"
+             class="status-dot status-lost"></div>
+      </div>
+      <div class="quote-content">
+        <div class="quote-meta"
+             th:text="${#dates.format(q.quota.evento.data, 'dd/MM/yyyy HH:mm')} + ' - ' + ${q.quota.evento.categoria} + ' - ' + ${q.quota.evento.descrizione}">
+          12/02/2025 21:00 - Calcio - Champions League
+        </div>
+        <div class="quote-event-name" th:text="${q.quota.evento.nome}">
+          Nome Evento
+        </div>
+        <div class="quote-description" th:text="${q.quota.categoria}">
+          Descrizione giocata
+        </div>
+        <div class="quote-odds-status">
+          <div class="quote-odds" th:text="${q.quota.esito} + ' | @' + ${q.moltiplicatore}">
+            1 | @1.58
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sezione Riepilogo: Quota totale, importo e vincita potenziale -->
+  <section class="summary">
+    <div>
+      Quota totale:
+      <span class="highlight" th:text="'@' + ${quotaTotale}">12</span>
+    </div>
+    <div>
+      Importo giocato:
+      <span class="highlight" th:text="${scommessa.importo} + '€'">4 €</span>
+    </div>
+    <div>
+      Vincita potenziale:
+      <span class="highlight" th:text="${scommessa.vincita} + '€'">48 €</span>
+    </div>
+  </section>
+
+  <!-- Sezione Azioni: Pulsante per tornare alla lista scommesse -->
+  <section class="actions">
+    <a th:href="@{/lista-scommesse}" class="btn-back">Torna alla lista scommesse</a>
+  </section>
+</main>
+
+<!-- Includi il fragment dello scontrino -->
+<div th:replace="fragments/scontrino :: scontrinoFragment"></div>
+
+<script th:src="@{/script/scontrino.js}"></script>
+
+</body>
+</html>

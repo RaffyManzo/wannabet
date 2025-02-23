@@ -1,18 +1,17 @@
 package is.project.wannabet.observer;
 
-import is.project.wannabet.observer.QuotaCache;
 import is.project.wannabet.model.Quota;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-/**
- * Gestisce la registrazione e la notifica degli observer delle quote.
- */
 @Component
 public class QuotaManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(QuotaManager.class);
 
     private final List<QuotaObserver> observers = new CopyOnWriteArrayList<>();
     private final QuotaCache quotaCache;
@@ -22,34 +21,29 @@ public class QuotaManager {
         this.quotaCache = quotaCache;
     }
 
-    /**
-     * Registra un nuovo observer per monitorare le modifiche alle quote.
-     */
     public void addObserver(QuotaObserver observer) {
         observers.add(observer);
+        logger.debug("Aggiunto observer: {}", observer.getClass().getSimpleName());
     }
 
-    /**
-     * Rimuove un observer registrato.
-     */
     public void removeObserver(QuotaObserver observer) {
         observers.remove(observer);
+        logger.debug("Rimosso observer: {}", observer.getClass().getSimpleName());
     }
 
-    /**
-     * Notifica tutti gli observer riguardo a una modifica su una quota.
-     */
     public void notifyObservers(Long idQuota) {
+        logger.debug("Notifico gli observer per quota id: {}", idQuota);
         for (QuotaObserver observer : observers) {
             observer.update(idQuota);
         }
     }
 
-    /**
-     * Registra un aggiornamento di una quota e notifica gli observer.
-     */
     public void aggiornaQuota(Quota quota) {
-        quotaCache.aggiornaQuota(quota); // Aggiorna la cache
-        notifyObservers(quota.getIdQuota()); // Notifica gli observer
+        logger.debug("Aggiornamento quota id: {} nella cache", quota.getIdQuota());
+        // Rimuovi il valore obsoleto e reinserisci quello aggiornato
+        quotaCache.rimuoviQuota(quota.getIdQuota());
+        quotaCache.aggiornaQuota(quota);
+        logger.debug("Quota id: {} aggiornata nella cache", quota.getIdQuota());
+        notifyObservers(quota.getIdQuota());
     }
 }

@@ -1,0 +1,195 @@
+/* Palette colori */
+:root {
+    --primary-color: #C80B37;
+    --secondary-color: #334348;
+    --background-light: #ffffff;
+    --background-gray: #f0f0f0;
+    --text-dark: #0c0c0c;
+    --border-light: #dcdcdc;
+    --inactive-color: #cccccc; /* Tonalità grigia per elementi non attivi */
+}
+
+/* Stili base */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: var(--background-gray);
+    color: var(--text-dark);
+}
+
+/* Main Navbar */
+.main-navbar {
+    background-color: var(--background-light);
+    border-bottom: 1px solid var(--border-light);
+    padding: 10px 20px;
+}
+.main-navbar ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+}
+.main-navbar a {
+    text-decoration: none;
+    color: var(--secondary-color);
+    font-weight: bold;
+}
+
+/* Container principale per la pagina quote */
+.quote-screen-container {
+    max-width: 900px;
+    margin: 20px auto;
+    background-color: var(--background-light);
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    padding: 20px;
+}
+
+/* Contenitore per le informazioni dell’evento o della ricerca */
+.event-info-container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+}
+.event-card-dettaglio {
+    background-color: var(--background-gray);
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+.event-card-dettaglio h3 {
+    margin: 0 0 10px 0;
+    color: var(--primary-color);
+}
+.event-card-dettaglio p {
+    margin: 5px 0;
+}
+.category-info {
+    background-color: var(--background-gray);
+    padding: 10px 15px;
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+/* Navbar delle categorie di quote */
+.quote-categories-nav {
+    border-bottom: 1px solid var(--border-light);
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+}
+.quote-categories-nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+}
+.quote-categories-nav li {
+    cursor: pointer;
+    padding: 8px 12px;
+    background-color: var(--inactive-color);
+    border-radius: 6px;
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+.quote-categories-nav li.active {
+    background-color: var(--primary-color);
+    color: var(--background-light);
+}
+.quote-categories-nav li:hover {
+    background-color: var(--primary-color);
+    color: var(--background-light);
+}
+
+/* Barra dei filtri */
+.quote-filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+.search-box label {
+    margin-right: 5px;
+}
+.search-box input,
+.quote-range input {
+    padding: 6px;
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+}
+
+/* Griglia degli eventi */
+.events-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Singolo blocco evento */
+.event-card {
+    background-color: var(--background-gray);
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+.quote-info-left {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.quote-datetime {
+    font-size: 0.9em;
+    color: #666;
+}
+.quote-event {
+    font-weight: bold;
+    font-size: 1em;
+    color: var(--text-dark);
+}
+
+/* Sezione delle quote */
+.quote-odds-right {
+    display: flex;
+    gap: 8px;
+}
+.quote-cell {
+    background-color: var(--background-light);
+    border-radius: 8px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.quote-cell.active {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+.quote-cell.active:hover {
+    background-color: var(--background-light);
+    color: #0c0c0c;
+}
+
+
+.quote-cell:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+/* Footer */
+.main-footer {
+    text-align: center;
+    padding: 10px 0;
+    background-color: var(--background-light);
+    border-top: 1px solid var(--border-light);
+    margin-top: 20px;
+}

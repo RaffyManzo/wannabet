@@ -66,6 +66,7 @@ public class ContoService {
      * @param importo   Importo da verificare.
      * @return true se il saldo è sufficiente, false altrimenti.
      */
+    @Transactional
     public boolean verificaSaldo(Long accountId, double importo) {
         Conto conto = contoRepository.findContoByAccountId(accountId);
 

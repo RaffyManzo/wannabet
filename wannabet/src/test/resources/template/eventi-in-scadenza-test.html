@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>I più giocati - Demo</title>
+    <style>
+        /* Palette (promemoria)
+           Primario (pulsanti / attivi): #C80B37
+           Secondario (pulsanti / blocchi scuri): #334348
+           Sfondo body scuro: #0c0c0c
+           Sfondo contenitori chiari: #ffffff / #f0f0f0
+           Testo scuro: #0c0c0c
+           Bordi leggeri: #dcdcdc
+           Link / evidenziazione / barra: #0787FA (oppure #5cb85c se la vuoi verde)
+        */
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .scadenza-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            background-color: #ffffff; /* Sfondo chiaro */
+            border: 1px solid #dcdcdc;
+            border-radius: 6px;
+            padding: 20px;
+            color: #0c0c0c;
+        }
+
+        .scadenza-container h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.2em;
+        }
+
+        /* Griglia dei blocchi evento */
+        .events-grid {
+            display: flex;
+            flex-wrap: wrap;      /* Va a capo su più righe se necessario */
+            gap: 20px;            /* Spazio tra le card */
+        }
+
+        /* Singolo blocco evento */
+        .event-card {
+            background-color: #f0f0f0;
+            border: 1px solid #dcdcdc;
+            border-radius: 6px;
+            padding: 15px;
+            flex: 1 1 calc(33.333% - 20px);
+            /*
+               - 33.333% per 3 colonne
+               - 20px è il gap orizzontale totale (gap: 20px) che va sottratto
+                 per non andare a capo.
+            */
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* Testata evento: campionato + orario */
+        .event-header {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        /* Sezione squadre: nome + immagine maglietta */
+        .teams-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .team {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 40%; /* Ciascuna squadra prende ~40%, VS prende il resto */
+        }
+        .vs {
+            font-weight: bold;
+            color: #0c0c0c;
+        }
+
+        /* Quote (1, X, 2) */
+        .odds-row {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .odd {
+            background-color: #ffffff;
+            border: 1px solid #dcdcdc;
+            border-radius: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            font-size: 0.9em;
+        }
+        .odd:hover {
+            background-color: #f9f9f9;
+            border-color: #C80B37; /* Primario in hover */
+        }
+
+        /* Barra di popolarità o progress */
+        .progress-bar {
+            background-color: #e1e1e4;
+            border-radius: 4px;
+            height: 4px;
+            width: 100%;
+            position: relative;
+        }
+        .progress-fill {
+            background-color: #0787FA; /* Cambia qui se vuoi verde (#5cb85c) */
+            height: 4px;
+            border-radius: 4px;
+            width: 50%; /* Larghezza di esempio */
+        }
+    </style>
+</head>
+<body>
+
+<div class="scadenza-container">
+    <h2>I più giocati</h2>
+    <div class="events-grid">
+
+        <!-- Card 1 -->
+        <div class="event-card">
+            <div class="event-header">Serie A, 15/4 - 20:45</div>
+            <div class="teams-row">
+                <div class="team">
+                    <span>Milan</span>
+                </div>
+                <div class="vs">VS</div>
+                <div class="team">
+                    <span>Verona</span>
+                </div>
+            </div>
+            <div class="odds-row">
+                <div class="odd">1 | 1.24</div>
+                <div class="odd">X | 3.35</div>
+                <div class="odd">2 | 2.90</div>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="event-card">
+            <div class="event-header">Serie A, 15/4 - 18:00</div>
+            <div class="teams-row">
+                <div class="team">
+                    <span>Atalanta</span>
+                </div>
+                <div class="vs">VS</div>
+                <div class="team">
+                    <span>Cagliari</span>
+                </div>
+            </div>
+            <div class="odds-row">
+                <div class="odd">1 | 1.56</div>
+                <div class="odd">X | 2.75</div>
+                <div class="odd">2 | 3.20</div>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="event-card">
+            <div class="event-header">Serie A, 15/4 - 15:00</div>
+            <div class="teams-row">
+                <div class="team">
+                    <span>Lazio</span>
+                </div>
+                <div class="vs">VS</div>
+                <div class="team">
+                    <span>Napoli</span>
+                </div>
+            </div>
+            <div class="odds-row">
+                <div class="odd">1 | 3.15</div>
+                <div class="odd">X | 2.90</div>
+                <div class="odd">2 | 2.57</div>
+            </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="event-card">
+            <div class="event-header">Serie A, 15/4 - 12:30</div>
+            <div class="teams-row">
+                <div class="team">
+                    <span>Fiorentina</span>
+                </div>
+                <div class="vs">VS</div>
+                <div class="team">
+                    <span>Como</span>
+                </div>
+            </div>
+            <div class="odds-row">
+                <div class="odd">1 | 2.04</div>
+                <div class="odd">X | 3.35</div>
+                <div class="odd">2 | 3.20</div>
+            </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="event-card">
+            <div class="event-header">Serie A, 16/4 - 15:00</div>
+            <div class="teams-row">
+                <div class="team">
+                    <span>Juventus</span>
+                </div>
+                <div class="vs">VS</div>
+                <div class="team">
+                    <span>Inter</span>
+                </div>
+            </div>
+            <div class="odds-row">
+                <div class="odd">1 | 2.23</div>
+                <div class="odd">X | 3.10</div>
+                <div class="odd">2 | 2.65</div>
+            </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="event-card">
+            <div class="event-header">Serie A, 16/4 - 15:00</div>
+            <div class="teams-row">
+                <div class="team">
+                    <span>Napoli</span>
+                </div>
+                <div class="vs">VS</div>
+                <div class="team">
+                    <span>Avellino</span>
+                </div>
+            </div>
+            <div class="odds-row">
+                <div class="odd">1 | 2.23</div>
+                <div class="odd">X | 3.10</div>
+                <div class="odd">2 | 2.65</div>
+            </div>
+        </div>
+
+</body>
+</html>

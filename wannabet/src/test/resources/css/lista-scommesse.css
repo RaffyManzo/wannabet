@@ -1,0 +1,89 @@
+/* Palette (promemoria)
+   Primario (pulsanti / attivi): #C80B37
+   Secondario (blocchi scuri):  #334348
+   Sfondo body scuro:          #0c0c0c
+   Sfondo contenitori chiari:  #ffffff / #f0f0f0
+   Testo scuro:                #0c0c0c
+   Bordi leggeri:              #dcdcdc
+*/
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+.lista-scommesse-container {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #ffffff; /* Sfondo chiaro */
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    padding: 20px;
+    color: #0c0c0c;
+}
+
+.lista-scommesse-container h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+}
+
+/* Contenitore generale delle card */
+.scommesse-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Spazio tra le card */
+}
+
+/* Singola card scommessa */
+.scommessa-card {
+    background-color: #f0f0f0;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Header della card: ID + icona stato */
+.scommessa-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.scommessa-id {
+    font-weight: bold;
+    font-size: 0.95em;
+}
+.scommessa-stato-icon {
+    width: 24px;
+    height: 24px;
+}
+
+/* Info: data e vincita */
+.scommessa-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.scommessa-data, .scommessa-vincita {
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Pulsante "Mostra scommessa" */
+.btn-mostra {
+    background-color: #C80B37; /* Primario */
+    color: #e1e1e4;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    align-self: flex-start; /* Allinea a sinistra */
+    font-size: 0.9em;
+}
+.btn-mostra:hover {
+    background-color: #a5092c; /* Hover più scuro */
+}

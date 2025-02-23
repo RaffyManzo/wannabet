@@ -1,0 +1,92 @@
+/* Palette della piattaforma:
+   - Primario (pulsanti, attivi): #C80B37
+   - Secondario (blocchi scuri): #334348
+   - Sfondo body scuro: #0c0c0c
+   - Sfondo contenitori chiari: #ffffff (o #f0f0f0)
+   - Testo scuro: #0c0c0c
+   - Link / evidenziazione: #0787FA
+   - Bordi: #dcdcdc
+*/
+
+/* Impostazioni globali */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #cccccc;
+    filter: blur(80%);
+    font-family: Arial, sans-serif;
+    color: #0c0c0c;
+}
+
+/* Container principale per centrare il form */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Styling del form */
+.login-form {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    border: 0.5px solid #1F2F37;
+    z-index: 2;
+}
+
+/* Logo o titolo */
+.login-form .logo {
+    text-align: center;
+    color: #C80B37;
+    margin-bottom: 20px;
+    font-size: 2em;
+}
+
+/* Gruppi di input */
+.input-group {
+    margin-bottom: 20px;
+}
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+.input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+    font-size: 1em;
+}
+
+/* Pulsante di Login */
+.btn-primary {
+    width: 100%;
+    padding: 10px;
+    background-color: #C80B37;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-primary:hover {
+    background-color: #a0072e;
+}
+
+/* Link per la registrazione */
+.signup-link {
+    text-align: center;
+    margin-top: 20px;
+}
+.signup-link a {
+    color: #0787FA;
+    text-decoration: none;
+}
+.signup-link a:hover {
+    text-decoration: underline;
+}

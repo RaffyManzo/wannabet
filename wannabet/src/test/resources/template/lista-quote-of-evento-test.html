@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Quote in Blocchi Orizzontali - Demo</title>
+    <style>
+        /* Palette (promemoria)
+           Primario (pulsanti / attivi): #C80B37
+           Secondario (pulsanti / blocchi scuri): #334348
+           Sfondo body scuro: #0c0c0c
+           Sfondo contenitori chiari: #ffffff / #f0f0f0
+           Testo scuro: #0c0c0c
+           Bordi leggeri: #dcdcdc
+           Link / evidenziazione: #0787FA
+        */
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .quote-screen-container {
+            max-width: 900px;
+            margin: 20px auto;
+            background-color: #ffffff; /* Sfondo chiaro */
+            border: 1px solid #dcdcdc;
+            border-radius: 6px;
+            padding: 20px;
+            color: #0c0c0c;
+        }
+
+        /* Barra di navigazione delle categorie di quote */
+        .quote-categories-nav {
+            border-bottom: 1px solid #dcdcdc;
+            margin-bottom: 15px;
+        }
+        .quote-categories-nav ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
+        }
+        .quote-categories-nav li {
+            cursor: pointer;
+            padding-bottom: 8px;
+            color: #334348; /* Colore secondario di base */
+            font-weight: 500;
+            position: relative;
+        }
+        .quote-categories-nav li.active {
+            color: #C80B37; /* Primario */
+            border-bottom: 2px solid #C80B37;
+        }
+        .quote-categories-nav li:hover {
+            color: #C80B37; /* Hover */
+        }
+
+        /* Barra dei filtri */
+        .quote-filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .quote-filter-bar .search-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .quote-filter-bar .search-box input[type="text"] {
+            padding: 6px 10px;
+            border: 1px solid #dcdcdc;
+            border-radius: 4px;
+        }
+        .quote-range {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .quote-range input[type="number"] {
+            width: 60px;
+            padding: 6px;
+            border: 1px solid #dcdcdc;
+            border-radius: 4px;
+        }
+
+        /* Contenitore dei blocchi */
+        .quote-blocks {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Spazio verticale tra i blocchi */
+        }
+
+        /* Singolo blocco evento-quote, disposto in orizzontale */
+        .quote-card {
+            background-color: #f0f0f0;
+            border: 1px solid #dcdcdc;
+            border-radius: 6px;
+            padding: 15px;
+            display: flex;             /* Layout orizzontale */
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Sezione di sinistra: info evento */
+        .quote-info-left {
+            display: flex;
+            flex-direction: column;  /* Data/Ora sopra, Evento sotto */
+            gap: 5px;
+        }
+        .quote-datetime {
+            font-size: 0.9em;
+            color: #666;
+        }
+        .quote-event {
+            font-weight: bold;
+            font-size: 1em;
+            color: #0c0c0c;
+        }
+
+        /* Sezione di destra: quote */
+        .quote-odds-right {
+            display: flex;
+            gap: 8px; /* Spazio orizzontale tra le quote */
+        }
+        .quote-cell {
+            background-color: #ffffff;
+            border: 1px solid #dcdcdc;
+            border-radius: 4px;
+            padding: 6px 10px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            font-size: 0.9em;
+        }
+        .quote-cell:hover {
+            background-color: #f9f9f9;
+            border-color: #C80B37; /* Primario in hover */
+        }
+        .quote-cell.selected {
+            border-color: #C80B37;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="quote-screen-container">
+
+    <!-- Navbar delle categorie di quote -->
+    <div class="quote-categories-nav">
+        <ul>
+            <li class="active">Risultato finale</li>
+            <li>Under/Over</li>
+            <li>GG/NG</li>
+            <li>Handicap</li>
+            <li>Draw No Bet</li>
+            <li>Margine Vittoria</li>
+        </ul>
+    </div>
+
+    <!-- Barra dei filtri -->
+    <div class="quote-filter-bar">
+        <div class="search-box">
+            <label for="searchTeam">Cerca squadra</label>
+            <input type="text" id="searchTeam" placeholder="Es. Milan">
+        </div>
+        <div class="quote-range">
+            <input type="number" step="0.01" min="1.01" value="1.02">
+            <span>-</span>
+            <input type="number" step="0.01" max="20" value="1.4">
+        </div>
+    </div>
+
+    <!-- Sezione dei blocchi di quote -->
+    <div class="quote-blocks">
+
+        <!-- Blocco 1 -->
+        <div class="quote-card">
+            <!-- Parte sinistra: info evento -->
+            <div class="quote-info-left">
+                <div class="quote-datetime">18/02 21:00</div>
+                <div class="quote-event">Milan vs Feyenoord</div>
+            </div>
+            <!-- Parte destra: quote -->
+            <div class="quote-odds-right">
+                <div class="quote-cell">1 | 1.48</div>
+                <div class="quote-cell">X | 4.90</div>
+                <div class="quote-cell">2 | 6.50</div>
+            </div>
+        </div>
+
+        <!-- Blocco 2 -->
+        <div class="quote-card">
+            <div class="quote-info-left">
+                <div class="quote-datetime">18/02 21:00</div>
+                <div class="quote-event">Atalanta vs Club Brugge</div>
+            </div>
+            <div class="quote-odds-right">
+                <div class="quote-cell">1 | 1.48</div>
+                <div class="quote-cell">X | 4.90</div>
+                <div class="quote-cell">2 | 6.50</div>
+            </div>
+        </div>
+
+        <!-- Blocco 3 -->
+        <div class="quote-card">
+            <div class="quote-info-left">
+                <div class="quote-datetime">18/02 21:00</div>
+                <div class="quote-event">Bayern Monaco vs Celtic</div>
+            </div>
+            <div class="quote-odds-right">
+                <div class="quote-cell">1 | 1.48</div>
+                <div class="quote-cell">X | 4.90</div>
+                <div class="quote-cell">2 | 6.50</div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

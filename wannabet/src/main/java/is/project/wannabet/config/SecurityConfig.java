@@ -1,8 +1,8 @@
 package is.project.wannabet.config;
 
+import is.project.wannabet.auth.CustomAuthenticationSuccessHandler;
 import is.project.wannabet.security.CustomPasswordEncoder;
 import is.project.wannabet.service.AccountDetailsService;
-import is.project.wannabet.service.AccountRegistratoService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -10,16 +10,13 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableMethodSecurity(prePostEnabled = true)
@@ -29,20 +26,31 @@ public class SecurityConfig {
     private AccountDetailsService accountDetailsService;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   CustomAuthenticationSuccessHandler successHandler) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Disabilita CSRF per le API REST
+                .csrf(AbstractHttpConfigurer::disable) // Disabilita CSRF per le API REST
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // 🔓 Permette login e registrazione
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/css/**", "/script/**", "/images/**", "/login.html", "/signup.html").permitAll()
+
                         .anyRequest().authenticated() // 🔒 Tutto il resto richiede autenticazione
                 )
+                .formLogin(form -> form
+                        .loginPage("/login.html")
+                        .permitAll()
+                )
                 .sessionManagement(session -> session
-                        .maximumSessions(1) // 🔒 Solo 1 sessione attiva per utente
+                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                        .sessionFixation().migrateSession()  // Migra la sessione dopo l'autenticazione
+                        .maximumSessions(1)
                         .maxSessionsPreventsLogin(true)
                 )
+
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint((request, response, authException) -> {
-                            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                            // Reindirizza alla pagina di login per le richieste non autorizzate
+                            response.sendRedirect(request.getContextPath() + "/login.html");
                         })
                 )
                 .logout(logout -> logout
@@ -56,6 +64,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {

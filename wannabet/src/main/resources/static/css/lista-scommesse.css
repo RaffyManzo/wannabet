@@ -1,0 +1,138 @@
+/* Palette (promemoria)
+   Primario (pulsanti / attivi): #C80B37
+   Secondario (blocchi scuri):  #334348
+   Sfondo body scuro:          #0c0c0c
+   Sfondo contenitori chiari:  #ffffff / #f0f0f0
+   Testo scuro:                #0c0c0c
+   Bordi leggeri:              #dcdcdc
+*/
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0; /* Sfondo chiaro globale */
+    color: #0c0c0c; /* Testo scuro */
+}
+
+/* Nav bar per filtrare scommesse (per tipo) */
+.scommesse-type-nav {
+    background-color: #ffffff;
+    padding: 10px 20px;
+    border-bottom: 1px solid #dcdcdc;
+    margin-bottom: 20px;
+}
+.scommesse-type-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+.scommesse-type-nav li {
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 4px;
+    color: #0c0c0c;
+    font-weight: 500;
+}
+.scommesse-type-nav li.active {
+    background-color: #C80B37; /* Primario */
+    color: #ffffff;
+}
+.scommesse-type-nav li:hover {
+    background-color: #334348; /* Secondario in hover */
+    color: #ffffff;
+}
+
+/* Contenitore principale della lista scommesse */
+.lista-scommesse-container {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #ffffff; /* Sfondo chiaro */
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    padding: 20px;
+}
+
+/* Titolo principale */
+.lista-scommesse-container h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    color: #0c0c0c;
+}
+
+/* Messaggi di errore */
+.error-msg {
+    color: #C80B37; /* Primario, in modo che risalti */
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Contenitore generale delle card */
+.scommesse-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Spazio tra le card */
+}
+
+/* Singola card scommessa */
+.scommessa-card {
+    background-color: #f0f0f0; /* Sfondo chiaro interno */
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Header della card: ID + eventuale icona stato */
+.scommessa-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.scommessa-id {
+    font-weight: bold;
+    font-size: 0.95em;
+}
+.scommessa-stato-icon {
+    width: 24px;
+    height: 24px;
+}
+
+/* Info: data, importo, ecc. */
+.scommessa-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.scommessa-data, .scommessa-vincita, .scommessa-importo, .scommessa-codice {
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Pulsanti azione */
+.btn-mostra, .btn-carica {
+    background-color: #C80B37; /* Primario */
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.9em;
+    align-self: flex-start; /* Allinea a sinistra */
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+}
+.btn-mostra:hover, .btn-carica:hover {
+    background-color: #a0072e; /* Più scuro in hover */
+}
+
+/* Se vuoi un layout orizzontale dei pulsanti, puoi usare una classe wrapper */
+.scommessa-actions {
+    display: flex;
+    gap: 10px;
+}

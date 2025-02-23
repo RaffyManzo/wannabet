@@ -1,0 +1,156 @@
+/* Palette:
+   Primario: #C80B37
+   Secondario: #334348
+   Sfondo body scuro: #0c0c0c
+   Sfondo contenitori chiari: #ffffff / #f0f0f0
+   Testo scuro: #0c0c0c
+   Bordi leggeri: #dcdcdc
+*/
+
+/* Stili base per il container */
+.container {
+    max-width: 900px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+}
+
+/* Navbar principale */
+.main-navbar {
+    background-color: #334348;
+    padding: 10px 20px;
+}
+.main-navbar ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+.main-navbar li a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* Barra di ricerca */
+.search-bar {
+    margin-bottom: 20px;
+}
+.search-bar input[type="text"] {
+    width: 70%;
+    padding: 8px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+}
+.search-bar button {
+    padding: 8px 12px;
+    background-color: #C80B37;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.search-bar button:hover {
+    background-color: #a5092c;
+}
+
+/* Tabella quote */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+th, td {
+    padding: 10px;
+    border: 1px solid #dcdcdc;
+    text-align: left;
+}
+
+/* Pulsante Referta */
+.btn-referta {
+    background-color: #C80B37;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 0.9em;
+}
+.btn-referta:hover {
+    background-color: #a5092c;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+.modal-content {
+    background-color: #ffffff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    width: 80%;
+    max-width: 400px;
+    position: relative;
+}
+.close {
+    color: #aaa;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+.close:hover {
+    color: #000;
+}
+
+/* Form nel modal */
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+.form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #dcdcdc;
+    border-radius: 4px;
+}
+.btn-submit {
+    background-color: #C80B37;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.btn-submit:hover {
+    background-color: #a5092c;
+}
+
+/* Footer */
+.main-footer {
+    background-color: #334348;
+    color: #ffffff;
+    text-align: center;
+    padding: 10px 0;
+}
