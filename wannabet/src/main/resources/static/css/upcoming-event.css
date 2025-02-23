@@ -82,12 +82,13 @@
 /* ========== Sezione 2: I più giocati ========== */
 .scadenza-container {
     max-width: 1200px;
-    margin: 20px auto;
     background-color: #ffffff;
     border: 1px solid #dcdcdc;
     border-radius: 6px;
     padding: 20px;
     color: #0c0c0c;
+
+    margin: 6% 0;
 }
 
 .scadenza-container h2 {

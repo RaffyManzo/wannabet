@@ -1,10 +1,15 @@
 package is.project.wannabet.controller;
 
 import is.project.wannabet.model.AccountRegistrato;
+import is.project.wannabet.model.Conto;
 import is.project.wannabet.model.Scommessa;
 import is.project.wannabet.service.AccountRegistratoService;
+import is.project.wannabet.service.ContoService;
 import is.project.wannabet.service.ScommessaService;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -23,6 +28,9 @@ public class ListaScommesseController {
 
     @Autowired
     private AccountRegistratoService accountRegistratoService;
+
+    @Autowired
+    private ContoService contoService;
 
     @Autowired
     private ScommessaService scommessaService;
@@ -58,6 +66,12 @@ public class ListaScommesseController {
             // se non specificato, consideriamo 'TUTTE'
             selectedType = "ALL";
         }
+
+        AccountRegistrato accountRegistrato = accountRegistratoService.getAccountByEmail(authentication.getName()).get();
+        Map<AccountRegistrato, Conto> accountMap = new HashMap<>();
+        accountMap.put(accountRegistrato,
+                contoService.getContoById(accountRegistrato.getConto().getIdConto()).get());
+        model.addAttribute("accountMap", accountMap);
 
         // 5. Aggiunge la lista di scommesse filtrate e il tipo selezionato al model
         model.addAttribute("scommesse", allScommesse);

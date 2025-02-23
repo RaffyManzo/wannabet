@@ -8,23 +8,19 @@
     <link rel="stylesheet" th:href="@{/css/eventi-lista.css}">
     <link rel="stylesheet" th:href="@{/css/upcoming-event.css}">
     <link rel="stylesheet" th:href="@{/css/scontrino.css}" />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
-
+    <!-- Includi il CSS del footer -->
+    <link rel="stylesheet" type="text/css" th:href="@{/css/footer.css}">
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <!-- Il file JS per gestire i filtri e il cambio di categoria (implementazione lato frontend) -->
     <script th:src="@{/js/home.js}"></script>
-
+    <link rel="stylesheet" type="text/css" th:href="@{/css/navbar.css}">
 </head>
 <body>
-
-<!-- Navbar principale -->
-<nav class="main-navbar">
-    <ul>
-        <li><a th:href="@{/home}">Home</a></li>
-        <li><a th:href="@{/lista-scommesse}">Le tue scommesse</a></li>
-    </ul>
-</nav>
+<!-- Inclusione della navbar passandogli la variabile accountMap -->
+<div th:replace="fragments/navbar :: navbarFragment(${accountMap})"></div>
 
 <!-- Container principale per le due sezioni -->
 <div class="content-wrapper">
@@ -92,10 +88,8 @@
 
 </div>
 
-<!-- Footer semplice -->
-<footer class="main-footer">
-    <p>&copy; 2025 Demo. Tutti i diritti riservati.</p>
-</footer>
+
+<div th:replace="fragments/footer :: footerFragment"></div>
 
 </body>
 </html>

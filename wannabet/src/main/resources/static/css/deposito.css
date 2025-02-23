@@ -1,0 +1,91 @@
+/* Stili di base per la pagina di deposito */
+body {
+    font-family: Arial, sans-serif;
+    color: #0c0c0c;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 500px;
+    margin: 50px auto;
+    background-color: #ffffff; /* Sfondo contenitori chiari */
+    padding: 20px;
+    border: 1px solid #dcdcdc;
+    border-radius: 5px;
+}
+
+h1 {
+    text-align: center;
+    color: #C80B37; /* Colore primario */
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #334348; /* Colore secondario */
+}
+
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #dcdcdc;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+.primaryButton {
+    background-color: #C80B37;
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    transition: background-color 0.3s ease;
+}
+
+.primaryButton:hover {
+    background-color: #b00a31;
+}
+
+/* Pulsanti secondari: per azioni di minor importanza come Modifica Dati o Annulla */
+.secondaryButton {
+    margin-top: 10px;
+    padding: 10px 15px;
+    background-color: #334348;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.secondaryButton:hover {
+    background-color: #56737d;
+}
+
+.error-message, .success-message {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 3px;
+    display: none;
+}
+
+.error-message {
+    color: #a94442;
+    background-color: #f8d7da;
+}
+
+.success-message {
+    color: #155724;
+    background-color: #d4edda;
+}

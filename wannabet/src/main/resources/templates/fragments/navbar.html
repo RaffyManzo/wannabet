@@ -1,0 +1,107 @@
+<!-- src/main/resources/templates/fragments/navbar.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!-- Definizione del fragment con nome "navbarFragment" che accetta il parametro accountMap -->
+<nav class="navbar" th:fragment="navbarFragment(accountMap)">
+    <div class="navbar-left">
+        <a href="/home" class="navbar-brand">WannaBet</a>
+    </div>
+    <div class="navbar-right">
+        <span class="navbar-saldo">
+          Saldo:
+          <span th:each="entry : ${accountMap}"
+                th:text="${#numbers.formatDecimal(entry.value.saldo, 1, 2)}">-- , --</span> $
+        </span>
+        <button class="btn-deposit" th:onclick="|window.location.href='/deposita'|">
+            <i class="fa fa-plus-circle"></i> Deposita
+        </button>
+        <button class="btn-profile" th:onclick="|document.getElementById('popupContainer').classList.add('show'); document.getElementById('parent-popup-container').classList.add('show')|">
+            <i class="fa fa-user"></i>
+        </button>
+    </div>
+
+    <div th:each=" entry : ${accountMap}" id="parent-popup-container" style="display: none">
+        <div id="popupContainer" class="popup-container">
+            <div class="popup-content">
+                <div class="container">
+
+                    <!-- Sezione Dati Personali -->
+                    <div class="section">
+                        <h2>Dati Personali</h2>
+                        <div class="data-grid" id="userData">
+                            <div class="data-item">Nome: <span th:text="${entry.key.nome}"></span></div>
+                            <div class="data-item">Cognome: <span th:text="${entry.key.cognome}"></span></div>
+                            <div class="data-item">Email: <span th:text="${entry.key.email}"></span></div>
+                        </div>
+                        <button class="secondaryButton"
+                                th:onclick="|document.getElementById('userPopup').style.display='block'|">
+                            Modifica Dati
+                        </button>
+                    </div>
+
+                    <hr class="horizontal-line">
+
+                    <!-- Sezione Conto Utente -->
+                    <div class="section">
+                        <h2>Conto Utente</h2>
+                        <p><b>ID:</b> <span th:text="${entry.key.idAccount}"></span></p>
+                        <p>
+                            <b>Saldo:</b>
+                            <span th:text="${#numbers.formatDecimal(entry.value.saldo, 1, 2)}"></span>
+                            &euro;
+                        </p>
+                        <!-- Se non esiste la proprietà "punti" in AccountRegistrato, si rimuove questa riga -->
+                        <!-- <p><b>Punti:</b> <span th:text="${entry.key.punti}"></span> pt</p> -->
+
+                        <button class="primaryButton"
+                                th:onclick="|window.location.href='/deposita'|">
+                            <i class="fa-solid fa-right-to-bracket"></i> Deposita
+                        </button>
+
+                        <button class="secondaryButton"
+                                th:onclick="|window.location.href='/home'|">
+                            <i class="fa-solid fa-right-from-bracket"></i> Preleva
+                        </button>
+                    </div>
+
+                    <!-- Popup per Modifica Dati -->
+                    <div id="userPopup" class="popup">
+                        <h3>Modifica Dati</h3>
+                        <input type="text" id="newName" placeholder="Nome" th:value="${entry.key.nome}">
+                        <input type="text" id="newSurname" placeholder="Cognome" th:value="${entry.key.cognome}">
+                        <input type="text" id="newCF" placeholder="Codice Fiscale" th:value="${entry.key.codiceFiscale}">
+                        <input type="date" id="newDOB" placeholder="Data di Nascita" th:value="${entry.key.dataNascita}">
+                        <input type="email" id="newEmail" placeholder="Email" th:value="${entry.key.email}">
+                        <button class="primaryButton" th:onclick="|window.location.href='salva'|">Salva</button>
+                        <button class="secondaryButton" th:onclick="|document.getElementById('userPopup').style.display='none'|">
+                            Annulla
+                        </button>
+                    </div>
+
+
+                    <hr class="horizontal-line">
+
+                    <!-- Sezione Lista Scommesse -->
+                    <div class="section">
+                        <button class="primaryButton" th:onclick="|window.location.href='/lista-scommesse'|">
+                            <i class="fa-regular fa-rectangle-list"></i> Le tue scommesse
+                        </button>
+                    </div>
+
+                    <hr class="horizontal-line">
+
+                    <button class="secondaryButton"
+                            th:onclick="|document.getElementById('popupContainer').classList.remove('show'); document.getElementById('parent-popup-container').classList.remove('show')|">
+                        <i class="fa-regular fa-circle-xmark"></i> Chiudi pannello
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</nav>
+
+</body>
+</html>
