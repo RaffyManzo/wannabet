@@ -1,7 +1,11 @@
 package is.project.wannabet.controller;
 
+import is.project.wannabet.model.AccountRegistrato;
+import is.project.wannabet.model.Conto;
 import is.project.wannabet.model.Evento;
 import is.project.wannabet.model.Quota;
+import is.project.wannabet.service.AccountRegistratoService;
+import is.project.wannabet.service.ContoService;
 import is.project.wannabet.service.EventoService;
 import is.project.wannabet.service.QuotaService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,6 +35,12 @@ public class HomeController {
 
     @Autowired
     private QuotaService quotaService;
+
+    @Autowired
+    private AccountRegistratoService accountRegistratoService;
+
+    @Autowired
+    private ContoService contoService;
 
 
     @PreAuthorize("isAuthenticated()")
@@ -74,6 +84,12 @@ public class HomeController {
                 .filter(entry -> !entry.getKey().isChiuso())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (a, b) -> a, LinkedHashMap::new));
 
+
+        AccountRegistrato accountRegistrato = accountRegistratoService.getAccountByEmail(userPrincipal.getName()).get();
+        Map<AccountRegistrato, Conto> accountMap = new HashMap<>();
+        accountMap.put(accountRegistrato,
+                contoService.getContoById(accountRegistrato.getConto().getIdConto()).get());
+        model.addAttribute("accountMap", accountMap);
 
         model.addAttribute("upcomingEventsMap", upcomingEventsMap);
 

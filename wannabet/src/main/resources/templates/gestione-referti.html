@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <title>Referta Quote - WannaBet</title>
     <link rel="stylesheet" th:href="@{/css/referta-quote.css}" />
+
+    <link rel="stylesheet" th:href="@{/css/scontrino.css}" />
     <script th:src="@{/script/referta-quote.js}" defer></script>
 </head>
 <body>
 <!-- Navbar principale (placeholder) -->
 <nav class="main-navbar">
     <ul>
-        <li><a th:href="@{/home}">Home</a></li>
         <li><a th:href="@{/referta-quote}">Referta Quote</a></li>
     </ul>
 </nav>
@@ -77,8 +78,7 @@
     </div>
 </div>
 
-<footer class="main-footer">
-    <p>&copy; 2025 WannaBet. Tutti i diritti riservati.</p>
-</footer>
+
+<div th:replace="fragments/footer :: footerFragment"></div>
 </body>
 </html>

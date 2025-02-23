@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>WannaBet - Registrazione</title>
+    <style>
+        /* Sfondo e font */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #cccccc;
+        }
+
+        /* Container centrato con sfondo chiaro e bordi */
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background-color: #ffffff; /* Puoi usare anche #f0f0f0 */
+            padding: 20px;
+            border: 1px solid #dcdcdc;
+            border-radius: 5px;
+
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Titolo con colore primario */
+        h1 {
+            text-align: center;
+            color: #C80B37;
+            margin-bottom: 20px;
+        }
+
+        /* Stile dei gruppi di form */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        /* Etichette con colore secondario */
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #334348;
+        }
+
+        /* Input con bordo e padding */
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #dcdcdc;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+
+        /* Bottone di submit con colore primario */
+        button {
+            background-color: #C80B37;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #b00a31;
+        }
+
+        /* Messaggio di errore */
+        #error-message {
+            margin-top: 15px;
+            padding: 10px;
+            border: 1px solid #f5c6cb;
+            background-color: #f8d7da;
+            color: #a94442;
+            display: none;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Registrazione Utente</h1>
+    <form id="registration-form">
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required maxlength="50">
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required minlength="6" maxlength="64">
+        </div>
+        <div class="form-group">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" name="nome" required maxlength="100" pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$">
+        </div>
+        <div class="form-group">
+            <label for="cognome">Cognome:</label>
+            <input type="text" id="cognome" name="cognome" required maxlength="100" pattern="^[A-Za-zÀ-ÖØ-öø-ÿ\s]+$">
+        </div>
+        <div class="form-group">
+            <label for="codiceFiscale">Codice Fiscale:</label>
+            <input type="text" id="codiceFiscale" name="codiceFiscale" required minlength="15" maxlength="16" pattern="^[A-Z]{6}[0-9]{2}[A-Z][0-9]{2}[A-Z][0-9]{3}[A-Z]$">
+        </div>
+        <div class="form-group">
+            <label for="indirizzoDiFatturazione">Indirizzo di Fatturazione:</label>
+            <input type="text" id="indirizzoDiFatturazione" name="indirizzoDiFatturazione" required maxlength="100" pattern=".*\d+.*">
+        </div>
+        <div class="form-group">
+            <label for="dataDiNascita">Data di Nascita:</label>
+            <input type="date" id="dataDiNascita" name="dataDiNascita" required>
+        </div>
+        <button type="submit">Registrati</button>
+    </form>
+    <!-- Sezione per mostrare l'errore in caso di fallimento della request -->
+    <div id="error-message"></div>
+</div>
+
+<script>
+    document.getElementById("registration-form").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        // Nasconde e resetta il messaggio di errore
+        const errorMessageDiv = document.getElementById("error-message");
+        errorMessageDiv.style.display = "none";
+        errorMessageDiv.innerText = "";
+
+        // Raccolta dei dati dal form
+        const formData = {
+            email: document.getElementById("email").value,
+            password: document.getElementById("password").value,
+            nome: document.getElementById("nome").value,
+            cognome: document.getElementById("cognome").value,
+            codiceFiscale: document.getElementById("codiceFiscale").value,
+            indirizzoDiFatturazione: document.getElementById("indirizzoDiFatturazione").value,
+            dataDiNascita: document.getElementById("dataDiNascita").value
+        };
+
+        // Invio dei dati tramite POST al controller di registrazione
+        fetch("/api/auth/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    // Se la risposta non è OK, catturiamo il testo dell'errore
+                    return response.text().then(text => { throw new Error(text) });
+                }
+                return response.text();
+            })
+            .then(data => {
+                // In caso di successo, si può decidere di fare un redirect o mostrare un messaggio di conferma
+                alert(data);
+            })
+            .catch(error => {
+                // Visualizza l'errore nella sezione dedicata
+                errorMessageDiv.style.display = "block";
+                errorMessageDiv.innerText = "Errore: " + error.message;
+            });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,235 @@
+/* src/main/resources/static/css/navbar.css */
+
+.navbar {
+    background-color: #ffffff; /* Sfondo contenitori chiari */
+    border-bottom: 1px solid #dcdcdc; /* Bordi */
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 5%;
+}
+
+.navbar-left .navbar-brand {
+    font-size: 24px;
+    font-weight: bold;
+    color: #C80B37; /* Colore primario */
+    text-decoration: none;
+}
+
+.navbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-saldo {
+    font-size: 16px;
+    color: #0c0c0c; /* Testo scuro */
+    margin-right: 20px;
+}
+
+.btn-deposit,
+.btn-profile {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    color: #334348; /* Secondario */
+    margin-right: 10px;
+}
+
+.btn-deposit:hover,
+.btn-profile:hover {
+    color: #C80B37; /* Link/evidenziazione */
+}
+
+.btn-deposit i,
+.btn-profile i {
+    margin-right: 5px;
+    font-size: 18px;
+}
+
+
+/*
+
+SEZIONE AREA PERSONALE POPUP
+
+*/
+
+
+/* Popup Container: definisce il contenitore che scorre da destra */
+.popup-container {
+    border-radius: 8px;
+    position: absolute;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    transition: right 0.3s ease-in-out;
+    z-index: 9999;
+    width: 18%;
+    right: 0;
+    top: 0;
+    height: 100vh;
+}
+
+/* Stato "show": mostra il popup facendo scorrere il container a destra (right: 0) */
+.show {
+    display: block !important;
+}
+
+/* Popup Content: stile della finestra contenuta nel popup-container */
+.popup-content {
+    background-color: #ffffff;
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+
+}
+
+/* Popup generico: usato per i popup di modifica dati e transazioni */
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #ffffff;
+    color: #0c0c0c;
+    padding: 20px;
+    border: 1px solid #dcdcdc;
+    box-shadow: 0px 0px 10px #C80B37;
+    width: calc(80% + 40px);
+    max-width: 440px;
+    border-radius: 10px;
+}
+
+/* Data Grid: per visualizzare i dati utente in formato a griglia */
+.data-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 10px 20px;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+/* Data Item: stile degli elementi della griglia */
+.data-item {
+    text-align: left;
+}
+
+/* Sezione: separa le varie sezioni (dati personali, conto, ecc.) */
+.section {
+    margin: 35px 0;
+}
+
+/* Linea Orizzontale: separa visivamente le sezioni */
+.horizontal-line {
+    border: 0;
+    border-top: 2px solid #dcdcdc;
+    width: 100%;
+    margin: 20px 0;
+}
+
+/* Pulsanti primari: per azioni principali come Preleva, Deposita, Vai alla lista scommesse e Chiudi */
+.primaryButton {
+    margin-top: 10px;
+    padding: 10px 15px;
+    background-color: #C80B37;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.primaryButton:hover {
+    background-color: #9e062a;
+}
+
+/* Pulsanti secondari: per azioni di minor importanza come Modifica Dati o Annulla */
+.secondaryButton {
+    margin-top: 10px;
+    padding: 10px 15px;
+    background-color: #334348;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+.secondaryButton:hover {
+    background-color: #56737d;
+}
+
+/* Stile specifico per il popup "Modifica Dati" */
+#userPopup.popup {
+    background-color: #ffffff;
+    color: #0c0c0c;
+    border: 1px solid #dcdcdc;
+    padding: 20px;
+    width: 90%;
+    max-width: 500px;
+    border-radius: 10px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 0px 10px rgba(200, 11, 55, 0.5);
+    z-index: 10000;
+}
+
+#userPopup.popup h3 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#userPopup.popup input[type="text"],
+#userPopup.popup input[type="date"],
+#userPopup.popup input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #dcdcdc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+#userPopup.popup button {
+    margin-top: 10px;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+/* Se preferisci differenziare i bottoni all'interno del popup, puoi specificarlo */
+#userPopup.popup .primaryButton {
+    background-color: #C80B37;
+    color: #ffffff;
+    border: none;
+}
+
+#userPopup.popup .primaryButton:hover {
+    background-color: #9e062a;
+}
+
+#userPopup.popup .secondaryButton {
+    background-color: #334348;
+    color: #ffffff;
+    border: none;
+    margin-left: 10px;
+}
+
+#userPopup.popup .secondaryButton:hover {
+    background-color: #56737d;
+}
+
+
+

@@ -5,10 +5,16 @@
   <title>Dettaglio Scommessa - WannaBet</title>
   <link rel="stylesheet" th:href="@{/css/scommessa-detail.css}" />
   <link rel="stylesheet" th:href="@{/css/scontrino.css}" />
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-
-</head>
+  <!-- Includi il CSS del footer -->
+  <link rel="stylesheet" th:href="@{/css/navbar.css}" />
+  <link rel="stylesheet" type="text/css" th:href="@{/css/footer.css}">
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"></head>
 <body>
+
+
+<!-- Inclusione della navbar passandogli la variabile accountMap -->
+<div th:replace="fragments/navbar :: navbarFragment(${accountMap})"></div>
 
 <main class="scommessa-container">
   <!-- Sezione Header: Visualizza ID e stato della scommessa -->
@@ -75,6 +81,10 @@
 <div th:replace="fragments/scontrino :: scontrinoFragment"></div>
 
 <script th:src="@{/script/scontrino.js}"></script>
+
+
+
+<div th:replace="fragments/footer :: footerFragment"></div>
 
 </body>
 </html>

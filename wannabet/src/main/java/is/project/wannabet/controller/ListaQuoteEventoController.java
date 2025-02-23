@@ -1,10 +1,12 @@
 package is.project.wannabet.controller;
 
-import is.project.wannabet.model.Evento;
-import is.project.wannabet.model.Quota;
-import is.project.wannabet.model.StatoQuota;
+import is.project.wannabet.model.*;
+import is.project.wannabet.service.AccountRegistratoService;
+import is.project.wannabet.service.ContoService;
 import is.project.wannabet.service.EventoService;
 import is.project.wannabet.service.QuotaService;
+
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -12,7 +14,10 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +32,12 @@ public class ListaQuoteEventoController {
     @Autowired
     private QuotaService quotaService;
 
+    @Autowired
+    private AccountRegistratoService accountRegistratoService;
+
+    @Autowired
+    private ContoService contoService;
+
     /**
      * Endpoint che gestisce sia il caso in cui viene passato un eventId (singolo evento)
      * sia il caso in cui viene passata una descrizione (più eventi).
@@ -38,7 +49,9 @@ public class ListaQuoteEventoController {
             @RequestParam(value = "event", required = false) Long eventId,
             @RequestParam(value = "descrizione", required = false) String descrizione,
             @RequestParam(value = "categoria", required = false) String categoriaParam,
-            Model model) {
+            Model model,
+            Authentication authentication) {
+
 
         List<Evento> eventi = new ArrayList<>();
 
@@ -77,6 +90,12 @@ public class ListaQuoteEventoController {
             }
             quotePerEvento.put(e.getIdEvento(), quotes);
         }
+
+        AccountRegistrato accountRegistrato = accountRegistratoService.getAccountByEmail(authentication.getName()).get();
+        Map<AccountRegistrato, Conto> accountMap = new HashMap<>();
+        accountMap.put(accountRegistrato,
+                contoService.getContoById(accountRegistrato.getConto().getIdConto()).get());
+        model.addAttribute("accountMap", accountMap);
 
         model.addAttribute("eventi", eventi);
         model.addAttribute("quotePerEvento", quotePerEvento);

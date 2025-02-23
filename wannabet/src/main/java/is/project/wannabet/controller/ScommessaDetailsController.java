@@ -1,9 +1,15 @@
 package is.project.wannabet.controller;
 
 import is.project.wannabet.model.AccountRegistrato;
+import is.project.wannabet.model.Conto;
+import is.project.wannabet.model.QuotaGiocata;
 import is.project.wannabet.model.Scommessa;
 import is.project.wannabet.service.AccountRegistratoService;
+import is.project.wannabet.service.ContoService;
 import is.project.wannabet.service.ScommessaService;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,6 +29,9 @@ public class ScommessaDetailsController {
 
     @Autowired
     private ScommessaService scommessaService;
+
+    @Autowired
+    private ContoService contoService;
 
     @GetMapping("/scommessa/{idScommessa}")
     @PreAuthorize("hasAnyRole('UTENTE','ADMIN')")
@@ -48,9 +57,15 @@ public class ScommessaDetailsController {
         Scommessa scommessa = scommessaOpt.get();
 
         double sommaQuote = scommessa.getQuoteGiocate().stream()
-                .mapToDouble(q -> q.getMoltiplicatore())
+                .mapToDouble(QuotaGiocata::getMoltiplicatore)
                 .sum();
         model.addAttribute("quotaTotale", sommaQuote);
+
+        AccountRegistrato accountRegistrato = accountRegistratoService.getAccountByEmail(authentication.getName()).get();
+        Map<AccountRegistrato, Conto> accountMap = new HashMap<>();
+        accountMap.put(accountRegistrato,
+                contoService.getContoById(accountRegistrato.getConto().getIdConto()).get());
+        model.addAttribute("accountMap", accountMap);
 
 
         // Aggiungi la scommessa al model per il rendering della view
