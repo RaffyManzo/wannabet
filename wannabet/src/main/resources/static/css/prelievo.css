@@ -1,26 +1,29 @@
-/* Stili di base per la pagina di deposito */
+/* Sfondo della pagina */
 body {
     font-family: Arial, sans-serif;
-    color: #0c0c0c;
+    color: #0c0c0c; /* Testo scuro */
     margin: 0;
     padding: 0;
 }
 
+/* Container centrale con sfondo chiaro */
 .container {
     max-width: 500px;
     margin: 50px auto;
     background-color: #ffffff; /* Sfondo contenitori chiari */
     padding: 20px;
-    border: 1px solid #dcdcdc;
+    border: 1px solid #dcdcdc; /* Bordi */
     border-radius: 5px;
 }
 
+/* Titolo */
 h1 {
     text-align: center;
     color: #C80B37; /* Colore primario */
     margin-bottom: 20px;
 }
 
+/* Stile dei gruppi del form */
 .form-group {
     margin-bottom: 15px;
 }
@@ -31,15 +34,17 @@ label {
     color: #334348; /* Colore secondario */
 }
 
+/* Stile degli input */
 input[type="text"],
 input[type="number"] {
     width: 100%;
     padding: 10px;
-    border: 1px solid #dcdcdc;
+    border: 1px solid #dcdcdc; /* Bordi */
     border-radius: 3px;
     box-sizing: border-box;
 }
 
+/* Bottone primario */
 .primaryButton {
     background-color: #C80B37;
     color: #ffffff;
@@ -56,23 +61,7 @@ input[type="number"] {
     background-color: #b00a31;
 }
 
-/* Pulsanti secondari: per azioni di minor importanza come Modifica Dati o Annulla */
-.secondaryButton {
-    margin: 10px;
-    padding: 10px 15px;
-    background-color: #334348;
-    color: #ffffff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-.secondaryButton:hover {
-    background-color: #56737d;
-}
-
+/* Messaggi di errore e successo */
 .error-message, .success-message {
     margin-top: 15px;
     padding: 10px;

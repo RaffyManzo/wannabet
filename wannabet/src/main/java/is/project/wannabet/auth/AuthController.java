@@ -14,6 +14,7 @@ import is.project.wannabet.security.CustomPasswordEncoder;
 import is.project.wannabet.service.AccountRegistratoService;
 import is.project.wannabet.service.ContoService;
 import is.project.wannabet.service.SaldoFedeltaService;
+import jakarta.servlet.ServletException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,6 +47,9 @@ public class AuthController {
 
     @Autowired
     private SaldoFedeltaService saldoFedeltaService;
+
+    @Autowired
+    private CustomAuthenticationSuccessHandler successHandler;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -91,7 +96,8 @@ public class AuthController {
      * Se l'utente è autenticato, carichiamo i suoi dati nella sessione.
      */
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response) {
+    public void login(@RequestBody LoginRequest loginRequest, HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
         );
@@ -105,7 +111,7 @@ public class AuthController {
 
         System.out.println("✅ Sessione creata con ID: " + session.getId());
 
-        return ResponseEntity.ok("Login effettuato con successo");
+        successHandler.onAuthenticationSuccess(request, response, authentication);
     }
 
 
@@ -113,8 +119,8 @@ public class AuthController {
     /**
      * Logout: Invalida la sessione dell'utente.
      */
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) {
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session != null) {
             session.invalidate(); // 🔹 Invalida la sessione

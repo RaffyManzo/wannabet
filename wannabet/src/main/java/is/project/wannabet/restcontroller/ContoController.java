@@ -2,6 +2,7 @@ package is.project.wannabet.restcontroller;
 
 
 import is.project.wannabet.payload.DepositoRequest;
+import is.project.wannabet.payload.PrelievoRequest;
 import is.project.wannabet.security.AuthenticationRequestAccountCheck;
 import is.project.wannabet.service.AccountRegistratoService;
 import jakarta.validation.Valid;
@@ -66,14 +67,14 @@ public class ContoController {
     @PostMapping("/{accountId}/preleva")
     @PreAuthorize("hasRole('UTENTE')")
     public ResponseEntity<?> preleva(@PathVariable Long accountId,
-                                          @RequestParam @Min(value = 1, message = "L'importo deve essere maggiore di zero") double importo,
+                                     @Valid @RequestBody PrelievoRequest prelievoRequest,
                                           Authentication authentication) {
 
         ResponseEntity<?> response = accountCheck.checkAccount(accountId, authentication);
 
         if(response.getStatusCode() == HttpStatus.OK) {
-            if (contoService.preleva(accountId, importo))
-                return ResponseEntity.ok("Prelievo di " + importo + " effettuato con successo.");
+            if (contoService.preleva(accountId, prelievoRequest.getImporto()))
+                return ResponseEntity.ok("Prelievo di " + prelievoRequest.getImporto() + " effettuato con successo all'Iban: " + prelievoRequest.getIban());
             else
                 return ResponseEntity.badRequest().body("Saldo insufficinte");
         } else return response;

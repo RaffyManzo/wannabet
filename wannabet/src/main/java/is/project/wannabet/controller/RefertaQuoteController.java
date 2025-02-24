@@ -1,13 +1,17 @@
 package is.project.wannabet.controller;
 
 import is.project.wannabet.model.AccountRegistrato;
+import is.project.wannabet.model.Conto;
 import is.project.wannabet.model.Quota;
 import is.project.wannabet.model.TipoScommessa;
 import is.project.wannabet.observer.QuotaCache;
 import is.project.wannabet.observer.QuotaManager;
 import is.project.wannabet.service.AccountRegistratoService;
 import is.project.wannabet.service.QuotaService;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +51,12 @@ public class RefertaQuoteController {
             model.addAttribute("error", "Account non trovato");
             return TEMPLATE;
         }
+
+        AccountRegistrato accountRegistrato = accountRegistratoService.getAccountByEmail(authentication.getName()).get();
+        Map<AccountRegistrato, Conto> accountMap = new HashMap<>();
+        accountMap.put(accountRegistrato,
+                new Conto());
+        model.addAttribute("accountMap", accountMap);
 
         // Recupera tutte le quote
         List<Quota> quoteList = quotaService.getAllQuote();

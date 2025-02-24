@@ -37,9 +37,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated() // 🔒 Tutto il resto richiede autenticazione
                 )
                 .formLogin(form -> form
-                        .loginPage("/login.html")
+                        .loginPage("/login")
                         .permitAll()
                 )
+
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                         .sessionFixation().migrateSession()  // Migra la sessione dopo l'autenticazione
