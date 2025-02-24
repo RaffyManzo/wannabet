@@ -134,7 +134,7 @@ SEZIONE AREA PERSONALE POPUP
 
 /* Pulsanti primari: per azioni principali come Preleva, Deposita, Vai alla lista scommesse e Chiudi */
 .primaryButton {
-    margin-top: 10px;
+    margin: 10px;
     padding: 10px 15px;
     background-color: #C80B37;
     color: #ffffff;
@@ -151,7 +151,7 @@ SEZIONE AREA PERSONALE POPUP
 
 /* Pulsanti secondari: per azioni di minor importanza come Modifica Dati o Annulla */
 .secondaryButton {
-    margin-top: 10px;
+    margin: 10px;
     padding: 10px 15px;
     background-color: #334348;
     color: #ffffff;

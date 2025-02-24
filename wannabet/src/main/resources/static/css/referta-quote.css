@@ -7,6 +7,12 @@
    Bordi leggeri: #dcdcdc
 */
 
+body {
+
+    font-family: Arial, sans-serif;
+
+}
+
 /* Stili base per il container */
 .container {
     max-width: 900px;

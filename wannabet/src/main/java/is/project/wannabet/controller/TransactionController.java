@@ -28,4 +28,14 @@ public class TransactionController {
         model.addAttribute("accountId", account.getIdAccount());
         return "deposito";
     }
+
+    // Endpoint per visualizzare la pagina di prelievo (view Thymeleaf)
+    @GetMapping("/preleva")
+    @PreAuthorize("hasRole('UTENTE')")
+    public String showPrelievoPage(Model model, Authentication authentication) {
+        // Estrae l'account dall'Authentication (si assume che sia di tipo AccountRegistrato)
+        AccountRegistrato account = accountRegistratoService.getAccountByEmail(authentication.getName()).get();
+        model.addAttribute("accountId", account.getIdAccount());
+        return "prelievo"; // Nome del template Thymeleaf (prelievo.html)
+    }
 }

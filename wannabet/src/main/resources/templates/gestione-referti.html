@@ -4,16 +4,90 @@
     <meta charset="UTF-8">
     <title>Referta Quote - WannaBet</title>
     <link rel="stylesheet" th:href="@{/css/referta-quote.css}" />
+    <link rel="stylesheet" th:href="@{/css/footer.css}" />
+    <link rel="stylesheet" th:href="@{/css/navbar.css}" />
 
-    <link rel="stylesheet" th:href="@{/css/scontrino.css}" />
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
     <script th:src="@{/script/referta-quote.js}" defer></script>
 </head>
 <body>
-<!-- Navbar principale (placeholder) -->
-<nav class="main-navbar">
-    <ul>
-        <li><a th:href="@{/referta-quote}">Referta Quote</a></li>
-    </ul>
+<nav class="navbar">
+    <div class="navbar-left">
+        <a href="/referta-quote" class="navbar-brand">WannaBet</a>
+    </div>
+    <div class="navbar-right">
+
+
+        <button class="secondaryButton" id="btnLogout" onclick="
+          fetch('/api/auth/logout', { method: 'POST' })
+            .then(response => {
+              if (!response.ok) throw new Error('Logout fallito');
+              return response.text();
+            })
+            .then(data => {
+              console.log(data);
+              // Esegui il redirect post-logout, ad esempio alla pagina di login
+              window.location.href = '/login.html';
+            })
+            .catch(error => console.error('Errore:', error));
+        ">
+            <i class="fa-solid fa-door-open"></i> Logout
+        </button>
+
+        <div class="vertical-divider" style="border-left: 1px solid #aaaaaa; margin: 0 20px; height: 25px;"></div>
+
+        <button class="btn-profile" th:onclick="|document.getElementById('popupContainer').classList.add('show'); document.getElementById('parent-popup-container').classList.add('show')|">
+            <i class="fa fa-user"></i>
+        </button>
+    </div>
+
+    <div th:each=" entry : ${accountMap}" id="parent-popup-container" style="display: none">
+        <div id="popupContainer" class="popup-container">
+            <div class="popup-content">
+                <div class="container">
+
+                    <!-- Sezione Dati Personali -->
+                    <div class="section">
+                        <h2>Dati Personali</h2>
+                        <div class="data-grid" id="userData">
+                            <div class="data-item">Nome: <span th:text="${entry.key.nome}"></span></div>
+                            <div class="data-item">Cognome: <span th:text="${entry.key.cognome}"></span></div>
+                            <div class="data-item">Email: <span th:text="${entry.key.email}"></span></div>
+                        </div>
+                        <button class="secondaryButton"
+                                th:onclick="|document.getElementById('userPopup').style.display='block'|">
+                            Modifica Dati
+                        </button>
+                    </div>
+
+                    <!-- Popup per Modifica Dati -->
+                    <div id="userPopup" class="popup">
+                        <h3>Modifica Dati</h3>
+                        <input type="text" id="newName" placeholder="Nome" th:value="${entry.key.nome}">
+                        <input type="text" id="newSurname" placeholder="Cognome" th:value="${entry.key.cognome}">
+                        <input type="text" id="newCF" placeholder="Codice Fiscale" th:value="${entry.key.codiceFiscale}">
+                        <input type="date" id="newDOB" placeholder="Data di Nascita" th:value="${entry.key.dataNascita}">
+                        <input type="email" id="newEmail" placeholder="Email" th:value="${entry.key.email}">
+                        <button class="primaryButton" th:onclick="|window.location.href='salva'|">Salva</button>
+                        <button class="secondaryButton" th:onclick="|document.getElementById('userPopup').style.display='none'|">
+                            Annulla
+                        </button>
+                    </div>
+
+
+                    <hr class="horizontal-line">
+
+                    <button class="secondaryButton"
+                            th:onclick="|document.getElementById('popupContainer').classList.remove('show'); document.getElementById('parent-popup-container').classList.remove('show')|">
+                        <i class="fa-regular fa-circle-xmark"></i> Chiudi pannello
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
 </nav>
 
 <div class="container">

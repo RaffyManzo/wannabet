@@ -5,7 +5,7 @@
 <!-- Definizione del fragment con nome "navbarFragment" che accetta il parametro accountMap -->
 <nav class="navbar" th:fragment="navbarFragment(accountMap)">
     <div class="navbar-left">
-        <a href="/home" class="navbar-brand">WannaBet</a>
+        <a class="navbar-brand" href="/home">WannaBet</a>
     </div>
     <div class="navbar-right">
         <span class="navbar-saldo">
@@ -13,16 +13,35 @@
           <span th:each="entry : ${accountMap}"
                 th:text="${#numbers.formatDecimal(entry.value.saldo, 1, 2)}">-- , --</span> $
         </span>
-        <button class="btn-deposit" th:onclick="|window.location.href='/deposita'|">
-            <i class="fa fa-plus-circle"></i> Deposita
+        <button class="primaryButton" th:onclick="|window.location.href='/deposita'|">
+            <i class="fa-solid fa-right-to-bracket"></i> Deposita
         </button>
+
+        <button class="secondaryButton" id="btnLogout" onclick="
+          fetch('/api/auth/logout', { method: 'POST' })
+            .then(response => {
+              if (!response.ok) throw new Error('Logout fallito');
+              return response.text();
+            })
+            .then(data => {
+              console.log(data);
+              // Esegui il redirect post-logout, ad esempio alla pagina di login
+              window.location.href = '/login.html';
+            })
+            .catch(error => console.error('Errore:', error));
+        ">
+            <i class="fa-solid fa-door-open"></i> Logout
+        </button>
+
+        <div class="vertical-divider" style="border-left: 1px solid #aaaaaa; margin: 0 20px; height: 25px;"></div>
+
         <button class="btn-profile" th:onclick="|document.getElementById('popupContainer').classList.add('show'); document.getElementById('parent-popup-container').classList.add('show')|">
             <i class="fa fa-user"></i>
         </button>
     </div>
 
-    <div th:each=" entry : ${accountMap}" id="parent-popup-container" style="display: none">
-        <div id="popupContainer" class="popup-container">
+    <div id="parent-popup-container" style="display: none" th:each=" entry : ${accountMap}">
+        <div class="popup-container" id="popupContainer">
             <div class="popup-content">
                 <div class="container">
 
@@ -38,6 +57,7 @@
                                 th:onclick="|document.getElementById('userPopup').style.display='block'|">
                             Modifica Dati
                         </button>
+
                     </div>
 
                     <hr class="horizontal-line">
@@ -60,21 +80,24 @@
                         </button>
 
                         <button class="secondaryButton"
-                                th:onclick="|window.location.href='/home'|">
+                                th:onclick="|window.location.href='/preleva'|">
                             <i class="fa-solid fa-right-from-bracket"></i> Preleva
                         </button>
                     </div>
 
                     <!-- Popup per Modifica Dati -->
-                    <div id="userPopup" class="popup">
+                    <div class="popup" id="userPopup">
                         <h3>Modifica Dati</h3>
-                        <input type="text" id="newName" placeholder="Nome" th:value="${entry.key.nome}">
-                        <input type="text" id="newSurname" placeholder="Cognome" th:value="${entry.key.cognome}">
-                        <input type="text" id="newCF" placeholder="Codice Fiscale" th:value="${entry.key.codiceFiscale}">
-                        <input type="date" id="newDOB" placeholder="Data di Nascita" th:value="${entry.key.dataNascita}">
-                        <input type="email" id="newEmail" placeholder="Email" th:value="${entry.key.email}">
+                        <input id="newName" placeholder="Nome" th:value="${entry.key.nome}" type="text">
+                        <input id="newSurname" placeholder="Cognome" th:value="${entry.key.cognome}" type="text">
+                        <input id="newCF" placeholder="Codice Fiscale" th:value="${entry.key.codiceFiscale}"
+                               type="text">
+                        <input id="newDOB" placeholder="Data di Nascita" th:value="${entry.key.dataNascita}"
+                               type="date">
+                        <input id="newEmail" placeholder="Email" th:value="${entry.key.email}" type="email">
                         <button class="primaryButton" th:onclick="|window.location.href='salva'|">Salva</button>
-                        <button class="secondaryButton" th:onclick="|document.getElementById('userPopup').style.display='none'|">
+                        <button class="secondaryButton"
+                                th:onclick="|document.getElementById('userPopup').style.display='none'|">
                             Annulla
                         </button>
                     </div>
@@ -95,6 +118,7 @@
                             th:onclick="|document.getElementById('popupContainer').classList.remove('show'); document.getElementById('parent-popup-container').classList.remove('show')|">
                         <i class="fa-regular fa-circle-xmark"></i> Chiudi pannello
                     </button>
+
 
                 </div>
             </div>
